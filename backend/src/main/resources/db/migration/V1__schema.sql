@@ -31,7 +31,7 @@ CREATE INDEX idx_products_badge       ON products(badge);
 CREATE TABLE product_colors (
     id             BIGSERIAL PRIMARY KEY,
     product_id     BIGINT       NOT NULL REFERENCES products(id) ON DELETE CASCADE,
-    hex            CHAR(7)      NOT NULL,
+    hex            VARCHAR(7)   NOT NULL,
     display_order  INT          NOT NULL DEFAULT 0
 );
 

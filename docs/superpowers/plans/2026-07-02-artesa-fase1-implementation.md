@@ -522,7 +522,7 @@ CREATE INDEX idx_products_badge       ON products(badge);
 CREATE TABLE product_colors (
     id             BIGSERIAL PRIMARY KEY,
     product_id     BIGINT       NOT NULL REFERENCES products(id) ON DELETE CASCADE,
-    hex            CHAR(7)      NOT NULL,
+    hex            VARCHAR(7)   NOT NULL,
     display_order  INT          NOT NULL DEFAULT 0
 );
 
@@ -859,7 +859,7 @@ public class ProductColor {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @Column(nullable = false, length = 7)
+    @Column(nullable = false, columnDefinition = "CHAR(7)")
     private String hex;
 
     @Column(name = "display_order", nullable = false)
