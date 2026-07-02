@@ -2,7 +2,7 @@ spring:
   application:
     name: artesa
   datasource:
-    url: jdbc:postgresql://localhost:5432/artesa
+    url: jdbc:postgresql://localhost:5433/artesa
     username: artesa
     password: artesa
   jpa:
