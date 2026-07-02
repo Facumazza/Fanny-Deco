@@ -6,7 +6,7 @@
 
 **Architecture:** Monorepo con `backend/` (Spring Boot 3 + JPA + Flyway + Postgres) y `frontend/` (React 18 + Vite + TS + Tailwind). Backend organizado por feature (`catalog/`). Frontend con fetch wrapper propio, React Router y design tokens en Tailwind config. Postgres corre en Docker.
 
-**Tech Stack:** Java 21, Spring Boot 3.3, Spring Data JPA, Flyway, PostgreSQL 16, JUnit 5, Testcontainers. React 18, Vite 5, TypeScript 5, Tailwind CSS 3, React Router v6, Vitest, React Testing Library, MSW.
+**Tech Stack:** Java 17, Spring Boot 3.3, Spring Data JPA, Flyway, PostgreSQL 16, JUnit 5, Testcontainers. React 18, Vite 5, TypeScript 5, Tailwind CSS 3, React Router v6, Vitest, React Testing Library, MSW.
 
 ## Global Constraints
 
@@ -297,7 +297,7 @@ target/
     <name>artesa-backend</name>
 
     <properties>
-        <java.version>21</java.version>
+        <java.version>17</java.version>
         <testcontainers.version>1.20.3</testcontainers.version>
     </properties>
 
@@ -3307,7 +3307,7 @@ Ver [spec de Fase 1](docs/superpowers/specs/2026-07-02-artesa-fase1-design.md) y
 ## Requisitos
 
 - **Docker Desktop** (para Postgres)
-- **JDK 21** — verificar con `java -version`
+- **JDK 17** — verificar con `java -version`
 - **Node.js 20 LTS** + npm — verificar con `node -v`
 - **Maven 3.9+** (opcional — el repo incluye `./mvnw`)
 
@@ -3366,7 +3366,7 @@ cd frontend && npm test
 ## Estructura del proyecto
 
 ```
-backend/     Spring Boot 3.3 + Java 21 + JPA + Flyway + Postgres
+backend/     Spring Boot 3.3 + Java 17 + JPA + Flyway + Postgres
 frontend/    React 18 + Vite + TypeScript + Tailwind CSS
 docs/        Specs y planes de implementación
 ```
