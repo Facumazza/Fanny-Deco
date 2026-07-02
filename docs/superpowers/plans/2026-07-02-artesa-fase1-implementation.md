@@ -742,7 +742,7 @@ public class Category {
     @Column(name = "display_order", nullable = false)
     private int displayOrder;
 
-    protected Category() {}
+    public Category() {}
 
     public Long getId() { return id; }
     public String getSlug() { return slug; }
@@ -823,7 +823,7 @@ public class Product {
     @OrderBy("displayOrder ASC")
     private List<ProductColor> colors = new ArrayList<>();
 
-    protected Product() {}
+    public Product() {}
 
     public Long getId() { return id; }
     public String getSlug() { return slug; }
@@ -865,7 +865,7 @@ public class ProductColor {
     @Column(name = "display_order", nullable = false)
     private int displayOrder;
 
-    protected ProductColor() {}
+    public ProductColor() {}
 
     public Long getId() { return id; }
     public Product getProduct() { return product; }
@@ -902,7 +902,7 @@ public class Review {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
-    protected Review() {}
+    public Review() {}
 
     public Long getId() { return id; }
     public String getAuthorName() { return authorName; }

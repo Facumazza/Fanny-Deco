@@ -23,7 +23,7 @@ public class Review {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
-    protected Review() {}
+    public Review() {}
 
     public Long getId() { return id; }
     public String getAuthorName() { return authorName; }

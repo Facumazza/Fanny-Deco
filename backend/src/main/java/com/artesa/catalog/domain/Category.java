@@ -25,7 +25,7 @@ public class Category {
     @Column(name = "display_order", nullable = false)
     private int displayOrder;
 
-    protected Category() {}
+    public Category() {}
 
     public Long getId() { return id; }
     public String getSlug() { return slug; }

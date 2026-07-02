@@ -50,7 +50,7 @@ public class Product {
     @OrderBy("displayOrder ASC")
     private List<ProductColor> colors = new ArrayList<>();
 
-    protected Product() {}
+    public Product() {}
 
     public Long getId() { return id; }
     public String getSlug() { return slug; }

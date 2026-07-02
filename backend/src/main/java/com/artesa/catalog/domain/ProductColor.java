@@ -20,7 +20,7 @@ public class ProductColor {
     @Column(name = "display_order", nullable = false)
     private int displayOrder;
 
-    protected ProductColor() {}
+    public ProductColor() {}
 
     public Long getId() { return id; }
     public Product getProduct() { return product; }
