@@ -37,7 +37,8 @@ public class CatalogMapper {
 
     public ReviewDto toDto(Review r) {
         return new ReviewDto(r.getId(), r.getAuthorName(), r.getRating(),
-                             r.getBody(), r.getCreatedAt());
+                             r.getBody(), r.getLocation(), r.getProductName(),
+                             r.getCreatedAt());
     }
 
     public <E, D> PageDto<D> toPage(Page<E> src, Function<E, D> mapper) {

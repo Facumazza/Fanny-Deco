@@ -15,11 +15,12 @@ describe('HomePage', () => {
   it('renders categories and products from the API', async () => {
     renderWithRouter();
     await waitFor(() => {
-      expect(screen.getByText('Carteras de Cuero')).toBeInTheDocument();
+      // Category names appear both in the categories grid and in the footer TIENDA column.
+      expect(screen.getAllByText('Carteras de Cuero').length).toBeGreaterThan(0);
       expect(screen.getByText('Bolso Tote Milano')).toBeInTheDocument();
     });
     for (const c of mockCategories) {
-      expect(screen.getByText(c.name)).toBeInTheDocument();
+      expect(screen.getAllByText(c.name).length).toBeGreaterThan(0);
     }
     expect(screen.getAllByText('$285 USD')).toHaveLength(mockProductsPage.content.length);
   });

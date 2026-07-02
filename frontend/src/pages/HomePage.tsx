@@ -7,6 +7,9 @@ import { CategoryCard } from '../components/catalog/CategoryCard';
 import { ProductCard } from '../components/catalog/ProductCard';
 import { Skeleton } from '../components/ui/Skeleton';
 import { ErrorState } from '../components/ui/ErrorState';
+import { ProcessSection } from '../components/sections/ProcessSection';
+import { ReviewsSection } from '../components/sections/ReviewsSection';
+import { Newsletter } from '../components/sections/Newsletter';
 
 type Status = 'loading' | 'error' | 'ok';
 
@@ -80,6 +83,15 @@ export default function HomePage() {
           </>
         )}
       </main>
+
+      {status === 'ok' && (
+        <>
+          <ProcessSection />
+          <ReviewsSection />
+          <Newsletter />
+        </>
+      )}
+
       <Footer />
     </>
   );

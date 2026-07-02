@@ -1,6 +1,6 @@
 import { useId } from 'react';
 
-export function StarRating({ value, count }: { value: number; count: number }) {
+export function StarRating({ value, count }: { value: number; count?: number }) {
   const clamped = Math.max(0, Math.min(5, value));
   const stars = Array.from({ length: 5 }, (_, i) => {
     const fill = Math.max(0, Math.min(1, clamped - i));
@@ -14,7 +14,7 @@ export function StarRating({ value, count }: { value: number; count: number }) {
           <Star key={i} fill={fill} />
         ))}
       </div>
-      <span className="text-muted">({count})</span>
+      {count !== undefined && <span className="text-muted">({count})</span>}
     </div>
   );
 }

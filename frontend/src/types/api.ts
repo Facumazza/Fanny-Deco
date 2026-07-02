@@ -33,6 +33,8 @@ export interface Review {
   authorName: string;
   rating: number;
   body: string;
+  location: string | null;
+  productName: string | null;
   createdAt: string;
 }
 

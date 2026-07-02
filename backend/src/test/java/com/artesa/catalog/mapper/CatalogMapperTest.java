@@ -103,7 +103,7 @@ class CatalogMapperTest {
 
         ReviewDto dto = mapper.toDto(r);
 
-        assertThat(dto).isEqualTo(new ReviewDto(1L, "María G.", 5, "Excelente", ts));
+        assertThat(dto).isEqualTo(new ReviewDto(1L, "María G.", 5, "Excelente", null, null, ts));
     }
 
     @Test

@@ -37,7 +37,9 @@ class ReviewControllerIT {
         mvc.perform(get("/api/reviews"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.length()").value(6))
-            .andExpect(jsonPath("$[0].authorName").value("María G."));
+            .andExpect(jsonPath("$[0].authorName").value("Valentina R."))
+            .andExpect(jsonPath("$[0].location").value("Buenos Aires"))
+            .andExpect(jsonPath("$[0].productName").value("BOLSO TOTE MILANO"));
     }
 
     @Test

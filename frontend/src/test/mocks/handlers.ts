@@ -26,8 +26,18 @@ export const mockProductsPage: Page<ProductSummary> = {
 };
 
 export const mockReviews: Review[] = [
-  { id: 1, authorName: 'María G.', rating: 5,
-    body: 'Calidad impecable', createdAt: '2026-06-10T14:00:00Z' },
+  { id: 1, authorName: 'Valentina R.', rating: 5,
+    body: 'El bolso Tote Milano llegó en una caja preciosa.',
+    location: 'Buenos Aires', productName: 'BOLSO TOTE MILANO',
+    createdAt: '2026-06-30T14:00:00Z' },
+  { id: 2, authorName: 'Camilo S.', rating: 5,
+    body: 'Compré el set de cuencos como regalo y fue un éxito total.',
+    location: 'Medellín', productName: 'SET CUENCOS TIERRA',
+    createdAt: '2026-06-23T14:00:00Z' },
+  { id: 3, authorName: 'Lucía F.', rating: 5,
+    body: 'La Cartera Minerva es perfecta.',
+    location: 'Ciudad de México', productName: 'CARTERA MINERVA',
+    createdAt: '2026-06-17T14:00:00Z' },
 ];
 
 export const handlers = [
