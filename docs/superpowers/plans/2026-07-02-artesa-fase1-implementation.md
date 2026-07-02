@@ -410,7 +410,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
-    open-in-view: false
+    open-in-view: true
   flyway:
     enabled: true
     locations: classpath:db/migration
