@@ -1,14 +1,201 @@
-import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import type { ProductDetail } from '../types/api';
+import { ApiRequestError } from '../types/api';
+import { getProduct } from '../api/catalog';
+import { Header } from '../components/layout/Header';
+import { Footer } from '../components/layout/Footer';
+import { Badge } from '../components/catalog/Badge';
+import { StarRating } from '../components/catalog/StarRating';
+import { Skeleton } from '../components/ui/Skeleton';
+
+const priceFmt = new Intl.NumberFormat('en-US', {
+  style: 'currency', currency: 'USD', maximumFractionDigits: 0,
+});
+
+type Status = 'loading' | 'ok' | 'not-found' | 'error';
 
 export default function ProductPage() {
-  const { slug } = useParams<{ slug: string }>();
+  const { slug = '' } = useParams<{ slug: string }>();
+  const [status, setStatus] = useState<Status>('loading');
+  const [product, setProduct] = useState<ProductDetail | null>(null);
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const [wishlisted, setWishlisted] = useState(false);
+
+  useEffect(() => {
+    setStatus('loading');
+    getProduct(slug)
+      .then(p => {
+        setProduct(p);
+        setSelectedColor(p.colors[0] ?? null);
+        setStatus('ok');
+      })
+      .catch(err => {
+        if (err instanceof ApiRequestError && err.status === 404) {
+          setStatus('not-found');
+        } else {
+          console.error(err);
+          setStatus('error');
+        }
+      });
+  }, [slug]);
+
   return (
-    <main className="max-w-3xl mx-auto px-6 py-16">
-      <h1 className="font-display text-3xl">Detalle de producto</h1>
-      <p className="mt-4 text-muted">
-        Placeholder Fase 1 — se implementa en Fase 2. Slug solicitado:{' '}
-        <code className="bg-cream-card px-2 py-1 rounded">{slug}</code>
-      </p>
-    </main>
+    <>
+      <Header />
+      <main className="max-w-7xl mx-auto px-6 py-10">
+        {status === 'loading' && <LoadingSkeleton />}
+
+        {status === 'not-found' && (
+          <div className="text-center py-24 max-w-md mx-auto">
+            <p className="text-terracotta text-xs tracking-[0.3em] mb-4">404</p>
+            <h1 className="font-display text-3xl mb-4">Producto no encontrado</h1>
+            <p className="text-muted mb-6">El producto que buscás no existe o fue removido.</p>
+            <Link to="/" className="text-terracotta hover:underline">
+              Volver a la tienda
+            </Link>
+          </div>
+        )}
+
+        {status === 'error' && (
+          <div className="text-center py-16">
+            <p className="text-ink">Algo salió mal cargando el producto.</p>
+          </div>
+        )}
+
+        {status === 'ok' && product && (
+          <>
+            {/* Breadcrumbs */}
+            <nav aria-label="Breadcrumb" className="text-sm text-muted mb-8">
+              <ol className="flex items-center gap-2">
+                <li><Link to="/" className="hover:text-terracotta">Inicio</Link></li>
+                <li aria-hidden>›</li>
+                <li className="uppercase tracking-wider text-xs">{product.categoryName}</li>
+                <li aria-hidden>›</li>
+                <li className="text-ink">{product.name}</li>
+              </ol>
+            </nav>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+              {/* Image */}
+              <div className="relative">
+                <div className="aspect-square bg-cream-card overflow-hidden rounded-sm">
+                  <img
+                    src={product.imageUrl}
+                    alt={product.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                {product.badge && (
+                  <div className="absolute top-4 left-4">
+                    <Badge kind={product.badge} />
+                  </div>
+                )}
+              </div>
+
+              {/* Info */}
+              <div className="flex flex-col">
+                <p className="text-terracotta text-xs tracking-[0.3em] mb-3">
+                  {product.categoryName.toUpperCase()}
+                </p>
+                <h1 className="font-display text-5xl leading-tight text-ink mb-4">
+                  {product.name}
+                </h1>
+                <div className="mb-6">
+                  <StarRating value={product.ratingAvg} count={product.ratingCount} />
+                </div>
+
+                <p className="text-3xl font-semibold text-terracotta mb-8">
+                  {priceFmt.format(product.priceUsd)} USD
+                </p>
+
+                {product.colors.length > 0 && (
+                  <div className="mb-8">
+                    <p className="text-xs tracking-wider text-muted mb-3">
+                      COLOR
+                      {selectedColor && (
+                        <span className="ml-2 text-ink">{selectedColor}</span>
+                      )}
+                    </p>
+                    <div className="flex gap-3">
+                      {product.colors.map(hex => (
+                        <button
+                          key={hex}
+                          type="button"
+                          onClick={() => setSelectedColor(hex)}
+                          aria-label={`Color ${hex}`}
+                          aria-pressed={selectedColor === hex}
+                          style={{ backgroundColor: hex }}
+                          className={
+                            'w-10 h-10 rounded-sm border-2 transition-colors ' +
+                            (selectedColor === hex
+                              ? 'border-brown-dark'
+                              : 'border-transparent hover:border-cream-card')
+                          }
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {product.description && (
+                  <div className="mb-8">
+                    <p className="text-xs tracking-wider text-muted mb-3">DESCRIPCIÓN</p>
+                    <p className="text-ink leading-relaxed">{product.description}</p>
+                  </div>
+                )}
+
+                <div className="flex items-center gap-3 mt-auto">
+                  <button
+                    type="button"
+                    disabled
+                    title="El carrito se implementa en la próxima fase"
+                    className="flex-1 bg-brown-dark text-white py-4 text-sm tracking-wider font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    AGREGAR AL CARRITO
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setWishlisted(w => !w)}
+                    aria-label="Agregar a favoritos"
+                    aria-pressed={wishlisted}
+                    className="w-14 h-14 flex items-center justify-center border border-cream-card hover:border-brown-dark transition-colors"
+                  >
+                    <svg
+                      width="20" height="20" viewBox="0 0 24 24"
+                      fill={wishlisted ? 'currentColor' : 'none'}
+                      stroke="currentColor" strokeWidth="2"
+                      className={wishlisted ? 'text-terracotta' : 'text-ink'}
+                    >
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                    </svg>
+                  </button>
+                </div>
+                <p className="text-xs text-muted mt-3">
+                  El carrito se habilita en la próxima fase.
+                </p>
+              </div>
+            </div>
+          </>
+        )}
+      </main>
+      <Footer />
+    </>
+  );
+}
+
+function LoadingSkeleton() {
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <Skeleton className="aspect-square" />
+      <div className="space-y-4">
+        <Skeleton className="h-4 w-24" />
+        <Skeleton className="h-12 w-3/4" />
+        <Skeleton className="h-6 w-40" />
+        <Skeleton className="h-10 w-32" />
+        <Skeleton className="h-24 w-full" />
+        <Skeleton className="h-14 w-full" />
+      </div>
+    </div>
   );
 }
