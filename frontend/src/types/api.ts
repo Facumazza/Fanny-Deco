@@ -52,6 +52,37 @@ export interface ApiError {
   timestamp: string;
 }
 
+// -------- Admin --------
+
+export interface AdminProduct {
+  id: number;
+  slug: string;
+  name: string;
+  description: string | null;
+  priceUsd: number;
+  imageUrl: string;
+  badge: ProductBadge | null;
+  ratingAvg: number;
+  ratingCount: number;
+  categoryId: number;
+  categoryName: string;
+  colors: string[];
+  createdAt: string;
+}
+
+export interface ProductUpsertRequest {
+  name: string;
+  slug: string;
+  description: string | null;
+  priceUsd: number;
+  imageUrl: string;
+  badge: ProductBadge | null;
+  ratingAvg: number;
+  ratingCount: number;
+  categoryId: number;
+  colors: string[];
+}
+
 export class ApiRequestError extends Error {
   status: number;
   body: ApiError | null;

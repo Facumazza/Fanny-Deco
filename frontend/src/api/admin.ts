@@ -1,4 +1,5 @@
-import { ApiError, ApiRequestError } from '../types/api';
+import type { AdminProduct, ApiError, Page, ProductUpsertRequest } from '../types/api';
+import { ApiRequestError } from '../types/api';
 
 // Admin client uses cookies for session auth. Every fetch needs `credentials: 'include'`
 // so the browser attaches the session cookie set by the login endpoint.
@@ -43,4 +44,35 @@ export function logout(): Promise<void> {
 
 export function getCurrentUser(): Promise<CurrentUser> {
   return adminFetch<CurrentUser>('/auth/me');
+}
+
+// -------- Products --------
+
+export function listAdminProducts(q?: string): Promise<Page<AdminProduct>> {
+  const qs = new URLSearchParams();
+  qs.set('size', '100');
+  if (q) qs.set('q', q);
+  return adminFetch<Page<AdminProduct>>(`/products?${qs}`);
+}
+
+export function getAdminProduct(id: number): Promise<AdminProduct> {
+  return adminFetch<AdminProduct>(`/products/${id}`);
+}
+
+export function createAdminProduct(req: ProductUpsertRequest): Promise<AdminProduct> {
+  return adminFetch<AdminProduct>('/products', {
+    method: 'POST',
+    body: JSON.stringify(req),
+  });
+}
+
+export function updateAdminProduct(id: number, req: ProductUpsertRequest): Promise<AdminProduct> {
+  return adminFetch<AdminProduct>(`/products/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(req),
+  });
+}
+
+export function deleteAdminProduct(id: number): Promise<void> {
+  return adminFetch<void>(`/products/${id}`, { method: 'DELETE' });
 }

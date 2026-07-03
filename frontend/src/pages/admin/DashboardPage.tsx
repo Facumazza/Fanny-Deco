@@ -1,55 +1,34 @@
-import { useAuth } from '../../hooks/useAuth';
+import { Link } from 'react-router-dom';
+import { AdminLayout } from '../../components/admin/AdminLayout';
 
 export default function DashboardPage() {
-  const { user, logout } = useAuth();
-
   return (
-    <div className="min-h-screen bg-cream-bg">
-      {/* Top bar */}
-      <header className="bg-brown-dark text-white">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div>
-            <p className="font-display text-xl tracking-widest">ARTESA</p>
-            <p className="text-[10px] tracking-[0.3em] opacity-70">PANEL ADMIN</p>
-          </div>
-          <div className="flex items-center gap-4 text-sm">
-            <span className="opacity-80">{user?.email}</span>
-            <button
-              onClick={() => { void logout(); }}
-              className="border border-white/40 px-4 py-1.5 hover:bg-white hover:text-brown-dark transition-colors"
-            >
-              Cerrar sesión
-            </button>
-          </div>
-        </div>
-      </header>
+    <AdminLayout>
+      <h1 className="font-display text-4xl text-ink mb-4">Bienvenido</h1>
+      <p className="text-muted mb-8 max-w-xl">
+        Panel de administración de ARTESA. Desde acá vas a gestionar los
+        productos, categorías, órdenes y reseñas de la tienda.
+      </p>
 
-      {/* Content placeholder */}
-      <main className="max-w-6xl mx-auto px-6 py-16">
-        <h1 className="font-display text-4xl text-ink mb-4">Bienvenido</h1>
-        <p className="text-muted mb-8 max-w-xl">
-          Estás en el panel de administración de ARTESA. El CRUD completo de
-          productos, categorías y reseñas se implementa en la Fase 5. Por ahora
-          esta pantalla confirma que la autenticación funciona.
-        </p>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <PlaceholderCard title="Productos"   count={12} note="12 productos activos" />
-          <PlaceholderCard title="Categorías"  count={4}  note="4 categorías" />
-          <PlaceholderCard title="Reseñas"     count={6}  note="6 reseñas" />
-        </div>
-      </main>
-    </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Link to="/admin/products"
+              className="bg-white p-6 rounded-card hover:shadow-md transition-shadow">
+          <p className="text-xs tracking-[0.3em] text-muted mb-2">PRODUCTOS</p>
+          <p className="font-display text-2xl text-ink mb-1">Gestionar catálogo</p>
+          <p className="text-sm text-muted">Crear, editar y borrar productos →</p>
+        </Link>
+        <PlaceholderCard title="Categorías" note="Próximamente" />
+        <PlaceholderCard title="Reseñas"    note="Próximamente" />
+      </div>
+    </AdminLayout>
   );
 }
 
-function PlaceholderCard({ title, count, note }: {
-  title: string; count: number; note: string;
-}) {
+function PlaceholderCard({ title, note }: { title: string; note: string }) {
   return (
-    <article className="bg-white p-6 rounded-card">
+    <article className="bg-white p-6 rounded-card opacity-60">
       <p className="text-xs tracking-[0.3em] text-muted mb-2">{title.toUpperCase()}</p>
-      <p className="font-display text-4xl text-ink mb-1">{count}</p>
+      <p className="font-display text-2xl text-ink mb-1">{title}</p>
       <p className="text-sm text-muted">{note}</p>
     </article>
   );

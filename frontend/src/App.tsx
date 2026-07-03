@@ -4,6 +4,7 @@ import ProductPage from './pages/ProductPage';
 import NotFoundPage from './pages/NotFoundPage';
 import LoginPage from './pages/admin/LoginPage';
 import DashboardPage from './pages/admin/DashboardPage';
+import ProductsListPage from './pages/admin/ProductsListPage';
 import { AuthProvider } from './hooks/useAuth';
 import { ProtectedRoute } from './components/admin/ProtectedRoute';
 
@@ -17,6 +18,10 @@ export default function App() {
         <Route
           path="/admin"
           element={<ProtectedRoute><DashboardPage /></ProtectedRoute>}
+        />
+        <Route
+          path="/admin/products"
+          element={<ProtectedRoute><ProductsListPage /></ProtectedRoute>}
         />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
