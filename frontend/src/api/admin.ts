@@ -1,4 +1,7 @@
-import type { AdminProduct, ApiError, Page, ProductUpsertRequest } from '../types/api';
+import type {
+  AdminCategory, AdminProduct, ApiError, CategoryUpsertRequest,
+  Page, ProductUpsertRequest,
+} from '../types/api';
 import { ApiRequestError } from '../types/api';
 
 // Admin client uses cookies for session auth. Every fetch needs `credentials: 'include'`
@@ -75,4 +78,32 @@ export function updateAdminProduct(id: number, req: ProductUpsertRequest): Promi
 
 export function deleteAdminProduct(id: number): Promise<void> {
   return adminFetch<void>(`/products/${id}`, { method: 'DELETE' });
+}
+
+// -------- Categories --------
+
+export function listAdminCategories(): Promise<AdminCategory[]> {
+  return adminFetch<AdminCategory[]>('/categories');
+}
+
+export function getAdminCategory(id: number): Promise<AdminCategory> {
+  return adminFetch<AdminCategory>(`/categories/${id}`);
+}
+
+export function createAdminCategory(req: CategoryUpsertRequest): Promise<AdminCategory> {
+  return adminFetch<AdminCategory>('/categories', {
+    method: 'POST',
+    body: JSON.stringify(req),
+  });
+}
+
+export function updateAdminCategory(id: number, req: CategoryUpsertRequest): Promise<AdminCategory> {
+  return adminFetch<AdminCategory>(`/categories/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(req),
+  });
+}
+
+export function deleteAdminCategory(id: number): Promise<void> {
+  return adminFetch<void>(`/categories/${id}`, { method: 'DELETE' });
 }

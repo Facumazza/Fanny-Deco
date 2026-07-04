@@ -7,8 +7,9 @@ interface Props {
 }
 
 const NAV = [
-  { to: '/admin',          label: 'Inicio' },
-  { to: '/admin/products', label: 'Productos' },
+  { to: '/admin',            label: 'Inicio' },
+  { to: '/admin/products',   label: 'Productos' },
+  { to: '/admin/categories', label: 'Categorías' },
 ];
 
 export function AdminLayout({ children }: Props) {

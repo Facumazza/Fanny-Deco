@@ -83,6 +83,24 @@ export interface ProductUpsertRequest {
   colors: string[];
 }
 
+export interface AdminCategory {
+  id: number;
+  slug: string;
+  name: string;
+  subtitle: string | null;
+  imageUrl: string;
+  displayOrder: number;
+  productCount: number;
+}
+
+export interface CategoryUpsertRequest {
+  name: string;
+  slug: string;
+  subtitle: string | null;
+  imageUrl: string;
+  displayOrder: number;
+}
+
 export class ApiRequestError extends Error {
   status: number;
   body: ApiError | null;

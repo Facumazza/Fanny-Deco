@@ -7,6 +7,9 @@ import DashboardPage from './pages/admin/DashboardPage';
 import ProductsListPage from './pages/admin/ProductsListPage';
 import ProductNewPage from './pages/admin/ProductNewPage';
 import ProductEditPage from './pages/admin/ProductEditPage';
+import CategoriesListPage from './pages/admin/CategoriesListPage';
+import CategoryNewPage from './pages/admin/CategoryNewPage';
+import CategoryEditPage from './pages/admin/CategoryEditPage';
 import { AuthProvider } from './hooks/useAuth';
 import { ProtectedRoute } from './components/admin/ProtectedRoute';
 
@@ -32,6 +35,18 @@ export default function App() {
         <Route
           path="/admin/products/:id/edit"
           element={<ProtectedRoute><ProductEditPage /></ProtectedRoute>}
+        />
+        <Route
+          path="/admin/categories"
+          element={<ProtectedRoute><CategoriesListPage /></ProtectedRoute>}
+        />
+        <Route
+          path="/admin/categories/new"
+          element={<ProtectedRoute><CategoryNewPage /></ProtectedRoute>}
+        />
+        <Route
+          path="/admin/categories/:id/edit"
+          element={<ProtectedRoute><CategoryEditPage /></ProtectedRoute>}
         />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

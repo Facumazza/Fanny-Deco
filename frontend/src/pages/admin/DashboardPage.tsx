@@ -17,8 +17,13 @@ export default function DashboardPage() {
           <p className="font-display text-2xl text-ink mb-1">Gestionar catálogo</p>
           <p className="text-sm text-muted">Crear, editar y borrar productos →</p>
         </Link>
-        <PlaceholderCard title="Categorías" note="Próximamente" />
-        <PlaceholderCard title="Reseñas"    note="Próximamente" />
+        <Link to="/admin/categories"
+              className="bg-white p-6 rounded-card hover:shadow-md transition-shadow">
+          <p className="text-xs tracking-[0.3em] text-muted mb-2">CATEGORÍAS</p>
+          <p className="font-display text-2xl text-ink mb-1">Organizar tienda</p>
+          <p className="text-sm text-muted">Definir las categorías del catálogo →</p>
+        </Link>
+        <PlaceholderCard title="Reseñas" note="Próximamente" />
       </div>
     </AdminLayout>
   );
