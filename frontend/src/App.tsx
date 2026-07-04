@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import ProductPage from './pages/ProductPage';
+import CartPage from './pages/CartPage';
 import NotFoundPage from './pages/NotFoundPage';
 import LoginPage from './pages/admin/LoginPage';
 import DashboardPage from './pages/admin/DashboardPage';
@@ -11,14 +12,17 @@ import CategoriesListPage from './pages/admin/CategoriesListPage';
 import CategoryNewPage from './pages/admin/CategoryNewPage';
 import CategoryEditPage from './pages/admin/CategoryEditPage';
 import { AuthProvider } from './hooks/useAuth';
+import { CartProvider } from './hooks/useCart';
 import { ProtectedRoute } from './components/admin/ProtectedRoute';
 
 export default function App() {
   return (
     <AuthProvider>
+      <CartProvider>
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/producto/:slug" element={<ProductPage />} />
+        <Route path="/carrito" element={<CartPage />} />
         <Route path="/admin/login" element={<LoginPage />} />
         <Route
           path="/admin"
@@ -50,6 +54,7 @@ export default function App() {
         />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
+      </CartProvider>
     </AuthProvider>
   );
 }

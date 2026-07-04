@@ -1,4 +1,9 @@
+import { Link } from 'react-router-dom';
+import { useCart } from '../../hooks/useCart';
+
 export function Header() {
+  const { itemCount } = useCart();
+
   return (
     <header>
       {/* Top-bar */}
@@ -23,17 +28,31 @@ export function Header() {
       {/* Nav */}
       <div className="bg-cream-bg">
         <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
-          <a href="/" className="flex flex-col leading-none">
+          <Link to="/" className="flex flex-col leading-none">
             <span className="font-display text-3xl tracking-widest text-ink">ARTESA</span>
             <span className="font-sans text-[10px] tracking-[0.3em] text-muted mt-1">CUERO &amp; CERÁMICA</span>
-          </a>
+          </Link>
           <nav className="flex items-center gap-10 text-sm text-ink">
             <a href="#" className="hover:text-terracotta">Colecciones</a>
             <a href="#" className="hover:text-terracotta">Cuero</a>
             <a href="#" className="hover:text-terracotta">Cerámica</a>
             <a href="#" className="hover:text-terracotta">Nosotros</a>
           </nav>
-          <button aria-label="Carrito" className="text-2xl cursor-default">🛍</button>
+          <Link
+            to="/carrito"
+            aria-label={`Carrito (${itemCount} ${itemCount === 1 ? 'ítem' : 'ítems'})`}
+            className="relative text-2xl hover:text-terracotta transition-colors"
+          >
+            🛍
+            {itemCount > 0 && (
+              <span
+                data-cart-count
+                className="absolute -top-1 -right-2 bg-terracotta text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] px-1 flex items-center justify-center"
+              >
+                {itemCount}
+              </span>
+            )}
+          </Link>
         </div>
       </div>
     </header>

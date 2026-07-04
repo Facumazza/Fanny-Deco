@@ -2,13 +2,22 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { http, HttpResponse } from 'msw';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, beforeEach } from 'vitest';
 import HomePage from '../../pages/HomePage';
+import { CartProvider } from '../../hooks/useCart';
 import { server } from '../setup';
 import { mockCategories, mockProductsPage } from '../mocks/handlers';
 
+beforeEach(() => { window.localStorage.clear(); });
+
 function renderWithRouter() {
-  return render(<MemoryRouter><HomePage /></MemoryRouter>);
+  return render(
+    <MemoryRouter>
+      <CartProvider>
+        <HomePage />
+      </CartProvider>
+    </MemoryRouter>
+  );
 }
 
 describe('HomePage', () => {

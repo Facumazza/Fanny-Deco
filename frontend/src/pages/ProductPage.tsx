@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import type { ProductDetail } from '../types/api';
 import { ApiRequestError } from '../types/api';
 import { getProduct } from '../api/catalog';
+import { useCart } from '../hooks/useCart';
 import { Header } from '../components/layout/Header';
 import { Footer } from '../components/layout/Footer';
 import { Badge } from '../components/catalog/Badge';
@@ -17,10 +18,28 @@ type Status = 'loading' | 'ok' | 'not-found' | 'error';
 
 export default function ProductPage() {
   const { slug = '' } = useParams<{ slug: string }>();
+  const { addItem } = useCart();
   const [status, setStatus] = useState<Status>('loading');
   const [product, setProduct] = useState<ProductDetail | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const [quantity, setQuantity] = useState(1);
   const [wishlisted, setWishlisted] = useState(false);
+  const [addedFeedback, setAddedFeedback] = useState(false);
+
+  function handleAddToCart() {
+    if (!product) return;
+    addItem({
+      productId: product.id,
+      slug: product.slug,
+      name: product.name,
+      imageUrl: product.imageUrl,
+      priceUsd: product.priceUsd,
+      color: selectedColor,
+      quantity,
+    });
+    setAddedFeedback(true);
+    setTimeout(() => setAddedFeedback(false), 2500);
+  }
 
   useEffect(() => {
     setStatus('loading');
@@ -145,12 +164,39 @@ export default function ProductPage() {
                   </div>
                 )}
 
+                <div className="mb-4">
+                  <p className="text-xs tracking-wider text-muted mb-2">CANTIDAD</p>
+                  <div className="inline-flex items-center border border-cream-card">
+                    <button
+                      type="button"
+                      onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                      aria-label="Disminuir cantidad"
+                      className="px-4 py-2 text-ink hover:bg-cream-card"
+                    >
+                      −
+                    </button>
+                    <span
+                      data-quantity
+                      className="px-6 py-2 min-w-[3rem] text-center"
+                    >
+                      {quantity}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setQuantity(q => q + 1)}
+                      aria-label="Aumentar cantidad"
+                      className="px-4 py-2 text-ink hover:bg-cream-card"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+
                 <div className="flex items-center gap-3 mt-auto">
                   <button
                     type="button"
-                    disabled
-                    title="El carrito se implementa en la próxima fase"
-                    className="flex-1 bg-brown-dark text-white py-4 text-sm tracking-wider font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
+                    onClick={handleAddToCart}
+                    className="flex-1 bg-brown-dark hover:bg-brown text-white py-4 text-sm tracking-wider font-semibold transition-colors"
                   >
                     AGREGAR AL CARRITO
                   </button>
@@ -171,9 +217,18 @@ export default function ProductPage() {
                     </svg>
                   </button>
                 </div>
-                <p className="text-xs text-muted mt-3">
-                  El carrito se habilita en la próxima fase.
-                </p>
+
+                {addedFeedback && (
+                  <div
+                    role="status"
+                    className="mt-4 bg-cream-card text-ink px-4 py-3 rounded-card text-sm flex items-center justify-between"
+                  >
+                    <span>Agregado al carrito.</span>
+                    <Link to="/carrito" className="text-terracotta hover:underline">
+                      Ver carrito →
+                    </Link>
+                  </div>
+                )}
               </div>
             </div>
           </>
