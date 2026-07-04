@@ -1,52 +1,167 @@
-// Placeholder — full cart page lives in the next chunk (piece B).
 import { Link } from 'react-router-dom';
 import { Header } from '../components/layout/Header';
 import { Footer } from '../components/layout/Footer';
 import { useCart } from '../hooks/useCart';
+import type { CartItem } from '../hooks/useCart';
+
+const priceFmt = new Intl.NumberFormat('en-US', {
+  style: 'currency', currency: 'USD', maximumFractionDigits: 0,
+});
 
 export default function CartPage() {
-  const { items, itemCount, subtotalUsd } = useCart();
+  const { items, itemCount, subtotalUsd, updateQuantity, removeItem, clear } = useCart();
+  const isEmpty = items.length === 0;
 
   return (
     <>
       <Header />
-      <main className="max-w-3xl mx-auto px-6 py-16">
-        <h1 className="font-display text-4xl text-ink mb-6">Tu carrito</h1>
-        {items.length === 0 ? (
-          <div className="text-center py-16">
-            <p className="text-muted mb-4">Todavía no agregaste productos.</p>
-            <Link to="/" className="text-terracotta hover:underline">
-              Ir a la tienda →
+      <main className="max-w-5xl mx-auto px-6 py-12">
+        <p className="text-terracotta text-xs tracking-[0.3em] mb-2">CARRITO</p>
+        <h1 className="font-display text-4xl text-ink mb-8">
+          {isEmpty ? 'Tu carrito está vacío' : `Tu carrito (${itemCount})`}
+        </h1>
+
+        {isEmpty ? (
+          <div className="bg-white p-12 rounded-card text-center">
+            <p className="text-muted mb-6">Todavía no agregaste productos.</p>
+            <Link
+              to="/"
+              className="inline-block bg-brown-dark hover:bg-brown text-white px-6 py-3 text-sm tracking-wider font-semibold"
+            >
+              IR A LA TIENDA
             </Link>
           </div>
         ) : (
-          <>
-            <p className="text-muted mb-4">
-              {itemCount} {itemCount === 1 ? 'ítem' : 'ítems'} · Subtotal: ${subtotalUsd.toFixed(2)} USD
-            </p>
-            <ul className="space-y-3">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Items */}
+            <ul className="lg:col-span-2 space-y-4">
               {items.map(it => (
-                <li key={`${it.productId}-${it.color ?? ''}`}
-                    className="bg-white p-4 rounded-card flex items-center gap-3">
-                  <img src={it.imageUrl} alt="" className="w-16 h-16 object-cover rounded-sm" />
-                  <div className="flex-1">
-                    <p className="font-medium text-ink">{it.name}</p>
-                    {it.color && <p className="text-xs text-muted">Color: {it.color}</p>}
-                  </div>
-                  <p className="text-sm text-muted">×{it.quantity}</p>
-                  <p className="font-semibold text-terracotta">
-                    ${(it.priceUsd * it.quantity).toFixed(0)} USD
-                  </p>
-                </li>
+                <CartRow
+                  key={`${it.productId}-${it.color ?? ''}`}
+                  item={it}
+                  onDecrease={() => updateQuantity(it.productId, it.color, it.quantity - 1)}
+                  onIncrease={() => updateQuantity(it.productId, it.color, it.quantity + 1)}
+                  onRemove={() => removeItem(it.productId, it.color)}
+                />
               ))}
+              <button
+                type="button"
+                onClick={() => {
+                  if (window.confirm('¿Vaciar el carrito?')) clear();
+                }}
+                className="text-sm text-muted hover:text-terracotta"
+              >
+                Vaciar carrito
+              </button>
             </ul>
-            <p className="text-xs text-muted mt-6">
-              (Vista mínima — cantidades editables y checkout en la próxima pieza.)
-            </p>
-          </>
+
+            {/* Summary */}
+            <aside className="bg-white rounded-card p-6 h-fit lg:sticky lg:top-6">
+              <p className="text-xs tracking-[0.3em] text-muted mb-4">RESUMEN</p>
+              <div className="flex justify-between text-ink mb-2">
+                <span>Subtotal</span>
+                <span className="font-semibold">{priceFmt.format(subtotalUsd)} USD</span>
+              </div>
+              <p className="text-xs text-muted mb-6">
+                Envío y descuentos se calculan en el próximo paso.
+              </p>
+              <Link
+                to="/checkout"
+                className="block bg-brown-dark hover:bg-brown text-white text-center py-4 text-sm tracking-wider font-semibold transition-colors"
+              >
+                CONTINUAR AL CHECKOUT →
+              </Link>
+              <Link
+                to="/"
+                className="block text-center text-muted hover:text-terracotta mt-4 text-sm"
+              >
+                Seguir comprando
+              </Link>
+            </aside>
+          </div>
         )}
       </main>
       <Footer />
     </>
+  );
+}
+
+function CartRow({ item, onDecrease, onIncrease, onRemove }: {
+  item: CartItem;
+  onDecrease: () => void;
+  onIncrease: () => void;
+  onRemove: () => void;
+}) {
+  const lineTotal = item.priceUsd * item.quantity;
+
+  return (
+    <li className="bg-white rounded-card p-4 flex items-center gap-4 flex-wrap sm:flex-nowrap">
+      <Link to={`/producto/${item.slug}`} className="shrink-0">
+        <img
+          src={item.imageUrl}
+          alt={item.name}
+          className="w-24 h-24 object-cover rounded-sm bg-cream-card"
+          loading="lazy"
+        />
+      </Link>
+
+      <div className="flex-1 min-w-0">
+        <Link
+          to={`/producto/${item.slug}`}
+          className="font-display text-lg text-ink hover:text-terracotta transition-colors block"
+        >
+          {item.name}
+        </Link>
+        {item.color && (
+          <p className="text-xs text-muted mt-1 flex items-center gap-2">
+            Color
+            <span
+              style={{ backgroundColor: item.color }}
+              title={item.color}
+              className="inline-block w-3 h-3 rounded-sm border border-black/10"
+            />
+            {item.color}
+          </p>
+        )}
+        <p className="text-sm text-muted mt-1">
+          {priceFmt.format(item.priceUsd)} USD c/u
+        </p>
+      </div>
+
+      {/* Qty stepper */}
+      <div className="inline-flex items-center border border-cream-card">
+        <button
+          type="button"
+          onClick={onDecrease}
+          aria-label="Disminuir"
+          className="px-3 py-2 text-ink hover:bg-cream-card"
+        >
+          −
+        </button>
+        <span className="px-4 py-2 min-w-[2.5rem] text-center">{item.quantity}</span>
+        <button
+          type="button"
+          onClick={onIncrease}
+          aria-label="Aumentar"
+          className="px-3 py-2 text-ink hover:bg-cream-card"
+        >
+          +
+        </button>
+      </div>
+
+      <p className="font-semibold text-terracotta w-24 text-right">
+        {priceFmt.format(lineTotal)} USD
+      </p>
+
+      <button
+        type="button"
+        onClick={onRemove}
+        aria-label={`Eliminar ${item.name}`}
+        title="Eliminar"
+        className="text-muted hover:text-terracotta text-xl px-2"
+      >
+        ×
+      </button>
+    </li>
   );
 }
