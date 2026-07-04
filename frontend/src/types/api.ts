@@ -101,6 +101,55 @@ export interface CategoryUpsertRequest {
   displayOrder: number;
 }
 
+// -------- Orders --------
+
+export type OrderStatus = 'PENDING' | 'PAID' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
+
+export interface OrderItem {
+  id: number;
+  productId: number;
+  productSlug: string;
+  productName: string;
+  productImageUrl: string;
+  color: string | null;
+  quantity: number;
+  unitPriceUsd: number;
+  lineTotalUsd: number;
+}
+
+export interface Order {
+  id: number;
+  reference: string;
+  customerEmail: string;
+  customerName: string;
+  shippingAddress: string;
+  city: string;
+  postalCode: string | null;
+  country: string;
+  phone: string | null;
+  notes: string | null;
+  subtotalUsd: number;
+  status: OrderStatus;
+  createdAt: string;
+  items: OrderItem[];
+}
+
+export interface CreateOrderRequest {
+  customerEmail: string;
+  customerName: string;
+  shippingAddress: string;
+  city: string;
+  postalCode?: string;
+  country: string;
+  phone?: string;
+  notes?: string;
+  items: {
+    productId: number;
+    quantity: number;
+    color?: string | null;
+  }[];
+}
+
 export class ApiRequestError extends Error {
   status: number;
   body: ApiError | null;

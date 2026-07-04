@@ -2,6 +2,8 @@ import { Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import ProductPage from './pages/ProductPage';
 import CartPage from './pages/CartPage';
+import CheckoutPage from './pages/CheckoutPage';
+import OrderConfirmationPage from './pages/OrderConfirmationPage';
 import NotFoundPage from './pages/NotFoundPage';
 import LoginPage from './pages/admin/LoginPage';
 import DashboardPage from './pages/admin/DashboardPage';
@@ -23,6 +25,8 @@ export default function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/producto/:slug" element={<ProductPage />} />
         <Route path="/carrito" element={<CartPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/orden/:reference" element={<OrderConfirmationPage />} />
         <Route path="/admin/login" element={<LoginPage />} />
         <Route
           path="/admin"

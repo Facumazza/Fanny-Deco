@@ -4,6 +4,7 @@ import com.artesa.catalog.admin.CategoryInUseException;
 import com.artesa.catalog.admin.CategoryNotFoundException;
 import com.artesa.catalog.admin.SlugAlreadyExistsException;
 import com.artesa.catalog.service.ProductNotFoundException;
+import com.artesa.orders.OrderNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -20,6 +21,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiError> productNotFound(ProductNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
             .body(ApiError.of("PRODUCT_NOT_FOUND", e.getMessage()));
+    }
+
+    @ExceptionHandler(OrderNotFoundException.class)
+    public ResponseEntity<ApiError> orderNotFound(OrderNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .body(ApiError.of("ORDER_NOT_FOUND", e.getMessage()));
     }
 
     // Note: this returns 400 (not 404) because CategoryNotFoundException is thrown
