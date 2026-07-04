@@ -1,5 +1,6 @@
 package com.artesa.common;
 
+import com.artesa.catalog.admin.CategoryInUseException;
 import com.artesa.catalog.admin.CategoryNotFoundException;
 import com.artesa.catalog.admin.SlugAlreadyExistsException;
 import com.artesa.catalog.service.ProductNotFoundException;
@@ -21,11 +22,23 @@ public class GlobalExceptionHandler {
             .body(ApiError.of("PRODUCT_NOT_FOUND", e.getMessage()));
     }
 
+    // Note: this returns 400 (not 404) because CategoryNotFoundException is thrown
+    // both from admin category GET (where 404 would be idiomatic) and from product
+    // upsert with a bad categoryId (where 400 is idiomatic). We keep 400 for
+    // consistency with the existing product-upsert contract.
     @ExceptionHandler(CategoryNotFoundException.class)
     public ResponseEntity<ApiError> categoryNotFound(CategoryNotFoundException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(ApiError.of("CATEGORY_NOT_FOUND",
                 "La categoría con id " + e.getCategoryId() + " no existe"));
+    }
+
+    @ExceptionHandler(CategoryInUseException.class)
+    public ResponseEntity<ApiError> categoryInUse(CategoryInUseException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+            .body(ApiError.of("CATEGORY_IN_USE",
+                "La categoría tiene " + e.getProductCount()
+                + " producto(s). Movelos o borralos antes."));
     }
 
     @ExceptionHandler(SlugAlreadyExistsException.class)
