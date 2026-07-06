@@ -10,6 +10,7 @@ const NAV = [
   { to: '/admin',            label: 'Inicio' },
   { to: '/admin/products',   label: 'Productos' },
   { to: '/admin/categories', label: 'Categorías' },
+  { to: '/admin/orders',     label: 'Órdenes' },
 ];
 
 export function AdminLayout({ children }: Props) {

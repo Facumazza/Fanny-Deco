@@ -1,6 +1,6 @@
 import type {
-  AdminCategory, AdminProduct, ApiError, CategoryUpsertRequest,
-  Page, ProductUpsertRequest,
+  AdminCategory, AdminOrderSummary, AdminProduct, ApiError, CategoryUpsertRequest,
+  Order, OrderStatus, Page, ProductUpsertRequest,
 } from '../types/api';
 import { ApiRequestError } from '../types/api';
 
@@ -106,4 +106,30 @@ export function updateAdminCategory(id: number, req: CategoryUpsertRequest): Pro
 
 export function deleteAdminCategory(id: number): Promise<void> {
   return adminFetch<void>(`/categories/${id}`, { method: 'DELETE' });
+}
+
+// -------- Orders --------
+
+export interface OrderListFilters {
+  status?: OrderStatus;
+  q?: string;
+}
+
+export function listAdminOrders(filters: OrderListFilters = {}): Promise<Page<AdminOrderSummary>> {
+  const qs = new URLSearchParams();
+  qs.set('size', '100');
+  if (filters.status) qs.set('status', filters.status);
+  if (filters.q)      qs.set('q', filters.q);
+  return adminFetch<Page<AdminOrderSummary>>(`/orders?${qs}`);
+}
+
+export function getAdminOrder(id: number): Promise<Order> {
+  return adminFetch<Order>(`/orders/${id}`);
+}
+
+export function updateOrderStatus(id: number, status: OrderStatus): Promise<Order> {
+  return adminFetch<Order>(`/orders/${id}/status`, {
+    method: 'PUT',
+    body: JSON.stringify({ status }),
+  });
 }

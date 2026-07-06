@@ -23,6 +23,12 @@ export default function DashboardPage() {
           <p className="font-display text-2xl text-ink mb-1">Organizar tienda</p>
           <p className="text-sm text-muted">Definir las categorías del catálogo →</p>
         </Link>
+        <Link to="/admin/orders"
+              className="bg-white p-6 rounded-card hover:shadow-md transition-shadow">
+          <p className="text-xs tracking-[0.3em] text-muted mb-2">ÓRDENES</p>
+          <p className="font-display text-2xl text-ink mb-1">Ventas y envíos</p>
+          <p className="text-sm text-muted">Ver órdenes y cambiar su estado →</p>
+        </Link>
         <PlaceholderCard title="Reseñas" note="Próximamente" />
       </div>
     </AdminLayout>

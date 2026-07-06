@@ -150,6 +150,17 @@ export interface CreateOrderRequest {
   }[];
 }
 
+export interface AdminOrderSummary {
+  id: number;
+  reference: string;
+  customerEmail: string;
+  customerName: string;
+  subtotalUsd: number;
+  status: OrderStatus;
+  itemCount: number;
+  createdAt: string;
+}
+
 export class ApiRequestError extends Error {
   status: number;
   body: ApiError | null;
