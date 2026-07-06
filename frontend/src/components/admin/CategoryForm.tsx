@@ -1,6 +1,7 @@
 import { FormEvent, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { CategoryUpsertRequest } from '../../types/api';
+import { ImageUploadField } from './ImageUploadField';
 
 interface Props {
   initial: CategoryUpsertRequest;
@@ -86,15 +87,11 @@ export function CategoryForm({ initial, submitLabel, onSubmit }: Props) {
         />
       </Field>
 
-      <Field label="URL de imagen" required>
-        <input
-          type="url"
-          required
-          value={form.imageUrl}
-          onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))}
-          className={inputCls}
-        />
-      </Field>
+      <ImageUploadField
+        required
+        value={form.imageUrl}
+        onChange={url => setForm(f => ({ ...f, imageUrl: url }))}
+      />
 
       <Field label="Orden" required hint="Menor = aparece primero en la home">
         <input

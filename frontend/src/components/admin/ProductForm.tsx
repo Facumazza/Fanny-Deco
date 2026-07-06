@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Category, ProductBadge, ProductUpsertRequest } from '../../types/api';
 import { getCategories } from '../../api/catalog';
+import { ImageUploadField } from './ImageUploadField';
 
 const BADGES: { value: ProductBadge; label: string }[] = [
   { value: 'MAS_VENDIDO',      label: 'Más vendido' },
@@ -150,15 +151,13 @@ export function ProductForm({ initial, submitLabel, onSubmit }: Props) {
           />
         </Field>
 
-        <Field label="URL de imagen" required>
-          <input
-            type="url"
+        <div>
+          <ImageUploadField
             required
             value={form.imageUrl}
-            onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))}
-            className={inputCls}
+            onChange={url => setForm(f => ({ ...f, imageUrl: url }))}
           />
-        </Field>
+        </div>
 
         <Field label="Rating promedio" hint="0.0 a 5.0" required>
           <input

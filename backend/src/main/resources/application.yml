@@ -27,6 +27,14 @@ server:
         same-site: lax
         # secure: true    # enable in production behind HTTPS
 
+spring.servlet.multipart:
+  max-file-size: 6MB
+  max-request-size: 6MB
+
+artesa:
+  uploads:
+    directory: ./uploads
+
 # Default admin credentials — CHANGE BEFORE DEPLOYING
 artesa:
   admin:
