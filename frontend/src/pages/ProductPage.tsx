@@ -9,10 +9,7 @@ import { Footer } from '../components/layout/Footer';
 import { Badge } from '../components/catalog/Badge';
 import { StarRating } from '../components/catalog/StarRating';
 import { Skeleton } from '../components/ui/Skeleton';
-
-const priceFmt = new Intl.NumberFormat('en-US', {
-  style: 'currency', currency: 'USD', maximumFractionDigits: 0,
-});
+import { formatArs } from '../lib/price';
 
 type Status = 'loading' | 'ok' | 'not-found' | 'error';
 
@@ -33,7 +30,7 @@ export default function ProductPage() {
       slug: product.slug,
       name: product.name,
       imageUrl: product.imageUrl,
-      priceUsd: product.priceUsd,
+      priceArs: product.priceArs,
       color: selectedColor,
       quantity,
     });
@@ -125,7 +122,7 @@ export default function ProductPage() {
                 </div>
 
                 <p className="text-3xl font-semibold text-terracotta mb-8">
-                  {priceFmt.format(product.priceUsd)} USD
+                  {formatArs(product.priceArs)}
                 </p>
 
                 {product.colors.length > 0 && (

@@ -43,7 +43,7 @@ class CatalogMapperTest {
         ReflectionTestUtils.setField(p, "id", 10L);
         ReflectionTestUtils.setField(p, "slug", "bolso-tote-milano");
         ReflectionTestUtils.setField(p, "name", "Bolso Tote Milano");
-        ReflectionTestUtils.setField(p, "priceUsd", new BigDecimal("285.00"));
+        ReflectionTestUtils.setField(p, "priceArs", new BigDecimal("285.00"));
         ReflectionTestUtils.setField(p, "imageUrl", "https://x/img.jpg");
         ReflectionTestUtils.setField(p, "badge", ProductBadge.MAS_VENDIDO);
         ReflectionTestUtils.setField(p, "ratingAvg", new BigDecimal("5.0"));
@@ -76,7 +76,7 @@ class CatalogMapperTest {
         ReflectionTestUtils.setField(p, "id", 10L);
         ReflectionTestUtils.setField(p, "slug", "bolso-tote-milano");
         ReflectionTestUtils.setField(p, "name", "Bolso Tote Milano");
-        ReflectionTestUtils.setField(p, "priceUsd", new BigDecimal("285.00"));
+        ReflectionTestUtils.setField(p, "priceArs", new BigDecimal("285.00"));
         ReflectionTestUtils.setField(p, "imageUrl", "https://x/img.jpg");
         ReflectionTestUtils.setField(p, "ratingAvg", new BigDecimal("5.0"));
         ReflectionTestUtils.setField(p, "ratingCount", 128);

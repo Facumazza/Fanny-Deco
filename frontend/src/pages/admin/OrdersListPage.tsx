@@ -4,9 +4,7 @@ import { AdminLayout } from '../../components/admin/AdminLayout';
 import { listAdminOrders } from '../../api/admin';
 import type { AdminOrderSummary, OrderStatus } from '../../types/api';
 
-const priceFmt = new Intl.NumberFormat('en-US', {
-  style: 'currency', currency: 'USD', maximumFractionDigits: 0,
-});
+import { formatArs } from '../../lib/price';
 
 const STATUSES: OrderStatus[] = ['PENDING', 'PAID', 'SHIPPED', 'DELIVERED', 'CANCELLED'];
 
@@ -130,7 +128,7 @@ export default function OrdersListPage() {
                   </td>
                   <td className="px-4 py-3 text-center text-ink">{o.itemCount}</td>
                   <td className="px-4 py-3 text-right font-semibold text-terracotta">
-                    {priceFmt.format(o.subtotalUsd)} USD
+                    {formatArs(o.subtotalArs)}
                   </td>
                   <td className="px-4 py-3 text-center">
                     <span className={`inline-block px-2 py-1 rounded-sm text-[10px] font-semibold tracking-wider ${STATUS_STYLES[o.status]}`}>

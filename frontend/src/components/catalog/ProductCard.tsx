@@ -2,10 +2,7 @@ import { Link } from 'react-router-dom';
 import type { ProductSummary } from '../../types/api';
 import { Badge } from './Badge';
 import { StarRating } from './StarRating';
-
-const priceFmt = new Intl.NumberFormat('en-US', {
-  style: 'currency', currency: 'USD', maximumFractionDigits: 0,
-});
+import { formatArs } from '../../lib/price';
 
 export function ProductCard({ product }: { product: ProductSummary }) {
   return (
@@ -44,7 +41,7 @@ export function ProductCard({ product }: { product: ProductSummary }) {
         </Link>
         <div className="flex items-center justify-between">
           <span className="text-terracotta font-semibold">
-            {priceFmt.format(product.priceUsd)} USD
+            {formatArs(product.priceArs)}
           </span>
           <div className="flex gap-1">
             {product.colors.map((hex, i) => (

@@ -21,8 +21,8 @@ public record ProductUpsertRequest(
 
     @NotNull
     @DecimalMin(value = "0.00", inclusive = true, message = "El precio no puede ser negativo")
-    @Digits(integer = 8, fraction = 2)
-    BigDecimal priceUsd,
+    @Digits(integer = 10, fraction = 2)
+    BigDecimal priceArs,
 
     @NotBlank
     @Size(max = 2000)

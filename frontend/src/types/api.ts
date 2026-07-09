@@ -14,7 +14,7 @@ export interface ProductSummary {
   id: number;
   slug: string;
   name: string;
-  priceUsd: number;
+  priceArs: number;
   imageUrl: string;
   badge: ProductBadge | null;
   ratingAvg: number;
@@ -59,7 +59,7 @@ export interface AdminProduct {
   slug: string;
   name: string;
   description: string | null;
-  priceUsd: number;
+  priceArs: number;
   imageUrl: string;
   badge: ProductBadge | null;
   ratingAvg: number;
@@ -74,7 +74,7 @@ export interface ProductUpsertRequest {
   name: string;
   slug: string;
   description: string | null;
-  priceUsd: number;
+  priceArs: number;
   imageUrl: string;
   badge: ProductBadge | null;
   ratingAvg: number;
@@ -113,8 +113,8 @@ export interface OrderItem {
   productImageUrl: string;
   color: string | null;
   quantity: number;
-  unitPriceUsd: number;
-  lineTotalUsd: number;
+  unitPriceArs: number;
+  lineTotalArs: number;
 }
 
 export interface Order {
@@ -128,7 +128,7 @@ export interface Order {
   country: string;
   phone: string | null;
   notes: string | null;
-  subtotalUsd: number;
+  subtotalArs: number;
   status: OrderStatus;
   createdAt: string;
   items: OrderItem[];
@@ -155,7 +155,7 @@ export interface AdminOrderSummary {
   reference: string;
   customerEmail: string;
   customerName: string;
-  subtotalUsd: number;
+  subtotalArs: number;
   status: OrderStatus;
   itemCount: number;
   createdAt: string;

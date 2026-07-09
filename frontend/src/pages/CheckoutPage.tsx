@@ -6,9 +6,7 @@ import { useCart } from '../hooks/useCart';
 import { createOrder } from '../api/orders';
 import { ApiRequestError } from '../types/api';
 
-const priceFmt = new Intl.NumberFormat('en-US', {
-  style: 'currency', currency: 'USD', maximumFractionDigits: 0,
-});
+import { formatArs } from '../lib/price';
 
 const inputCls =
   'w-full border border-cream-card px-3 py-2 focus:outline-none focus:border-brown-dark bg-white';
@@ -36,7 +34,7 @@ const INITIAL: FormState = {
 };
 
 export default function CheckoutPage() {
-  const { items, subtotalUsd, itemCount, clear } = useCart();
+  const { items, subtotalArs, itemCount, clear } = useCart();
   const navigate = useNavigate();
 
   const [form, setForm] = useState<FormState>(INITIAL);
@@ -199,7 +197,7 @@ export default function CheckoutPage() {
                     <p className="text-muted text-xs">×{it.quantity}</p>
                   </div>
                   <p className="text-terracotta font-semibold">
-                    {priceFmt.format(it.priceUsd * it.quantity)}
+                    {formatArs(it.priceArs * it.quantity)}
                   </p>
                 </li>
               ))}
@@ -207,7 +205,7 @@ export default function CheckoutPage() {
             <div className="border-t border-cream-card pt-4 mb-4">
               <div className="flex justify-between text-ink text-sm mb-1">
                 <span>{itemCount} {itemCount === 1 ? 'ítem' : 'ítems'}</span>
-                <span>{priceFmt.format(subtotalUsd)} USD</span>
+                <span>{formatArs(subtotalArs)}</span>
               </div>
               <p className="text-xs text-muted">
                 Los pagos y el envío se coordinan luego por email.

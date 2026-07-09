@@ -4,12 +4,10 @@ import { Footer } from '../components/layout/Footer';
 import { useCart } from '../hooks/useCart';
 import type { CartItem } from '../hooks/useCart';
 
-const priceFmt = new Intl.NumberFormat('en-US', {
-  style: 'currency', currency: 'USD', maximumFractionDigits: 0,
-});
+import { formatArs } from '../lib/price';
 
 export default function CartPage() {
-  const { items, itemCount, subtotalUsd, updateQuantity, removeItem, clear } = useCart();
+  const { items, itemCount, subtotalArs, updateQuantity, removeItem, clear } = useCart();
   const isEmpty = items.length === 0;
 
   return (
@@ -60,7 +58,7 @@ export default function CartPage() {
               <p className="text-xs tracking-[0.3em] text-muted mb-4">RESUMEN</p>
               <div className="flex justify-between text-ink mb-2">
                 <span>Subtotal</span>
-                <span className="font-semibold">{priceFmt.format(subtotalUsd)} USD</span>
+                <span className="font-semibold">{formatArs(subtotalArs)}</span>
               </div>
               <p className="text-xs text-muted mb-6">
                 Envío y descuentos se calculan en el próximo paso.
@@ -92,7 +90,7 @@ function CartRow({ item, onDecrease, onIncrease, onRemove }: {
   onIncrease: () => void;
   onRemove: () => void;
 }) {
-  const lineTotal = item.priceUsd * item.quantity;
+  const lineTotal = item.priceArs * item.quantity;
 
   return (
     <li className="bg-white rounded-card p-4 flex items-center gap-4 flex-wrap sm:flex-nowrap">
@@ -124,7 +122,7 @@ function CartRow({ item, onDecrease, onIncrease, onRemove }: {
           </p>
         )}
         <p className="text-sm text-muted mt-1">
-          {priceFmt.format(item.priceUsd)} USD c/u
+          {formatArs(item.priceArs)} c/u
         </p>
       </div>
 
@@ -150,7 +148,7 @@ function CartRow({ item, onDecrease, onIncrease, onRemove }: {
       </div>
 
       <p className="font-semibold text-terracotta w-24 text-right">
-        {priceFmt.format(lineTotal)} USD
+        {formatArs(lineTotal)}
       </p>
 
       <button

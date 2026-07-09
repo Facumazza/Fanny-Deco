@@ -16,7 +16,9 @@ describe('ProductCard', () => {
   it('renders name, price without decimals, and badge label', () => {
     renderCard();
     expect(screen.getByText('Bolso Tote Milano')).toBeInTheDocument();
-    expect(screen.getByText('$285 USD')).toBeInTheDocument();
+    // Formatted price ($ 342.000 in es-AR locale) uses a non-breaking space between
+    // symbol and number; match with a regex to sidestep whitespace normalization diffs.
+    expect(screen.getByText(/342\.000/)).toBeInTheDocument();
     expect(screen.getByText('MÁS VENDIDO')).toBeInTheDocument();
   });
 

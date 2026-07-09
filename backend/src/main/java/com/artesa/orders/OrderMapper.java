@@ -18,7 +18,7 @@ public class OrderMapper {
             o.getCountry(),
             o.getPhone(),
             o.getNotes(),
-            o.getSubtotalUsd(),
+            o.getSubtotalArs(),
             o.getStatus(),
             o.getCreatedAt(),
             o.getItems().stream()
@@ -36,8 +36,8 @@ public class OrderMapper {
             i.getProductImageUrl(),
             i.getColor(),
             i.getQuantity(),
-            i.getUnitPriceUsd(),
-            i.getLineTotalUsd()
+            i.getUnitPriceArs(),
+            i.getLineTotalArs()
         );
     }
 }

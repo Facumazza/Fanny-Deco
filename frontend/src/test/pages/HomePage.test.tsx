@@ -31,7 +31,7 @@ describe('HomePage', () => {
     for (const c of mockCategories) {
       expect(screen.getAllByText(c.name).length).toBeGreaterThan(0);
     }
-    expect(screen.getAllByText('$285 USD')).toHaveLength(mockProductsPage.content.length);
+    expect(screen.getAllByText(/342\.000/)).toHaveLength(mockProductsPage.content.length);
   });
 
   it('shows retry button on error and recovers on click', async () => {

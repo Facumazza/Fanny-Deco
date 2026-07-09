@@ -50,8 +50,8 @@ public class ProductController {
 
     private Sort resolveSort(String raw) {
         return switch (raw) {
-            case "price,asc"  -> Sort.by(Sort.Order.asc("priceUsd"));
-            case "price,desc" -> Sort.by(Sort.Order.desc("priceUsd"));
+            case "price,asc"  -> Sort.by(Sort.Order.asc("priceArs"));
+            case "price,desc" -> Sort.by(Sort.Order.desc("priceArs"));
             default           -> Sort.by(Sort.Order.desc("createdAt"));
         };
     }

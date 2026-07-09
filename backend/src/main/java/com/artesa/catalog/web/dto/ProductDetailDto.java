@@ -8,7 +8,7 @@ public record ProductDetailDto(
     Long id,
     String slug,
     String name,
-    BigDecimal priceUsd,
+    BigDecimal priceArs,
     String imageUrl,
     ProductBadge badge,
     BigDecimal ratingAvg,

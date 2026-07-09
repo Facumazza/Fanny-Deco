@@ -18,7 +18,7 @@ public class CatalogMapper {
 
     public ProductSummaryDto toSummary(Product p) {
         return new ProductSummaryDto(
-            p.getId(), p.getSlug(), p.getName(), p.getPriceUsd(), p.getImageUrl(),
+            p.getId(), p.getSlug(), p.getName(), p.getPriceArs(), p.getImageUrl(),
             p.getBadge(), p.getRatingAvg(), p.getRatingCount(),
             p.getCategory().getSlug(),
             p.getColors().stream().map(ProductColor::getHex).toList()
@@ -27,7 +27,7 @@ public class CatalogMapper {
 
     public ProductDetailDto toDetail(Product p) {
         return new ProductDetailDto(
-            p.getId(), p.getSlug(), p.getName(), p.getPriceUsd(), p.getImageUrl(),
+            p.getId(), p.getSlug(), p.getName(), p.getPriceArs(), p.getImageUrl(),
             p.getBadge(), p.getRatingAvg(), p.getRatingCount(),
             p.getCategory().getSlug(), p.getCategory().getName(),
             p.getDescription(),

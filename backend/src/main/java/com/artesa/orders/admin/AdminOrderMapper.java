@@ -13,7 +13,7 @@ public class AdminOrderMapper {
             o.getReference(),
             o.getCustomerEmail(),
             o.getCustomerName(),
-            o.getSubtotalUsd(),
+            o.getSubtotalArs(),
             o.getStatus(),
             o.getItems().size(),
             o.getCreatedAt()

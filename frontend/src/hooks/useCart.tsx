@@ -10,7 +10,7 @@ export interface CartItem {
   slug: string;
   name: string;
   imageUrl: string;
-  priceUsd: number;
+  priceArs: number;
   color: string | null;
   quantity: number;
 }
@@ -22,7 +22,7 @@ interface CartState {
   removeItem: (productId: number, color: string | null) => void;
   clear: () => void;
   itemCount: number;   // total units across items
-  subtotalUsd: number;
+  subtotalArs: number;
 }
 
 const STORAGE_KEY = 'artesa.cart.v1';
@@ -80,7 +80,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
           slug: input.slug,
           name: input.name,
           imageUrl: input.imageUrl,
-          priceUsd: input.priceUsd,
+          priceArs: input.priceArs,
           color: input.color,
           quantity: qty,
         },
@@ -107,8 +107,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const derived = useMemo(() => {
     const itemCount = items.reduce((n, it) => n + it.quantity, 0);
-    const subtotalUsd = items.reduce((s, it) => s + it.quantity * it.priceUsd, 0);
-    return { itemCount, subtotalUsd };
+    const subtotalArs = items.reduce((s, it) => s + it.quantity * it.priceArs, 0);
+    return { itemCount, subtotalArs };
   }, [items]);
 
   return (

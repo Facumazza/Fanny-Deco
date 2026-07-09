@@ -79,7 +79,7 @@ class ProductControllerIT {
     void sortsByPriceAscending() throws Exception {
         mvc.perform(get("/api/products?sort=price,asc&size=48"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.content[0].priceUsd").value(42.00));
+            .andExpect(jsonPath("$.content[0].priceArs").value(50400.00));
     }
 
     @Test

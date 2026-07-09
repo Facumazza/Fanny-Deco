@@ -100,7 +100,7 @@ class AdminProductControllerIT {
               "name": "Test Producto",
               "slug": "test-producto-nuevo",
               "description": "Un producto de prueba.",
-              "priceUsd": 199.99,
+              "priceArs": 199.99,
               "imageUrl": "https://example.com/img.jpg",
               "badge": "NUEVO",
               "ratingAvg": 4.5,
@@ -115,7 +115,7 @@ class AdminProductControllerIT {
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.id").isNumber())
             .andExpect(jsonPath("$.slug").value("test-producto-nuevo"))
-            .andExpect(jsonPath("$.priceUsd").value(199.99))
+            .andExpect(jsonPath("$.priceArs").value(199.99))
             .andExpect(jsonPath("$.badge").value("NUEVO"))
             .andExpect(jsonPath("$.colors.length()").value(2));
     }
@@ -127,7 +127,7 @@ class AdminProductControllerIT {
             {
               "name": "Duplicado",
               "slug": "bolso-tote-milano",
-              "priceUsd": 100.00,
+              "priceArs": 100.00,
               "imageUrl": "https://example.com/img.jpg",
               "ratingAvg": 4.0,
               "ratingCount": 0,
@@ -148,7 +148,7 @@ class AdminProductControllerIT {
             {
               "name": "Slug malo",
               "slug": "Slug Con Mayusc y Espacios",
-              "priceUsd": 100.00,
+              "priceArs": 100.00,
               "imageUrl": "https://example.com/img.jpg",
               "ratingAvg": 4.0,
               "ratingCount": 0,
@@ -169,7 +169,7 @@ class AdminProductControllerIT {
             {
               "name": "Sin categoría",
               "slug": "sin-categoria",
-              "priceUsd": 100.00,
+              "priceArs": 100.00,
               "imageUrl": "https://example.com/img.jpg",
               "ratingAvg": 4.0,
               "ratingCount": 0,
@@ -191,7 +191,7 @@ class AdminProductControllerIT {
               "name": "Bolso Tote Milano Renovado",
               "slug": "bolso-tote-milano",
               "description": "Nueva descripción.",
-              "priceUsd": 299.00,
+              "priceArs": 299.00,
               "imageUrl": "https://example.com/new.jpg",
               "badge": "MAS_VENDIDO",
               "ratingAvg": 4.9,
@@ -204,7 +204,7 @@ class AdminProductControllerIT {
                 .content(body))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.name").value("Bolso Tote Milano Renovado"))
-            .andExpect(jsonPath("$.priceUsd").value(299.00))
+            .andExpect(jsonPath("$.priceArs").value(299.00))
             .andExpect(jsonPath("$.colors.length()").value(1))
             .andExpect(jsonPath("$.colors[0]").value("#000000"));
     }
@@ -217,7 +217,7 @@ class AdminProductControllerIT {
             {
               "name": "Para Borrar",
               "slug": "para-borrar",
-              "priceUsd": 10.00,
+              "priceArs": 10.00,
               "imageUrl": "https://example.com/img.jpg",
               "ratingAvg": 3.0,
               "ratingCount": 0,

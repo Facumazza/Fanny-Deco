@@ -13,7 +13,7 @@ public record AdminOrderSummaryDto(
     String reference,
     String customerEmail,
     String customerName,
-    BigDecimal subtotalUsd,
+    BigDecimal subtotalArs,
     OrderStatus status,
     int itemCount,
     Instant createdAt

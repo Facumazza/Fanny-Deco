@@ -14,7 +14,7 @@ public class AdminProductMapper {
             p.getSlug(),
             p.getName(),
             p.getDescription(),
-            p.getPriceUsd(),
+            p.getPriceArs(),
             p.getImageUrl(),
             p.getBadge(),
             p.getRatingAvg(),

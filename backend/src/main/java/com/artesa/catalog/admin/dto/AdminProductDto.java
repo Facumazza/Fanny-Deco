@@ -11,7 +11,7 @@ public record AdminProductDto(
     String slug,
     String name,
     String description,
-    BigDecimal priceUsd,
+    BigDecimal priceArs,
     String imageUrl,
     ProductBadge badge,
     BigDecimal ratingAvg,

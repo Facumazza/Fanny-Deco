@@ -34,7 +34,7 @@ export default function ProductEditPage() {
     name: product.name,
     slug: product.slug,
     description: product.description,
-    priceUsd: product.priceUsd,
+    priceArs: product.priceArs,
     imageUrl: product.imageUrl,
     badge: product.badge,
     ratingAvg: product.ratingAvg,

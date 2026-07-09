@@ -62,10 +62,10 @@ class OrderControllerIT {
             .andExpect(jsonPath("$.status").value("PENDING"))
             .andExpect(jsonPath("$.customerEmail").value("cliente@example.com"))
             .andExpect(jsonPath("$.customerName").value("Ana Cliente"))
-            .andExpect(jsonPath("$.subtotalUsd").value(735.00))  // 285*2 + 165 = 735
+            .andExpect(jsonPath("$.subtotalArs").value(735.00))  // 285*2 + 165 = 735
             .andExpect(jsonPath("$.items.length()").value(2))
             .andExpect(jsonPath("$.items[0].productName").exists())
-            .andExpect(jsonPath("$.items[0].unitPriceUsd").exists());
+            .andExpect(jsonPath("$.items[0].unitPriceArs").exists());
     }
 
     @Test

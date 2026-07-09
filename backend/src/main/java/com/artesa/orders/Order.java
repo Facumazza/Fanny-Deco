@@ -42,8 +42,8 @@ public class Order {
     @Column(columnDefinition = "TEXT")
     private String notes;
 
-    @Column(name = "subtotal_usd", nullable = false, precision = 10, scale = 2)
-    private BigDecimal subtotalUsd;
+    @Column(name = "subtotal_ars", nullable = false, precision = 12, scale = 2)
+    private BigDecimal subtotalArs;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
@@ -68,7 +68,7 @@ public class Order {
     public String getCountry() { return country; }
     public String getPhone() { return phone; }
     public String getNotes() { return notes; }
-    public BigDecimal getSubtotalUsd() { return subtotalUsd; }
+    public BigDecimal getSubtotalArs() { return subtotalArs; }
     public OrderStatus getStatus() { return status; }
     public Instant getCreatedAt() { return createdAt; }
     public List<OrderItem> getItems() { return items; }

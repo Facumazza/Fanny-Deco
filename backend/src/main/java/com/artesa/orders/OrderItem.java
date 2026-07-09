@@ -36,11 +36,11 @@ public class OrderItem {
     @Column(nullable = false)
     private int quantity;
 
-    @Column(name = "unit_price_usd", nullable = false, precision = 10, scale = 2)
-    private BigDecimal unitPriceUsd;
+    @Column(name = "unit_price_ars", nullable = false, precision = 12, scale = 2)
+    private BigDecimal unitPriceArs;
 
-    @Column(name = "line_total_usd", nullable = false, precision = 10, scale = 2)
-    private BigDecimal lineTotalUsd;
+    @Column(name = "line_total_ars", nullable = false, precision = 12, scale = 2)
+    private BigDecimal lineTotalArs;
 
     public OrderItem() {}
 
@@ -52,6 +52,6 @@ public class OrderItem {
     public String getProductImageUrl() { return productImageUrl; }
     public String getColor() { return color; }
     public int getQuantity() { return quantity; }
-    public BigDecimal getUnitPriceUsd() { return unitPriceUsd; }
-    public BigDecimal getLineTotalUsd() { return lineTotalUsd; }
+    public BigDecimal getUnitPriceArs() { return unitPriceArs; }
+    public BigDecimal getLineTotalArs() { return lineTotalArs; }
 }

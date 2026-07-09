@@ -23,8 +23,8 @@ public class Product {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "price_usd", nullable = false, precision = 10, scale = 2)
-    private BigDecimal priceUsd;
+    @Column(name = "price_ars", nullable = false, precision = 12, scale = 2)
+    private BigDecimal priceArs;
 
     @Column(name = "image_url", nullable = false, columnDefinition = "TEXT")
     private String imageUrl;
@@ -57,7 +57,7 @@ public class Product {
     public String getSlug() { return slug; }
     public String getName() { return name; }
     public String getDescription() { return description; }
-    public BigDecimal getPriceUsd() { return priceUsd; }
+    public BigDecimal getPriceArs() { return priceArs; }
     public String getImageUrl() { return imageUrl; }
     public ProductBadge getBadge() { return badge; }
     public BigDecimal getRatingAvg() { return ratingAvg; }

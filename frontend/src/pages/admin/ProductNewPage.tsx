@@ -8,7 +8,7 @@ const EMPTY: ProductUpsertRequest = {
   name: '',
   slug: '',
   description: '',
-  priceUsd: 0,
+  priceArs: 0,
   imageUrl: '',
   badge: null,
   ratingAvg: 5,

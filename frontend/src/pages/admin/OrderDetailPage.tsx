@@ -5,9 +5,7 @@ import { getAdminOrder, updateOrderStatus } from '../../api/admin';
 import { ApiRequestError } from '../../types/api';
 import type { Order, OrderStatus } from '../../types/api';
 
-const priceFmt = new Intl.NumberFormat('en-US', {
-  style: 'currency', currency: 'USD', maximumFractionDigits: 0,
-});
+import { formatArs } from '../../lib/price';
 
 const STATUSES: OrderStatus[] = ['PENDING', 'PAID', 'SHIPPED', 'DELIVERED', 'CANCELLED'];
 
@@ -175,11 +173,11 @@ export default function OrderDetailPage() {
                       </p>
                     )}
                     <p className="text-xs text-muted mt-1">
-                      {priceFmt.format(it.unitPriceUsd)} × {it.quantity}
+                      {formatArs(it.unitPriceArs)} × {it.quantity}
                     </p>
                   </div>
                   <p className="font-semibold text-terracotta w-24 text-right">
-                    {priceFmt.format(it.lineTotalUsd)}
+                    {formatArs(it.lineTotalArs)}
                   </p>
                 </li>
               ))}
@@ -187,7 +185,7 @@ export default function OrderDetailPage() {
             <div className="border-t border-cream-card pt-4 mt-4 flex justify-between items-center">
               <span className="text-ink font-medium">Total</span>
               <span className="font-display text-2xl text-terracotta">
-                {priceFmt.format(order.subtotalUsd)} USD
+                {formatArs(order.subtotalArs)}
               </span>
             </div>
           </section>

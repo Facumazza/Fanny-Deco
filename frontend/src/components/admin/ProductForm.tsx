@@ -139,14 +139,14 @@ export function ProductForm({ initial, submitLabel, onSubmit }: Props) {
           </select>
         </Field>
 
-        <Field label="Precio (USD)" required>
+        <Field label="Precio (ARS)" required>
           <input
             type="number"
             required
             min="0"
             step="0.01"
-            value={form.priceUsd}
-            onChange={e => setForm(f => ({ ...f, priceUsd: Number(e.target.value) }))}
+            value={form.priceArs}
+            onChange={e => setForm(f => ({ ...f, priceArs: Number(e.target.value) }))}
             className={inputCls}
           />
         </Field>

@@ -94,7 +94,7 @@ public class AdminProductService {
         setField(p, "slug", req.slug());
         setField(p, "name", req.name());
         setField(p, "description", req.description());
-        setField(p, "priceUsd", req.priceUsd());
+        setField(p, "priceArs", req.priceArs());
         setField(p, "imageUrl", req.imageUrl());
         setField(p, "badge", req.badge());
         setField(p, "ratingAvg", req.ratingAvg());

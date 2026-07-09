@@ -73,7 +73,7 @@ public class OrderService {
         BigDecimal subtotal = BigDecimal.ZERO;
         for (CreateOrderRequest.Item ri : req.items()) {
             Product p = productsById.get(ri.productId());
-            BigDecimal unit = p.getPriceUsd();
+            BigDecimal unit = p.getPriceArs();
             BigDecimal line = unit.multiply(BigDecimal.valueOf(ri.quantity()));
 
             OrderItem oi = new OrderItem();
@@ -84,13 +84,13 @@ public class OrderService {
             setField(oi, "productImageUrl", p.getImageUrl());
             setField(oi, "color", ri.color());
             setField(oi, "quantity", ri.quantity());
-            setField(oi, "unitPriceUsd", unit);
-            setField(oi, "lineTotalUsd", line);
+            setField(oi, "unitPriceArs", unit);
+            setField(oi, "lineTotalArs", line);
             order.getItems().add(oi);
 
             subtotal = subtotal.add(line);
         }
-        setField(order, "subtotalUsd", subtotal);
+        setField(order, "subtotalArs", subtotal);
 
         return orderRepo.save(order);
     }

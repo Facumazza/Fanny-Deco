@@ -17,7 +17,7 @@ public record OrderDto(
     String country,
     String phone,
     String notes,
-    BigDecimal subtotalUsd,
+    BigDecimal subtotalArs,
     OrderStatus status,
     Instant createdAt,
     List<Item> items
@@ -30,7 +30,7 @@ public record OrderDto(
         String productImageUrl,
         String color,
         int quantity,
-        BigDecimal unitPriceUsd,
-        BigDecimal lineTotalUsd
+        BigDecimal unitPriceArs,
+        BigDecimal lineTotalArs
     ) {}
 }

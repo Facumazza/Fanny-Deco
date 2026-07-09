@@ -4,9 +4,7 @@ import { AdminLayout } from '../../components/admin/AdminLayout';
 import { deleteAdminProduct, listAdminProducts } from '../../api/admin';
 import type { AdminProduct } from '../../types/api';
 
-const priceFmt = new Intl.NumberFormat('en-US', {
-  style: 'currency', currency: 'USD', maximumFractionDigits: 0,
-});
+import { formatArs } from '../../lib/price';
 
 type Status = 'loading' | 'ok' | 'error';
 
@@ -133,7 +131,7 @@ export default function ProductsListPage() {
                       : <span className="text-muted">—</span>}
                   </td>
                   <td className="px-4 py-3 text-right font-semibold text-terracotta">
-                    {priceFmt.format(p.priceUsd)} USD
+                    {formatArs(p.priceArs)}
                   </td>
                   <td className="px-4 py-3 text-right">
                     <div className="inline-flex gap-2">
