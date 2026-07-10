@@ -1,9 +1,9 @@
 import { FormEvent, useState } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { Header } from '../components/layout/Header';
 import { Footer } from '../components/layout/Footer';
 import { useCart } from '../hooks/useCart';
-import { createOrder } from '../api/orders';
+import { createOrder, initiatePayment } from '../api/orders';
 import { ApiRequestError } from '../types/api';
 
 import { formatArs } from '../lib/price';
@@ -35,7 +35,6 @@ const INITIAL: FormState = {
 
 export default function CheckoutPage() {
   const { items, subtotalArs, itemCount, clear } = useCart();
-  const navigate = useNavigate();
 
   const [form, setForm] = useState<FormState>(INITIAL);
   const [submitting, setSubmitting] = useState(false);
@@ -70,8 +69,12 @@ export default function CheckoutPage() {
           color: it.color ?? undefined,
         })),
       });
+      // The cart is emptied only once we know we're bouncing to MP. If the
+      // payment-initiation call fails we keep the cart so the user can retry
+      // without losing their items.
+      const initiation = await initiatePayment(order.reference);
       clear();
-      navigate(`/orden/${order.reference}`, { replace: true });
+      window.location.href = initiation.initPoint;
     } catch (err) {
       if (err instanceof ApiRequestError && err.body?.message) {
         setError(err.body.message);
@@ -208,7 +211,7 @@ export default function CheckoutPage() {
                 <span>{formatArs(subtotalArs)}</span>
               </div>
               <p className="text-xs text-muted">
-                Los pagos y el envío se coordinan luego por email.
+                Al continuar te redirigimos a MercadoPago para completar el pago.
               </p>
             </div>
             <button
@@ -216,7 +219,7 @@ export default function CheckoutPage() {
               disabled={submitting}
               className="w-full bg-brown-dark hover:bg-brown text-white py-4 text-sm tracking-wider font-semibold transition-colors disabled:opacity-60"
             >
-              {submitting ? 'ENVIANDO ORDEN…' : 'CONFIRMAR ORDEN'}
+              {submitting ? 'YENDO A MERCADOPAGO…' : 'PAGAR CON MERCADOPAGO →'}
             </button>
           </aside>
         </form>

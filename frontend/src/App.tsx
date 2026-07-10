@@ -4,6 +4,7 @@ import ProductPage from './pages/ProductPage';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import OrderConfirmationPage from './pages/OrderConfirmationPage';
+import OrderStatusPage from './pages/OrderStatusPage';
 import NotFoundPage from './pages/NotFoundPage';
 import LoginPage from './pages/admin/LoginPage';
 import DashboardPage from './pages/admin/DashboardPage';
@@ -29,6 +30,9 @@ export default function App() {
         <Route path="/carrito" element={<CartPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/orden/:reference" element={<OrderConfirmationPage />} />
+        <Route path="/orden/:reference/success" element={<OrderStatusPage kind="success" />} />
+        <Route path="/orden/:reference/fallo" element={<OrderStatusPage kind="failure" />} />
+        <Route path="/orden/:reference/pendiente" element={<OrderStatusPage kind="pending" />} />
         <Route path="/admin/login" element={<LoginPage />} />
         <Route
           path="/admin"

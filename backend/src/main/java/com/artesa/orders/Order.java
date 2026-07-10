@@ -52,6 +52,21 @@ public class Order {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
+    @Column(name = "payment_id", length = 80)
+    private String paymentId;
+
+    @Column(name = "payment_status", length = 30)
+    private String paymentStatus;
+
+    @Column(name = "payment_method", length = 60)
+    private String paymentMethod;
+
+    @Column(name = "paid_at")
+    private Instant paidAt;
+
+    @Column(name = "preference_id", length = 120)
+    private String preferenceId;
+
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY,
                cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items = new ArrayList<>();
@@ -71,5 +86,10 @@ public class Order {
     public BigDecimal getSubtotalArs() { return subtotalArs; }
     public OrderStatus getStatus() { return status; }
     public Instant getCreatedAt() { return createdAt; }
+    public String getPaymentId() { return paymentId; }
+    public String getPaymentStatus() { return paymentStatus; }
+    public String getPaymentMethod() { return paymentMethod; }
+    public Instant getPaidAt() { return paidAt; }
+    public String getPreferenceId() { return preferenceId; }
     public List<OrderItem> getItems() { return items; }
 }

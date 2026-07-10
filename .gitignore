@@ -19,6 +19,7 @@ frontend/coverage/
 # Env / secrets
 .env
 .env.local
+backend/.env
 
 # User-uploaded images (dev only — prod should use S3/Cloudinary)
 backend/uploads/

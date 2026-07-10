@@ -35,6 +35,17 @@ artesa:
   uploads:
     directory: ./uploads
 
+  payments:
+    # `mercadopago` for real integration, or leave blank/other for tests-with-fake.
+    provider: ${ARTESA_PAYMENT_PROVIDER:mercadopago}
+    mercadopago:
+      access-token: ${MERCADOPAGO_ACCESS_TOKEN:}
+    # Public URL of the backend as reachable from MercadoPago's servers.
+    # In dev, this is your ngrok URL (e.g. https://abc123.ngrok-free.app).
+    public-base-url: ${ARTESA_PUBLIC_BASE_URL:http://localhost:8080}
+    # URL of the storefront where the customer will be sent after payment.
+    frontend-base-url: ${ARTESA_FRONTEND_BASE_URL:http://localhost:5173}
+
 # Default admin credentials — CHANGE BEFORE DEPLOYING
 artesa:
   admin:
