@@ -19,6 +19,7 @@ import OrderDetailPage from './pages/admin/OrderDetailPage';
 import { AuthProvider } from './hooks/useAuth';
 import { CartProvider } from './hooks/useCart';
 import { ProtectedRoute } from './components/admin/ProtectedRoute';
+import { WhatsAppButton } from './components/layout/WhatsAppButton';
 
 export default function App() {
   return (
@@ -72,6 +73,7 @@ export default function App() {
         />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
+      <WhatsAppButton />
       </CartProvider>
     </AuthProvider>
   );
