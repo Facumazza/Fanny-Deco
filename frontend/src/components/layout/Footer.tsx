@@ -1,3 +1,10 @@
+import { Link } from 'react-router-dom';
+
+interface FooterLink {
+  label: string;
+  to: string;
+}
+
 export function Footer() {
   const year = new Date().getFullYear();
 
@@ -20,27 +27,38 @@ export function Footer() {
               <span aria-hidden>📞</span> +54 11 1234 5678
             </li>
             <li className="flex items-center gap-2">
-              <span aria-hidden>✉</span> hola@artesa.com
+              <span aria-hidden>✉</span>
+              <a href="mailto:hola@artesa.com" className="hover:text-white">hola@artesa.com</a>
             </li>
           </ul>
         </div>
 
         <FooterColumn
           title="TIENDA"
-          links={['Carteras de Cuero', 'Carteras Otros Mat.', 'Cerámica Deco', 'Cerámica Casa']}
+          links={[
+            { label: 'Carteras de Cuero',      to: '/?categoria=carteras-cuero' },
+            { label: 'Carteras Otros Mat.',    to: '/?categoria=carteras-otros' },
+            { label: 'Cerámica Deco',          to: '/?categoria=ceramica-deco' },
+            { label: 'Cerámica Casa',          to: '/?categoria=ceramica-casa' },
+          ]}
         />
         <FooterColumn
           title="INFORMACIÓN"
-          links={['Nosotros', 'El proceso', 'Sustentabilidad', 'Prensa']}
+          links={[
+            { label: 'Nosotros',          to: '/nosotros' },
+            { label: 'El proceso',        to: '/el-proceso' },
+            { label: 'Sustentabilidad',   to: '/sustentabilidad' },
+            { label: 'Prensa',            to: '/prensa' },
+          ]}
         />
         <FooterColumn
           title="AYUDA"
           links={[
-            'Política de cambio y devolución',
-            'Opciones de pago',
-            'Método de envío',
-            'Contacto',
-            'Preguntas frecuentes',
+            { label: 'Política de cambio y devolución', to: '/politica-de-cambio-y-devolucion' },
+            { label: 'Opciones de pago',                to: '/opciones-de-pago' },
+            { label: 'Método de envío',                 to: '/metodo-de-envio' },
+            { label: 'Contacto',                        to: '/contacto' },
+            { label: 'Preguntas frecuentes',            to: '/preguntas-frecuentes' },
           ]}
         />
       </div>
@@ -51,13 +69,19 @@ export function Footer() {
           <p className="text-xs tracking-[0.3em] text-white/60 mb-4">SEGUINOS EN REDES</p>
           <div className="flex items-center justify-center gap-8">
             {[
-              { label: 'INSTAGRAM', icon: '◎' },
-              { label: 'FACEBOOK',  icon: 'f' },
-              { label: 'TWITTER / X', icon: '𝕏' },
-              { label: 'YOUTUBE',   icon: '▶' },
-              { label: 'WHATSAPP',  icon: '💬' },
+              { label: 'INSTAGRAM', icon: '◎',  href: 'https://instagram.com/artesa' },
+              { label: 'FACEBOOK',  icon: 'f',  href: 'https://facebook.com/artesa'  },
+              { label: 'TWITTER / X', icon: '𝕏', href: 'https://twitter.com/artesa' },
+              { label: 'YOUTUBE',   icon: '▶',  href: 'https://youtube.com/@artesa'  },
+              { label: 'WHATSAPP',  icon: '💬', href: 'https://wa.me/5491112345678'  },
             ].map(s => (
-              <a key={s.label} href="#" className="flex flex-col items-center gap-2 hover:text-white">
+              <a
+                key={s.label}
+                href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col items-center gap-2 hover:text-white"
+              >
                 <span className="w-10 h-10 border border-white/20 flex items-center justify-center text-lg">
                   {s.icon}
                 </span>
@@ -79,14 +103,14 @@ export function Footer() {
   );
 }
 
-function FooterColumn({ title, links }: { title: string; links: string[] }) {
+function FooterColumn({ title, links }: { title: string; links: FooterLink[] }) {
   return (
     <div>
       <p className="text-xs tracking-[0.3em] text-white/60 mb-4">{title}</p>
       <ul className="space-y-3 text-sm">
         {links.map(link => (
-          <li key={link}>
-            <a href="#" className="hover:text-white">{link}</a>
+          <li key={link.label}>
+            <Link to={link.to} className="hover:text-white">{link.label}</Link>
           </li>
         ))}
       </ul>

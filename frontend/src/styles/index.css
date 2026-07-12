@@ -4,3 +4,13 @@
 
 html, body, #root { height: 100%; }
 body { @apply bg-cream-bg text-ink font-sans antialiased; }
+
+/* Long-form content shell used by informational pages (política, faq, nosotros, etc.). */
+.content-body h2 { @apply font-display text-2xl text-ink mt-8 mb-3; }
+.content-body h3 { @apply font-display text-xl text-ink mt-6 mb-2; }
+.content-body p { @apply text-muted leading-relaxed mb-4; }
+.content-body ul { @apply list-disc pl-6 text-muted space-y-1 mb-4; }
+.content-body ol { @apply list-decimal pl-6 text-muted space-y-1 mb-4; }
+.content-body a { @apply text-terracotta hover:underline; }
+.content-body strong { @apply text-ink font-medium; }
+.content-body em { @apply italic; }

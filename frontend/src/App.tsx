@@ -6,6 +6,15 @@ import CheckoutPage from './pages/CheckoutPage';
 import OrderConfirmationPage from './pages/OrderConfirmationPage';
 import OrderStatusPage from './pages/OrderStatusPage';
 import NotFoundPage from './pages/NotFoundPage';
+import PoliticaCambioPage from './pages/info/PoliticaCambioPage';
+import OpcionesPagoPage from './pages/info/OpcionesPagoPage';
+import MetodoEnvioPage from './pages/info/MetodoEnvioPage';
+import ContactoPage from './pages/info/ContactoPage';
+import NosotrosPage from './pages/info/NosotrosPage';
+import ElProcesoPage from './pages/info/ElProcesoPage';
+import SustentabilidadPage from './pages/info/SustentabilidadPage';
+import PrensaPage from './pages/info/PrensaPage';
+import PreguntasFrecuentesPage from './pages/info/PreguntasFrecuentesPage';
 import LoginPage from './pages/admin/LoginPage';
 import DashboardPage from './pages/admin/DashboardPage';
 import ProductsListPage from './pages/admin/ProductsListPage';
@@ -34,6 +43,16 @@ export default function App() {
         <Route path="/orden/:reference/success" element={<OrderStatusPage kind="success" />} />
         <Route path="/orden/:reference/fallo" element={<OrderStatusPage kind="failure" />} />
         <Route path="/orden/:reference/pendiente" element={<OrderStatusPage kind="pending" />} />
+        {/* Content / info pages */}
+        <Route path="/politica-de-cambio-y-devolucion" element={<PoliticaCambioPage />} />
+        <Route path="/opciones-de-pago" element={<OpcionesPagoPage />} />
+        <Route path="/metodo-de-envio" element={<MetodoEnvioPage />} />
+        <Route path="/contacto" element={<ContactoPage />} />
+        <Route path="/nosotros" element={<NosotrosPage />} />
+        <Route path="/el-proceso" element={<ElProcesoPage />} />
+        <Route path="/sustentabilidad" element={<SustentabilidadPage />} />
+        <Route path="/prensa" element={<PrensaPage />} />
+        <Route path="/preguntas-frecuentes" element={<PreguntasFrecuentesPage />} />
         <Route path="/admin/login" element={<LoginPage />} />
         <Route
           path="/admin"
