@@ -48,6 +48,14 @@ artesa:
     public-base-url: ${ARTESA_PUBLIC_BASE_URL:http://localhost:8080}
     # URL of the storefront where the customer will be sent after payment.
     frontend-base-url: ${ARTESA_FRONTEND_BASE_URL:http://localhost:5173}
+  emails:
+    # `resend` for real integration, `console` to log emails to stdout (dev).
+    provider: ${ARTESA_EMAIL_PROVIDER:console}
+    from: ${ARTESA_EMAIL_FROM:ARTESA <no-reply@artesa.com>}
+    admin-to: ${ARTESA_EMAIL_ADMIN_TO:admin@artesa.com}
+    shop-name: ${ARTESA_EMAIL_SHOP_NAME:ARTESA}
+    resend:
+      api-key: ${RESEND_API_KEY:}
 
 logging:
   level:

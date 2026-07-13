@@ -62,7 +62,8 @@ class OrderControllerIT {
             .andExpect(jsonPath("$.status").value("PENDING"))
             .andExpect(jsonPath("$.customerEmail").value("cliente@example.com"))
             .andExpect(jsonPath("$.customerName").value("Ana Cliente"))
-            .andExpect(jsonPath("$.subtotalArs").value(735.00))  // 285*2 + 165 = 735
+            // Seed prices after ARS migration: product 1 = 342000, product 2 = 198000.
+            .andExpect(jsonPath("$.subtotalArs").value(882000.00))  // 342000*2 + 198000
             .andExpect(jsonPath("$.items.length()").value(2))
             .andExpect(jsonPath("$.items[0].productName").exists())
             .andExpect(jsonPath("$.items[0].unitPriceArs").exists());

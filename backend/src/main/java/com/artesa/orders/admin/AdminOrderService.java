@@ -1,5 +1,6 @@
 package com.artesa.orders.admin;
 
+import com.artesa.emails.OrderMailer;
 import com.artesa.orders.Order;
 import com.artesa.orders.OrderNotFoundException;
 import com.artesa.orders.OrderRepository;
@@ -21,9 +22,11 @@ import java.util.List;
 public class AdminOrderService {
 
     private final OrderRepository orderRepo;
+    private final OrderMailer mailer;
 
-    public AdminOrderService(OrderRepository orderRepo) {
+    public AdminOrderService(OrderRepository orderRepo, OrderMailer mailer) {
         this.orderRepo = orderRepo;
+        this.mailer = mailer;
     }
 
     @Transactional(readOnly = true)
@@ -54,8 +57,11 @@ public class AdminOrderService {
 
     public Order updateStatus(Long id, OrderStatus newStatus) {
         Order order = getById(id);
+        OrderStatus previous = order.getStatus();
         setField(order, "status", newStatus);
-        return orderRepo.save(order);
+        Order saved = orderRepo.save(order);
+        mailer.onStatusTransition(saved, previous, newStatus);
+        return saved;
     }
 
     private static void setField(Object target, String fieldName, Object value) {

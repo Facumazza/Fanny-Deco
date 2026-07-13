@@ -3,6 +3,7 @@ package com.artesa.orders;
 import com.artesa.catalog.domain.Product;
 import com.artesa.catalog.repository.ProductRepository;
 import com.artesa.catalog.service.ProductNotFoundException;
+import com.artesa.emails.OrderMailer;
 import com.artesa.orders.dto.CreateOrderRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,10 +30,14 @@ public class OrderService {
 
     private final OrderRepository orderRepo;
     private final ProductRepository productRepo;
+    private final OrderMailer mailer;
 
-    public OrderService(OrderRepository orderRepo, ProductRepository productRepo) {
+    public OrderService(OrderRepository orderRepo,
+                        ProductRepository productRepo,
+                        OrderMailer mailer) {
         this.orderRepo = orderRepo;
         this.productRepo = productRepo;
+        this.mailer = mailer;
     }
 
     @Transactional(readOnly = true)
@@ -92,7 +97,9 @@ public class OrderService {
         }
         setField(order, "subtotalArs", subtotal);
 
-        return orderRepo.save(order);
+        Order saved = orderRepo.save(order);
+        mailer.onOrderCreated(saved);
+        return saved;
     }
 
     private String generateUniqueReference() {

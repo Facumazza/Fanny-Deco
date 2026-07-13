@@ -1,5 +1,6 @@
 package com.artesa.payments;
 
+import com.artesa.emails.OrderMailer;
 import com.artesa.orders.Order;
 import com.artesa.orders.OrderRepository;
 import com.artesa.orders.OrderStatus;
@@ -21,15 +22,18 @@ public class PaymentService {
 
     private final PaymentGateway gateway;
     private final OrderRepository orderRepo;
+    private final OrderMailer mailer;
     private final String publicBaseUrl;
     private final String frontendBaseUrl;
 
     public PaymentService(PaymentGateway gateway,
                           OrderRepository orderRepo,
+                          OrderMailer mailer,
                           @Value("${artesa.payments.public-base-url}") String publicBaseUrl,
                           @Value("${artesa.payments.frontend-base-url}") String frontendBaseUrl) {
         this.gateway = gateway;
         this.orderRepo = orderRepo;
+        this.mailer = mailer;
         this.publicBaseUrl = trimSlash(publicBaseUrl);
         this.frontendBaseUrl = trimSlash(frontendBaseUrl);
     }
@@ -70,14 +74,18 @@ public class PaymentService {
             return;
         }
         Order order = maybe.get();
+        OrderStatus previous = order.getStatus();
+        OrderStatus next = mapProviderStatusToOrder(info.status());
+
         setField(order, "paymentId", info.paymentId());
         setField(order, "paymentStatus", info.status());
         setField(order, "paymentMethod", info.paymentMethod());
-        setField(order, "status", mapProviderStatusToOrder(info.status()));
+        setField(order, "status", next);
         if ("approved".equalsIgnoreCase(info.status()) && order.getPaidAt() == null) {
             setField(order, "paidAt", Instant.now());
         }
-        orderRepo.save(order);
+        Order saved = orderRepo.save(order);
+        mailer.onStatusTransition(saved, previous, next);
     }
 
     private static OrderStatus mapProviderStatusToOrder(String providerStatus) {
