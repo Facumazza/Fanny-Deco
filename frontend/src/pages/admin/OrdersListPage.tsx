@@ -1,10 +1,16 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { listAdminOrders } from '../../api/admin';
 import type { AdminOrderSummary, OrderStatus } from '../../types/api';
 
 import { formatArs } from '../../lib/price';
+
+const VALID_STATUS: OrderStatus[] = ['PENDING', 'PAID', 'SHIPPED', 'DELIVERED', 'CANCELLED'];
+function parseStatus(raw: string | null): OrderStatus | '' {
+  if (!raw) return '';
+  return (VALID_STATUS as string[]).includes(raw) ? (raw as OrderStatus) : '';
+}
 
 const STATUSES: OrderStatus[] = ['PENDING', 'PAID', 'SHIPPED', 'DELIVERED', 'CANCELLED'];
 
@@ -34,8 +40,18 @@ type Status = 'loading' | 'ok' | 'error';
 export default function OrdersListPage() {
   const [status, setStatus] = useState<Status>('loading');
   const [items, setItems] = useState<AdminOrderSummary[]>([]);
-  const [statusFilter, setStatusFilter] = useState<OrderStatus | ''>('');
-  const [q, setQ] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [q, setQ] = useState(searchParams.get('q') ?? '');
+
+  // Status filter lives in the URL so dashboard cards can deep-link into a filter.
+  const statusFilter: OrderStatus | '' = parseStatus(searchParams.get('status'));
+
+  function updateStatusFilter(next: OrderStatus | '') {
+    const params = new URLSearchParams(searchParams);
+    if (next) params.set('status', next);
+    else      params.delete('status');
+    setSearchParams(params, { replace: true });
+  }
 
   const load = useCallback(async () => {
     setStatus('loading');
@@ -67,7 +83,7 @@ export default function OrdersListPage() {
       <div className="flex items-center gap-3 mb-6 flex-wrap">
         <select
           value={statusFilter}
-          onChange={e => setStatusFilter(e.target.value as OrderStatus | '')}
+          onChange={e => updateStatusFilter(e.target.value as OrderStatus | '')}
           className="border border-cream-card bg-white px-3 py-2 focus:outline-none focus:border-brown-dark"
         >
           <option value="">Todos los estados</option>
