@@ -1,6 +1,6 @@
 import type {
-  AdminCategory, AdminOrderSummary, AdminProduct, ApiError, CategoryUpsertRequest,
-  Order, OrderStatus, Page, ProductUpsertRequest,
+  AdminCategory, AdminOrderSummary, AdminProduct, AdminStats, ApiError,
+  CategoryUpsertRequest, Order, OrderStatus, Page, ProductUpsertRequest,
 } from '../types/api';
 import { ApiRequestError } from '../types/api';
 
@@ -132,4 +132,10 @@ export function updateOrderStatus(id: number, status: OrderStatus): Promise<Orde
     method: 'PUT',
     body: JSON.stringify({ status }),
   });
+}
+
+// -------- Stats --------
+
+export function getAdminStats(): Promise<AdminStats> {
+  return adminFetch<AdminStats>('/stats');
 }

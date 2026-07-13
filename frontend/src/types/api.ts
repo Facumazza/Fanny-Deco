@@ -150,6 +150,20 @@ export interface CreateOrderRequest {
   }[];
 }
 
+export interface AdminStats {
+  today:      { revenueArs: number; orderCount: number };
+  last7Days:  { revenueArs: number; orderCount: number };
+  thisMonth:  { revenueArs: number; orderCount: number };
+  orderCountsByStatus: Record<OrderStatus, number>;
+  topProducts: {
+    productId: number;
+    slug: string;
+    name: string;
+    unitsSold: number;
+    revenueArs: number;
+  }[];
+}
+
 export interface AdminOrderSummary {
   id: number;
   reference: string;
