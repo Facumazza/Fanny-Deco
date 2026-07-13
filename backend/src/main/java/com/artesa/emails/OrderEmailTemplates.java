@@ -66,15 +66,20 @@ public class OrderEmailTemplates {
         return new EmailMessage(o.getCustomerEmail(), subject, body);
     }
 
-    /** Shipped — in transit. */
+    /** Shipped — in transit. Includes the tracking code when the admin has set one. */
     public EmailMessage orderShipped(Order o) {
         String subject = "Tu pedido está en camino — " + o.getReference();
+        String trackingLine = (o.getTrackingInfo() != null && !o.getTrackingInfo().isBlank())
+            ? "<br><br><strong>Código de seguimiento:</strong><br>" +
+              "<span style=\"font-family:monospace;background:#F5EFE5;padding:6px 10px;display:inline-block;border-radius:4px;\">" +
+              escape(o.getTrackingInfo()) + "</span>"
+            : "";
         String body = shell(
             "Tu pedido está en camino",
             "Hola " + escape(o.getCustomerName()) + ",<br><br>" +
             "Despachamos tu pedido <strong>" + o.getReference() + "</strong>. " +
-            "Va a la dirección: " + escape(o.getShippingAddress()) + ", " + escape(o.getCity()) + ".<br><br>" +
-            "Si tenés un número de seguimiento del correo, te lo compartimos por WhatsApp o email en breve.",
+            "Va a la dirección: " + escape(o.getShippingAddress()) + ", " + escape(o.getCity()) + "." +
+            trackingLine,
             renderOrderBlock(o),
             null
         );

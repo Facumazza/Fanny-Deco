@@ -20,6 +20,7 @@ public class OrderMapper {
             o.getNotes(),
             o.getSubtotalArs(),
             o.getStatus(),
+            o.getTrackingInfo(),
             o.getCreatedAt(),
             o.getItems().stream()
                 .map(this::toItem)

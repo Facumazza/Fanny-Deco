@@ -82,6 +82,18 @@ export default function OrderConfirmationPage() {
               </section>
             </div>
 
+            {order.trackingInfo && (
+              <section className="bg-cream-card rounded-card p-6 mb-8">
+                <p className="text-xs tracking-[0.3em] text-terracotta mb-3">SEGUIMIENTO</p>
+                <p className="text-sm text-muted mb-2">
+                  Tu pedido ya está en camino con este código:
+                </p>
+                <p className="font-mono text-lg text-ink tracking-wide bg-white inline-block px-3 py-2 rounded-sm">
+                  {order.trackingInfo}
+                </p>
+              </section>
+            )}
+
             {/* Items */}
             <section className="bg-white rounded-card p-6 mb-6">
               <p className="text-xs tracking-[0.3em] text-muted mb-4">PRODUCTOS ({order.items.length})</p>

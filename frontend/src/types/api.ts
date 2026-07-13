@@ -130,6 +130,7 @@ export interface Order {
   notes: string | null;
   subtotalArs: number;
   status: OrderStatus;
+  trackingInfo: string | null;
   createdAt: string;
   items: OrderItem[];
 }

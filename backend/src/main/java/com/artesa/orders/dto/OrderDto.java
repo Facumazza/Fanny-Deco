@@ -19,6 +19,7 @@ public record OrderDto(
     String notes,
     BigDecimal subtotalArs,
     OrderStatus status,
+    String trackingInfo,
     Instant createdAt,
     List<Item> items
 ) {

@@ -67,6 +67,9 @@ public class Order {
     @Column(name = "preference_id", length = 120)
     private String preferenceId;
 
+    @Column(name = "tracking_info", length = 300)
+    private String trackingInfo;
+
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY,
                cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items = new ArrayList<>();
@@ -91,5 +94,6 @@ public class Order {
     public String getPaymentMethod() { return paymentMethod; }
     public Instant getPaidAt() { return paidAt; }
     public String getPreferenceId() { return preferenceId; }
+    public String getTrackingInfo() { return trackingInfo; }
     public List<OrderItem> getItems() { return items; }
 }

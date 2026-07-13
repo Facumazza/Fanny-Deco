@@ -6,6 +6,7 @@ import com.artesa.orders.OrderMapper;
 import com.artesa.orders.OrderStatus;
 import com.artesa.orders.admin.dto.AdminOrderSummaryDto;
 import com.artesa.orders.admin.dto.UpdateOrderStatusRequest;
+import com.artesa.orders.admin.dto.UpdateTrackingRequest;
 import com.artesa.orders.dto.OrderDto;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
@@ -57,6 +58,13 @@ public class AdminOrderController {
     public OrderDto updateStatus(@PathVariable Long id,
                                  @Valid @RequestBody UpdateOrderStatusRequest req) {
         var updated = service.updateStatus(id, req.status());
+        return orderMapper.toDto(updated);
+    }
+
+    @PutMapping("/{id}/tracking")
+    public OrderDto updateTracking(@PathVariable Long id,
+                                   @Valid @RequestBody UpdateTrackingRequest req) {
+        var updated = service.updateTracking(id, req.trackingInfo());
         return orderMapper.toDto(updated);
     }
 }

@@ -64,6 +64,19 @@ public class AdminOrderService {
         return saved;
     }
 
+    /**
+     * Admin can set/edit the shipping tracking info at any time. It's included in
+     * the next "shipped" email — so if the admin sets it BEFORE marking SHIPPED,
+     * the customer's first shipping email already carries the code.
+     */
+    public Order updateTracking(Long id, String trackingInfo) {
+        Order order = getById(id);
+        String normalized = (trackingInfo == null || trackingInfo.isBlank())
+            ? null : trackingInfo.trim();
+        setField(order, "trackingInfo", normalized);
+        return orderRepo.save(order);
+    }
+
     private static void setField(Object target, String fieldName, Object value) {
         Field f = ReflectionUtils.findField(target.getClass(), fieldName);
         if (f == null) throw new IllegalStateException("Missing field " + fieldName);

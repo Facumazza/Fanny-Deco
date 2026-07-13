@@ -134,6 +134,13 @@ export function updateOrderStatus(id: number, status: OrderStatus): Promise<Orde
   });
 }
 
+export function updateOrderTracking(id: number, trackingInfo: string | null): Promise<Order> {
+  return adminFetch<Order>(`/orders/${id}/tracking`, {
+    method: 'PUT',
+    body: JSON.stringify({ trackingInfo }),
+  });
+}
+
 // -------- Stats --------
 
 export function getAdminStats(): Promise<AdminStats> {

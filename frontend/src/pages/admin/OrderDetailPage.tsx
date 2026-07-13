@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { AdminLayout } from '../../components/admin/AdminLayout';
-import { getAdminOrder, updateOrderStatus } from '../../api/admin';
+import { getAdminOrder, updateOrderStatus, updateOrderTracking } from '../../api/admin';
 import { ApiRequestError } from '../../types/api';
 import type { Order, OrderStatus } from '../../types/api';
 
@@ -140,6 +140,11 @@ export default function OrderDetailPage() {
             </section>
           </div>
 
+          <TrackingEditor
+            order={order}
+            onUpdated={updated => { setOrder(updated); setFeedback('Seguimiento guardado.'); setTimeout(() => setFeedback(null), 3000); }}
+          />
+
           {/* Items */}
           <section className="bg-white rounded-card p-6">
             <p className="text-xs tracking-[0.3em] text-muted mb-4">
@@ -192,5 +197,62 @@ export default function OrderDetailPage() {
         </>
       )}
     </AdminLayout>
+  );
+}
+
+function TrackingEditor({ order, onUpdated }: {
+  order: Order;
+  onUpdated: (o: Order) => void;
+}) {
+  const [value, setValue] = useState(order.trackingInfo ?? '');
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Reset when the parent flips to a different order.
+  useEffect(() => { setValue(order.trackingInfo ?? ''); }, [order.id, order.trackingInfo]);
+
+  const dirty = (value.trim() || null) !== (order.trackingInfo ?? null);
+
+  async function save() {
+    setSaving(true);
+    setError(null);
+    try {
+      const updated = await updateOrderTracking(order.id, value.trim() || null);
+      onUpdated(updated);
+    } catch (e) {
+      console.error(e);
+      setError('No se pudo guardar. Revisá el campo (máx 300 caracteres).');
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <section className="bg-white rounded-card p-6 mb-6">
+      <p className="text-xs tracking-[0.3em] text-muted mb-3">SEGUIMIENTO DEL ENVÍO</p>
+      <p className="text-xs text-muted mb-3">
+        Código del correo (OCA, Andreani, Correo Argentino, etc.). Si lo dejás
+        acá, el próximo email que reciba el cliente lo incluye automáticamente.
+      </p>
+      <div className="flex items-center gap-3 flex-wrap">
+        <input
+          type="text"
+          maxLength={300}
+          value={value}
+          onChange={e => setValue(e.target.value)}
+          placeholder="ej: OCA E1234567AR"
+          className="flex-1 min-w-[260px] border border-cream-card px-3 py-2 focus:outline-none focus:border-brown-dark bg-white"
+        />
+        <button
+          type="button"
+          onClick={() => void save()}
+          disabled={!dirty || saving}
+          className="bg-brown-dark hover:bg-brown text-white px-5 py-2 text-sm tracking-wider font-semibold disabled:opacity-40"
+        >
+          {saving ? 'GUARDANDO…' : 'GUARDAR'}
+        </button>
+      </div>
+      {error && <p role="alert" className="text-terracotta text-xs mt-2">{error}</p>}
+    </section>
   );
 }
