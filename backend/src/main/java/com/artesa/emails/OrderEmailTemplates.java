@@ -101,6 +101,22 @@ public class OrderEmailTemplates {
         return new EmailMessage(o.getCustomerEmail(), subject, body);
     }
 
+    /** Refunded — money returned to the customer's card/account. */
+    public EmailMessage orderRefunded(Order o) {
+        String subject = "Reembolso procesado — " + o.getReference();
+        String body = shell(
+            "Reembolso procesado",
+            "Hola " + escape(o.getCustomerName()) + ",<br><br>" +
+            "Procesamos el reembolso de tu orden <strong>" + o.getReference() + "</strong> " +
+            "por " + escape(ARS.format(o.getSubtotalArs())) + ".<br><br>" +
+            "MercadoPago va a devolver el importe a tu medio de pago original. Los " +
+            "plazos varían según el emisor de la tarjeta (habitualmente 5 a 14 días hábiles).",
+            renderOrderBlock(o),
+            "Si tenés dudas sobre este reembolso, respondé este email."
+        );
+        return new EmailMessage(o.getCustomerEmail(), subject, body);
+    }
+
     /** Cancelled. */
     public EmailMessage orderCancelled(Order o) {
         String subject = "Tu orden fue cancelada — " + o.getReference();

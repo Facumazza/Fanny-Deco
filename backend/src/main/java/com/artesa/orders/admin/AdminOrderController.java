@@ -8,6 +8,7 @@ import com.artesa.orders.admin.dto.AdminOrderSummaryDto;
 import com.artesa.orders.admin.dto.UpdateOrderStatusRequest;
 import com.artesa.orders.admin.dto.UpdateTrackingRequest;
 import com.artesa.orders.dto.OrderDto;
+import com.artesa.payments.PaymentService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -23,15 +24,18 @@ public class AdminOrderController {
     private final AdminOrderMapper adminMapper;
     private final OrderMapper orderMapper;
     private final CatalogMapper catalogMapper;
+    private final PaymentService paymentService;
 
     public AdminOrderController(AdminOrderService service,
                                 AdminOrderMapper adminMapper,
                                 OrderMapper orderMapper,
-                                CatalogMapper catalogMapper) {
+                                CatalogMapper catalogMapper,
+                                PaymentService paymentService) {
         this.service = service;
         this.adminMapper = adminMapper;
         this.orderMapper = orderMapper;
         this.catalogMapper = catalogMapper;
+        this.paymentService = paymentService;
     }
 
     @GetMapping
@@ -66,5 +70,13 @@ public class AdminOrderController {
                                    @Valid @RequestBody UpdateTrackingRequest req) {
         var updated = service.updateTracking(id, req.trackingInfo());
         return orderMapper.toDto(updated);
+    }
+
+    /** Full refund through MP + flips order to REFUNDED + notifies the customer. */
+    @PostMapping("/{id}/refund")
+    public OrderDto refund(@PathVariable Long id) {
+        var order = service.getById(id);
+        var refunded = paymentService.refundOrder(order);
+        return orderMapper.toDto(refunded);
     }
 }

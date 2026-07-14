@@ -40,6 +40,16 @@ public class FakePaymentGateway implements PaymentGateway {
         return hit;
     }
 
+    public final java.util.List<String> refundedIds = new java.util.ArrayList<>();
+
+    @Override
+    public void refundPayment(String paymentId) {
+        if (!paymentsById.containsKey(paymentId)) {
+            throw new PaymentException("MP_REFUND_FAILED", "unknown payment");
+        }
+        refundedIds.add(paymentId);
+    }
+
     /** Test helper: simulate a payment that MP would have recorded. */
     public String recordPayment(String orderRef, String status, String method, BigDecimal amount) {
         String pid = String.valueOf(idSeq.incrementAndGet());

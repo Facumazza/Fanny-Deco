@@ -19,4 +19,11 @@ public interface PaymentGateway {
      * NOT the preference id). Used by the webhook to reconcile.
      */
     PaymentStatusInfo fetchPaymentStatus(String paymentId);
+
+    /**
+     * Issue a full refund for a previously-approved payment. Providers require
+     * the payment id — the amount is not passed because we only support full
+     * refunds; partial refunds add UX and edge cases that aren't worth it yet.
+     */
+    void refundPayment(String paymentId);
 }

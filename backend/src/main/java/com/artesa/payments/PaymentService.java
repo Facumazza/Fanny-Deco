@@ -58,6 +58,32 @@ public class PaymentService {
     }
 
     /**
+     * Full refund via the provider, then flips the order to REFUNDED and fires
+     * the customer email. Assumes there's a payment id to refund (i.e. status
+     * moved past PENDING at some point).
+     */
+    public Order refundOrder(Order order) {
+        if (order.getPaymentId() == null || order.getPaymentId().isBlank()) {
+            throw new PaymentException("NO_PAYMENT_TO_REFUND",
+                "La orden todavía no tiene un pago asociado");
+        }
+        if (order.getStatus() == OrderStatus.REFUNDED
+            || order.getStatus() == OrderStatus.CANCELLED) {
+            throw new PaymentException("ALREADY_TERMINAL",
+                "La orden ya está en un estado terminal (" + order.getStatus() + ")");
+        }
+
+        gateway.refundPayment(order.getPaymentId());
+
+        OrderStatus previous = order.getStatus();
+        setField(order, "paymentStatus", "refunded");
+        setField(order, "status", OrderStatus.REFUNDED);
+        Order saved = orderRepo.save(order);
+        mailer.onStatusTransition(saved, previous, OrderStatus.REFUNDED);
+        return saved;
+    }
+
+    /**
      * Called by the webhook. Fetches the payment from the provider and, if it maps
      * to a known order (via external_reference == our order reference), updates the
      * order status accordingly. Idempotent.
@@ -91,9 +117,10 @@ public class PaymentService {
     private static OrderStatus mapProviderStatusToOrder(String providerStatus) {
         if (providerStatus == null) return OrderStatus.PENDING;
         return switch (providerStatus.toLowerCase()) {
-            case "approved", "authorized"           -> OrderStatus.PAID;
-            case "rejected", "cancelled", "refunded" -> OrderStatus.CANCELLED;
-            default -> OrderStatus.PENDING;   // pending, in_process, in_mediation
+            case "approved", "authorized" -> OrderStatus.PAID;
+            case "refunded"               -> OrderStatus.REFUNDED;
+            case "rejected", "cancelled"  -> OrderStatus.CANCELLED;
+            default                       -> OrderStatus.PENDING;   // pending, in_process, in_mediation
         };
     }
 

@@ -12,7 +12,7 @@ function parseStatus(raw: string | null): OrderStatus | '' {
   return (VALID_STATUS as string[]).includes(raw) ? (raw as OrderStatus) : '';
 }
 
-const STATUSES: OrderStatus[] = ['PENDING', 'PAID', 'SHIPPED', 'DELIVERED', 'CANCELLED'];
+const STATUSES: OrderStatus[] = ['PENDING', 'PAID', 'SHIPPED', 'DELIVERED', 'CANCELLED', 'REFUNDED'];
 
 const STATUS_LABEL: Record<OrderStatus, string> = {
   PENDING:   'Pendiente',
@@ -20,6 +20,7 @@ const STATUS_LABEL: Record<OrderStatus, string> = {
   SHIPPED:   'Enviada',
   DELIVERED: 'Entregada',
   CANCELLED: 'Cancelada',
+  REFUNDED:  'Reembolsada',
 };
 
 const STATUS_STYLES: Record<OrderStatus, string> = {
@@ -28,6 +29,7 @@ const STATUS_STYLES: Record<OrderStatus, string> = {
   SHIPPED:   'bg-purple-100 text-purple-800',
   DELIVERED: 'bg-green-100 text-green-800',
   CANCELLED: 'bg-gray-200 text-gray-600',
+  REFUNDED:  'bg-orange-100 text-orange-800',
 };
 
 const dateFmt = new Intl.DateTimeFormat('es-AR', {

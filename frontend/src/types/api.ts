@@ -103,7 +103,7 @@ export interface CategoryUpsertRequest {
 
 // -------- Orders --------
 
-export type OrderStatus = 'PENDING' | 'PAID' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
+export type OrderStatus = 'PENDING' | 'PAID' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED' | 'REFUNDED';
 
 export interface OrderItem {
   id: number;

@@ -4,6 +4,7 @@ import com.artesa.orders.Order;
 import com.artesa.orders.OrderItem;
 import com.mercadopago.MercadoPagoConfig;
 import com.mercadopago.client.payment.PaymentClient;
+import com.mercadopago.client.payment.PaymentRefundClient;
 import com.mercadopago.client.preference.*;
 import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
@@ -107,6 +108,24 @@ public class MercadoPagoPaymentGateway implements PaymentGateway {
         } catch (MPException e) {
             log.error("MercadoPago SDK error fetching payment " + paymentId, e);
             throw new PaymentException("MP_SDK_ERROR", "Error consultando el pago");
+        }
+    }
+
+    @Override
+    public void refundPayment(String paymentId) {
+        try {
+            new PaymentRefundClient().refund(Long.valueOf(paymentId));
+        } catch (NumberFormatException e) {
+            throw new PaymentException("BAD_PAYMENT_ID", "Payment id must be numeric");
+        } catch (MPApiException e) {
+            log.error("MercadoPago API error refunding {}: status={}, body={}",
+                paymentId, e.getStatusCode(),
+                e.getApiResponse() == null ? "n/a" : e.getApiResponse().getContent());
+            throw new PaymentException("MP_REFUND_FAILED",
+                "MercadoPago rechazó el reembolso");
+        } catch (MPException e) {
+            log.error("MercadoPago SDK error refunding " + paymentId, e);
+            throw new PaymentException("MP_SDK_ERROR", "Error procesando el reembolso");
         }
     }
 

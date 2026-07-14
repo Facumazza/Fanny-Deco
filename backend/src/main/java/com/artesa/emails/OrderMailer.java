@@ -56,6 +56,10 @@ public class OrderMailer {
         safeSend(templates.orderCancelled(order));
     }
 
+    public void onOrderRefunded(Order order) {
+        safeSend(templates.orderRefunded(order));
+    }
+
     /**
      * Dispatch based on a status transition. Called by AdminOrderService when the
      * admin flips the status manually. `from` may be null on the very first assignment.
@@ -67,6 +71,7 @@ public class OrderMailer {
             case SHIPPED   -> onOrderShipped(order);
             case DELIVERED -> onOrderDelivered(order);
             case CANCELLED -> onOrderCancelled(order);
+            case REFUNDED  -> onOrderRefunded(order);
             case PENDING   -> { /* no-op — going back to pending doesn't warrant an email */ }
         }
     }

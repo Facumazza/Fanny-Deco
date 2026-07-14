@@ -13,6 +13,7 @@ const STATUS_LABEL: Record<OrderStatus, string> = {
   SHIPPED:   'Enviadas',
   DELIVERED: 'Entregadas',
   CANCELLED: 'Canceladas',
+  REFUNDED:  'Reembolsadas',
 };
 
 const STATUS_LINK: Record<OrderStatus, string> = {
@@ -21,6 +22,7 @@ const STATUS_LINK: Record<OrderStatus, string> = {
   SHIPPED:   '/admin/orders?status=SHIPPED',
   DELIVERED: '/admin/orders?status=DELIVERED',
   CANCELLED: '/admin/orders?status=CANCELLED',
+  REFUNDED:  '/admin/orders?status=REFUNDED',
 };
 
 export default function DashboardPage() {

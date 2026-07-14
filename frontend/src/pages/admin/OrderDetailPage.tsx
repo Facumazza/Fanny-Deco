@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { AdminLayout } from '../../components/admin/AdminLayout';
-import { getAdminOrder, updateOrderStatus, updateOrderTracking } from '../../api/admin';
+import { getAdminOrder, refundOrder, updateOrderStatus, updateOrderTracking } from '../../api/admin';
 import { ApiRequestError } from '../../types/api';
 import type { Order, OrderStatus } from '../../types/api';
-
 import { formatArs } from '../../lib/price';
 
+// Statuses the admin can flip TO with the status buttons. REFUNDED is intentionally
+// excluded — it's set only via the refund action so the money-movement side effect
+// isn't accidentally triggered by clicking a chip.
 const STATUSES: OrderStatus[] = ['PENDING', 'PAID', 'SHIPPED', 'DELIVERED', 'CANCELLED'];
 
 const STATUS_LABEL: Record<OrderStatus, string> = {
@@ -15,7 +17,14 @@ const STATUS_LABEL: Record<OrderStatus, string> = {
   SHIPPED:   'Enviada',
   DELIVERED: 'Entregada',
   CANCELLED: 'Cancelada',
+  REFUNDED:  'Reembolsada',
 };
+
+/** Terminal statuses where "cambiar estado" doesn't make sense anymore. */
+const TERMINAL: OrderStatus[] = ['CANCELLED', 'REFUNDED'];
+
+/** Statuses where a refund still makes sense (payment came through and hasn't been reversed). */
+const REFUNDABLE: OrderStatus[] = ['PAID', 'SHIPPED', 'DELIVERED'];
 
 const dateFmt = new Intl.DateTimeFormat('es-AR', {
   dateStyle: 'long', timeStyle: 'short',
@@ -97,25 +106,42 @@ export default function OrderDetailPage() {
           {/* Status changer */}
           <section className="bg-white rounded-card p-6 mb-6">
             <p className="text-xs tracking-[0.3em] text-muted mb-3">ESTADO ACTUAL</p>
-            <div className="flex items-center gap-3 flex-wrap">
-              {STATUSES.map(s => (
-                <button
-                  key={s}
-                  type="button"
-                  onClick={() => void handleStatusChange(s)}
-                  disabled={saving || s === order.status}
-                  className={
-                    'px-4 py-2 text-xs tracking-wider font-semibold border transition-colors ' +
-                    (s === order.status
-                      ? 'bg-brown-dark text-white border-brown-dark cursor-default'
-                      : 'bg-white text-ink border-cream-card hover:border-brown-dark disabled:opacity-40')
-                  }
-                >
-                  {STATUS_LABEL[s].toUpperCase()}
-                </button>
-              ))}
-            </div>
+            {TERMINAL.includes(order.status) ? (
+              <p className="text-sm text-muted">
+                Esta orden está en estado terminal (
+                <strong>{STATUS_LABEL[order.status]}</strong>) y no se puede
+                cambiar más.
+              </p>
+            ) : (
+              <div className="flex items-center gap-3 flex-wrap">
+                {STATUSES.map(s => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => void handleStatusChange(s)}
+                    disabled={saving || s === order.status}
+                    className={
+                      'px-4 py-2 text-xs tracking-wider font-semibold border transition-colors ' +
+                      (s === order.status
+                        ? 'bg-brown-dark text-white border-brown-dark cursor-default'
+                        : 'bg-white text-ink border-cream-card hover:border-brown-dark disabled:opacity-40')
+                    }
+                  >
+                    {STATUS_LABEL[s].toUpperCase()}
+                  </button>
+                ))}
+              </div>
+            )}
           </section>
+
+          {/* Refund action — only relevant while the payment is live. */}
+          {REFUNDABLE.includes(order.status) && (
+            <RefundPanel order={order} onRefunded={o => {
+              setOrder(o);
+              setFeedback('Reembolso procesado. Se le notificó al cliente por email.');
+              setTimeout(() => setFeedback(null), 3500);
+            }} />
+          )}
 
           {/* Customer + shipping */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -197,6 +223,54 @@ export default function OrderDetailPage() {
         </>
       )}
     </AdminLayout>
+  );
+}
+
+function RefundPanel({ order, onRefunded }: {
+  order: Order;
+  onRefunded: (o: Order) => void;
+}) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleRefund() {
+    const ok = window.confirm(
+      `¿Reembolsar ${formatArs(order.subtotalArs)} al cliente?\n\n` +
+      `MercadoPago va a devolver el importe al medio de pago original y le vamos ` +
+      `a notificar por email. Esta acción no se puede deshacer.`
+    );
+    if (!ok) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const refunded = await refundOrder(order.id);
+      onRefunded(refunded);
+    } catch (e) {
+      console.error(e);
+      const body = (e as { body?: { message?: string } }).body;
+      setError(body?.message ?? 'No se pudo procesar el reembolso.');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <section className="bg-white rounded-card p-6 mb-6 border border-orange-100">
+      <p className="text-xs tracking-[0.3em] text-muted mb-2">REEMBOLSO</p>
+      <p className="text-sm text-muted mb-4 max-w-2xl">
+        Devuelve el importe total al medio de pago original vía MercadoPago.
+        El cliente recibe el email de confirmación automáticamente.
+      </p>
+      <button
+        type="button"
+        onClick={() => void handleRefund()}
+        disabled={busy}
+        className="bg-white text-terracotta border border-terracotta hover:bg-terracotta hover:text-white px-5 py-2 text-sm tracking-wider font-semibold transition-colors disabled:opacity-40"
+      >
+        {busy ? 'REEMBOLSANDO…' : `REEMBOLSAR ${formatArs(order.subtotalArs)}`}
+      </button>
+      {error && <p role="alert" className="text-terracotta text-xs mt-3">{error}</p>}
+    </section>
   );
 }
 

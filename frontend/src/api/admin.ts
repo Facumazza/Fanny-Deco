@@ -141,6 +141,10 @@ export function updateOrderTracking(id: number, trackingInfo: string | null): Pr
   });
 }
 
+export function refundOrder(id: number): Promise<Order> {
+  return adminFetch<Order>(`/orders/${id}/refund`, { method: 'POST' });
+}
+
 // -------- Stats --------
 
 export function getAdminStats(): Promise<AdminStats> {
