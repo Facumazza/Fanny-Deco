@@ -2,6 +2,7 @@ package com.artesa.payments;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,9 +25,11 @@ public class WebhookController {
     private static final Logger log = LoggerFactory.getLogger(WebhookController.class);
 
     private final PaymentService paymentService;
+    private final WebhookSignatureVerifier signatures;
 
-    public WebhookController(PaymentService paymentService) {
+    public WebhookController(PaymentService paymentService, WebhookSignatureVerifier signatures) {
         this.paymentService = paymentService;
+        this.signatures = signatures;
     }
 
     @PostMapping
@@ -34,6 +37,8 @@ public class WebhookController {
         @RequestParam(name = "id",    required = false) String queryId,
         @RequestParam(name = "topic", required = false) String queryTopic,
         @RequestParam(name = "type",  required = false) String queryType,
+        @RequestHeader(name = "x-signature",  required = false) String signatureHeader,
+        @RequestHeader(name = "x-request-id", required = false) String requestId,
         @RequestBody(required = false) Map<String, Object> body
     ) {
         String paymentId = resolvePaymentId(queryId, queryTopic, queryType, body);
@@ -43,6 +48,16 @@ public class WebhookController {
                 body == null ? "n/a" : body.keySet());
             return ResponseEntity.ok().build();
         }
+
+        // Reject forgeries. In dev (no secret configured) the verifier is inert
+        // and returns true with a startup warning.
+        if (!signatures.verify(signatureHeader, requestId, paymentId)) {
+            // 401 rather than 200 so a genuine misconfiguration is visible instead of
+            // silently discarded. MP retries on non-2xx, but a persistent 401 signals
+            // "your secret is wrong" — that's what we want.
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
         try {
             paymentService.applyPaymentUpdate(paymentId);
         } catch (Exception e) {

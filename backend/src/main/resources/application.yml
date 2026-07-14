@@ -42,7 +42,10 @@ artesa:
     # `mercadopago` for real integration, or leave blank/other for tests-with-fake.
     provider: ${ARTESA_PAYMENT_PROVIDER:mercadopago}
     mercadopago:
-      access-token: ${MERCADOPAGO_ACCESS_TOKEN:}
+      access-token:    ${MERCADOPAGO_ACCESS_TOKEN:}
+      # HMAC secret from the MP dashboard → Notificaciones → Webhooks → Firma.
+      # When empty, incoming webhooks are NOT verified (dev only).
+      webhook-secret:  ${MERCADOPAGO_WEBHOOK_SECRET:}
     # Public URL of the backend as reachable from MercadoPago's servers.
     # In dev, this is your ngrok URL (e.g. https://abc123.ngrok-free.app).
     public-base-url: ${ARTESA_PUBLIC_BASE_URL:http://localhost:8080}
