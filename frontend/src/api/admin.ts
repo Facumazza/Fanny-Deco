@@ -1,6 +1,7 @@
 import type {
   AdminCategory, AdminOrderSummary, AdminProduct, AdminStats, ApiError,
   CategoryUpsertRequest, Order, OrderStatus, Page, ProductUpsertRequest,
+  Review, ReviewUpsertRequest,
 } from '../types/api';
 import { ApiRequestError } from '../types/api';
 
@@ -143,6 +144,34 @@ export function updateOrderTracking(id: number, trackingInfo: string | null): Pr
 
 export function refundOrder(id: number): Promise<Order> {
   return adminFetch<Order>(`/orders/${id}/refund`, { method: 'POST' });
+}
+
+// -------- Reviews --------
+
+export function listAdminReviews(): Promise<Review[]> {
+  return adminFetch<Review[]>('/reviews');
+}
+
+export function getAdminReview(id: number): Promise<Review> {
+  return adminFetch<Review>(`/reviews/${id}`);
+}
+
+export function createAdminReview(req: ReviewUpsertRequest): Promise<Review> {
+  return adminFetch<Review>('/reviews', {
+    method: 'POST',
+    body: JSON.stringify(req),
+  });
+}
+
+export function updateAdminReview(id: number, req: ReviewUpsertRequest): Promise<Review> {
+  return adminFetch<Review>(`/reviews/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(req),
+  });
+}
+
+export function deleteAdminReview(id: number): Promise<void> {
+  return adminFetch<void>(`/reviews/${id}`, { method: 'DELETE' });
 }
 
 // -------- Stats --------

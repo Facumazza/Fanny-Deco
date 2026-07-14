@@ -25,6 +25,9 @@ import CategoryNewPage from './pages/admin/CategoryNewPage';
 import CategoryEditPage from './pages/admin/CategoryEditPage';
 import OrdersListPage from './pages/admin/OrdersListPage';
 import OrderDetailPage from './pages/admin/OrderDetailPage';
+import ReviewsListPage from './pages/admin/ReviewsListPage';
+import ReviewNewPage from './pages/admin/ReviewNewPage';
+import ReviewEditPage from './pages/admin/ReviewEditPage';
 import { AuthProvider } from './hooks/useAuth';
 import { CartProvider } from './hooks/useCart';
 import { ProtectedRoute } from './components/admin/ProtectedRoute';
@@ -89,6 +92,18 @@ export default function App() {
         <Route
           path="/admin/orders/:id"
           element={<ProtectedRoute><OrderDetailPage /></ProtectedRoute>}
+        />
+        <Route
+          path="/admin/reviews"
+          element={<ProtectedRoute><ReviewsListPage /></ProtectedRoute>}
+        />
+        <Route
+          path="/admin/reviews/new"
+          element={<ProtectedRoute><ReviewNewPage /></ProtectedRoute>}
+        />
+        <Route
+          path="/admin/reviews/:id/edit"
+          element={<ProtectedRoute><ReviewEditPage /></ProtectedRoute>}
         />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

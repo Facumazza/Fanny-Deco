@@ -38,6 +38,14 @@ export interface Review {
   createdAt: string;
 }
 
+export interface ReviewUpsertRequest {
+  authorName: string;
+  rating: number;
+  body: string;
+  location: string | null;
+  productName: string | null;
+}
+
 export interface Page<T> {
   content: T[];
   page: number;
