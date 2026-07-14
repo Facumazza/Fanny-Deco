@@ -6,6 +6,7 @@ import com.artesa.catalog.admin.SlugAlreadyExistsException;
 import com.artesa.catalog.service.ProductNotFoundException;
 import com.artesa.orders.OrderNotFoundException;
 import com.artesa.payments.PaymentException;
+import com.artesa.reviews.ReviewNotFoundException;
 import com.artesa.uploads.UploadException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiError> orderNotFound(OrderNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
             .body(ApiError.of("ORDER_NOT_FOUND", e.getMessage()));
+    }
+
+    @ExceptionHandler(ReviewNotFoundException.class)
+    public ResponseEntity<ApiError> reviewNotFound(ReviewNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .body(ApiError.of("REVIEW_NOT_FOUND", e.getMessage()));
     }
 
     @ExceptionHandler(UploadException.class)
