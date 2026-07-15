@@ -48,7 +48,9 @@ export function ImageUploadField({ value, onChange, label = 'URL de imagen', req
           {label.toUpperCase()}{required && <span className="text-terracotta"> *</span>}
         </span>
         <input
-          type="url"
+          // Not type="url": the backend returns relative paths like "/uploads/xxx.jpg"
+          // after upload, which browsers reject as invalid URLs and block the submit.
+          type="text"
           required={required}
           value={value}
           onChange={e => onChange(e.target.value)}
