@@ -1,8 +1,13 @@
+import { Link } from 'react-router-dom';
 import type { Category } from '../../types/api';
 
 export function CategoryCard({ category }: { category: Category }) {
   return (
-    <div className="relative overflow-hidden rounded-card aspect-[3/4] group">
+    <Link
+      to={`/?categoria=${category.slug}#coleccion`}
+      className="relative overflow-hidden rounded-card aspect-[3/4] group block focus:outline-none focus:ring-2 focus:ring-brown-dark focus:ring-offset-2"
+      aria-label={`Ver ${category.name}`}
+    >
       <img
         src={category.imageUrl}
         alt={category.name}
@@ -16,6 +21,6 @@ export function CategoryCard({ category }: { category: Category }) {
           <p className="text-sm opacity-90 mt-1">{category.subtitle}</p>
         )}
       </div>
-    </div>
+    </Link>
   );
 }
