@@ -15,9 +15,8 @@ export const mockCategories: Category[] = [
 export const mockProduct: ProductSummary = {
   id: 10, slug: 'bolso-tote-milano', name: 'Bolso Tote Milano',
   priceArs: 342000, imageUrl: 'https://x/p.jpg',
-  badge: 'MAS_VENDIDO', ratingAvg: 5.0, ratingCount: 128,
+  ratingAvg: 5.0, ratingCount: 128,
   categorySlug: 'carteras-cuero',
-  colors: ['#6B4029', '#2B2A28', '#C9B79C'],
 };
 
 export const mockProductsPage: Page<ProductSummary> = {

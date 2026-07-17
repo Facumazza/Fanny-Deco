@@ -102,7 +102,6 @@ export default function ProductsListPage() {
                 <th className="text-left px-4 py-3 w-16">IMG</th>
                 <th className="text-left px-4 py-3">NOMBRE</th>
                 <th className="text-left px-4 py-3">CATEGORÍA</th>
-                <th className="text-left px-4 py-3">BADGE</th>
                 <th className="text-right px-4 py-3">PRECIO</th>
                 <th className="text-right px-4 py-3 w-40">ACCIONES</th>
               </tr>
@@ -123,13 +122,6 @@ export default function ProductsListPage() {
                     <div className="text-xs text-muted">{p.slug}</div>
                   </td>
                   <td className="px-4 py-3 text-ink">{p.categoryName}</td>
-                  <td className="px-4 py-3">
-                    {p.badge
-                      ? <span className="inline-block bg-terracotta text-white text-[10px] font-semibold tracking-wider px-2 py-1 rounded-sm">
-                          {p.badge.replace('_', ' ')}
-                        </span>
-                      : <span className="text-muted">—</span>}
-                  </td>
                   <td className="px-4 py-3 text-right font-semibold text-terracotta">
                     {formatArs(p.priceArs)}
                   </td>

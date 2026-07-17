@@ -1,9 +1,8 @@
 import { apiFetch } from './client';
-import type { Category, Page, ProductBadge, ProductDetail, ProductSummary, Review } from '../types/api';
+import type { Category, Page, ProductDetail, ProductSummary, Review } from '../types/api';
 
 export interface ProductFilters {
   category?: string;
-  badge?: ProductBadge;
   q?: string;
   page?: number;
   size?: number;
@@ -17,7 +16,6 @@ export function getCategories(): Promise<Category[]> {
 export function getProducts(filters: ProductFilters = {}): Promise<Page<ProductSummary>> {
   const qs = new URLSearchParams();
   if (filters.category) qs.set('category', filters.category);
-  if (filters.badge)    qs.set('badge', filters.badge);
   if (filters.q)        qs.set('q', filters.q);
   if (filters.page !== undefined) qs.set('page', String(filters.page));
   if (filters.size !== undefined) qs.set('size', String(filters.size));

@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import type { ProductSummary } from '../../types/api';
-import { Badge } from './Badge';
 import { StarRating } from './StarRating';
 import { formatArs } from '../../lib/price';
 
@@ -14,11 +13,6 @@ export function ProductCard({ product }: { product: ProductSummary }) {
           loading="lazy"
           className="w-full h-full object-cover"
         />
-        {product.badge && (
-          <div className="absolute top-3 left-3">
-            <Badge kind={product.badge} />
-          </div>
-        )}
         <button
           type="button"
           data-wishlist
@@ -43,17 +37,6 @@ export function ProductCard({ product }: { product: ProductSummary }) {
           <span className="text-terracotta font-semibold">
             {formatArs(product.priceArs)}
           </span>
-          <div className="flex gap-1">
-            {product.colors.map((hex, i) => (
-              <span
-                key={i}
-                data-swatch
-                title={hex}
-                style={{ backgroundColor: hex }}
-                className="w-4 h-4 rounded-sm border border-black/10"
-              />
-            ))}
-          </div>
         </div>
       </div>
     </article>

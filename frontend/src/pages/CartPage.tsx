@@ -35,11 +35,11 @@ export default function CartPage() {
             <ul className="lg:col-span-2 space-y-4">
               {items.map(it => (
                 <CartRow
-                  key={`${it.productId}-${it.color ?? ''}`}
+                  key={it.productId}
                   item={it}
-                  onDecrease={() => updateQuantity(it.productId, it.color, it.quantity - 1)}
-                  onIncrease={() => updateQuantity(it.productId, it.color, it.quantity + 1)}
-                  onRemove={() => removeItem(it.productId, it.color)}
+                  onDecrease={() => updateQuantity(it.productId, it.quantity - 1)}
+                  onIncrease={() => updateQuantity(it.productId, it.quantity + 1)}
+                  onRemove={() => removeItem(it.productId)}
                 />
               ))}
               <button
@@ -110,17 +110,6 @@ function CartRow({ item, onDecrease, onIncrease, onRemove }: {
         >
           {item.name}
         </Link>
-        {item.color && (
-          <p className="text-xs text-muted mt-1 flex items-center gap-2">
-            Color
-            <span
-              style={{ backgroundColor: item.color }}
-              title={item.color}
-              className="inline-block w-3 h-3 rounded-sm border border-black/10"
-            />
-            {item.color}
-          </p>
-        )}
         <p className="text-sm text-muted mt-1">
           {formatArs(item.priceArs)} c/u
         </p>

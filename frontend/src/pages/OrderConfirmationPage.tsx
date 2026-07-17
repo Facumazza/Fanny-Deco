@@ -107,16 +107,6 @@ export default function OrderConfirmationPage() {
                     />
                     <div className="flex-1 min-w-0">
                       <p className="text-ink font-medium">{it.productName}</p>
-                      {it.color && (
-                        <p className="text-xs text-muted flex items-center gap-2 mt-1">
-                          Color
-                          <span
-                            style={{ backgroundColor: it.color }}
-                            className="inline-block w-3 h-3 rounded-sm border border-black/10"
-                          />
-                          {it.color}
-                        </p>
-                      )}
                       <p className="text-xs text-muted mt-1">
                         {formatArs(it.unitPriceArs)} × {it.quantity}
                       </p>

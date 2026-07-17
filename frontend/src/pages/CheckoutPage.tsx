@@ -66,7 +66,6 @@ export default function CheckoutPage() {
         items: items.map(it => ({
           productId: it.productId,
           quantity: it.quantity,
-          color: it.color ?? undefined,
         })),
       });
       // The cart is emptied only once we know we're bouncing to MP. If the
@@ -193,7 +192,7 @@ export default function CheckoutPage() {
             <p className="text-xs tracking-[0.3em] text-muted mb-4">TU ORDEN</p>
             <ul className="space-y-3 mb-4">
               {items.map(it => (
-                <li key={`${it.productId}-${it.color ?? ''}`} className="flex items-center gap-3 text-sm">
+                <li key={it.productId} className="flex items-center gap-3 text-sm">
                   <img src={it.imageUrl} alt="" className="w-12 h-12 object-cover rounded-sm bg-cream-card" />
                   <div className="flex-1 min-w-0">
                     <p className="text-ink truncate">{it.name}</p>

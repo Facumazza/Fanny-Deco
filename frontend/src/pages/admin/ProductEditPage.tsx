@@ -36,11 +36,9 @@ export default function ProductEditPage() {
     description: product.description,
     priceArs: product.priceArs,
     imageUrl: product.imageUrl,
-    badge: product.badge,
     ratingAvg: product.ratingAvg,
     ratingCount: product.ratingCount,
     categoryId: product.categoryId,
-    colors: product.colors,
   };
 
   return (

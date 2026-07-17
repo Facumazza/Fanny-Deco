@@ -11,21 +11,23 @@ export interface CartItem {
   name: string;
   imageUrl: string;
   priceArs: number;
-  color: string | null;
   quantity: number;
 }
 
 interface CartState {
   items: CartItem[];
   addItem: (input: Omit<CartItem, 'quantity'> & { quantity?: number }) => void;
-  updateQuantity: (productId: number, color: string | null, quantity: number) => void;
-  removeItem: (productId: number, color: string | null) => void;
+  updateQuantity: (productId: number, quantity: number) => void;
+  removeItem: (productId: number) => void;
   clear: () => void;
   itemCount: number;   // total units across items
   subtotalArs: number;
 }
 
-const STORAGE_KEY = 'artesa.cart.v1';
+// v2 = colors removed. Old carts (v1) on returning visitors are silently
+// dropped instead of migrated — a stale cart is low-cost, and the previous
+// shape carried a color per line we no longer track.
+const STORAGE_KEY = 'artesa.cart.v2';
 
 const CartContext = createContext<CartState | null>(null);
 
@@ -45,14 +47,6 @@ function loadInitial(): CartItem[] {
   }
 }
 
-/**
- * Two entries in the cart are the "same line" when they refer to the same product
- * AND the same selected color. Adding an existing (product, color) combo bumps qty.
- */
-function sameLine(a: CartItem, productId: number, color: string | null): boolean {
-  return a.productId === productId && (a.color ?? null) === (color ?? null);
-}
-
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>(loadInitial);
 
@@ -67,7 +61,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const addItem = useCallback<CartState['addItem']>((input) => {
     const qty = Math.max(1, input.quantity ?? 1);
     setItems(list => {
-      const idx = list.findIndex(it => sameLine(it, input.productId, input.color));
+      const idx = list.findIndex(it => it.productId === input.productId);
       if (idx >= 0) {
         const next = [...list];
         next[idx] = { ...next[idx], quantity: next[idx].quantity + qty };
@@ -81,26 +75,25 @@ export function CartProvider({ children }: { children: ReactNode }) {
           name: input.name,
           imageUrl: input.imageUrl,
           priceArs: input.priceArs,
-          color: input.color,
           quantity: qty,
         },
       ];
     });
   }, []);
 
-  const updateQuantity = useCallback<CartState['updateQuantity']>((productId, color, quantity) => {
+  const updateQuantity = useCallback<CartState['updateQuantity']>((productId, quantity) => {
     setItems(list => {
       if (quantity <= 0) {
-        return list.filter(it => !sameLine(it, productId, color));
+        return list.filter(it => it.productId !== productId);
       }
       return list.map(it =>
-        sameLine(it, productId, color) ? { ...it, quantity } : it
+        it.productId === productId ? { ...it, quantity } : it
       );
     });
   }, []);
 
-  const removeItem = useCallback<CartState['removeItem']>((productId, color) => {
-    setItems(list => list.filter(it => !sameLine(it, productId, color)));
+  const removeItem = useCallback<CartState['removeItem']>((productId) => {
+    setItems(list => list.filter(it => it.productId !== productId));
   }, []);
 
   const clear = useCallback(() => setItems([]), []);

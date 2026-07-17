@@ -10,11 +10,9 @@ const EMPTY: ProductUpsertRequest = {
   description: '',
   priceArs: 0,
   imageUrl: '',
-  badge: null,
   ratingAvg: 5,
   ratingCount: 0,
   categoryId: 0,
-  colors: [],
 };
 
 export default function ProductNewPage() {

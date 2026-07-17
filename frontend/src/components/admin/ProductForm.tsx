@@ -1,17 +1,8 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import type { Category, ProductBadge, ProductUpsertRequest } from '../../types/api';
+import type { Category, ProductUpsertRequest } from '../../types/api';
 import { getCategories } from '../../api/catalog';
 import { ImageUploadField } from './ImageUploadField';
-
-const BADGES: { value: ProductBadge; label: string }[] = [
-  { value: 'MAS_VENDIDO',      label: 'Más vendido' },
-  { value: 'NUEVO',            label: 'Nuevo' },
-  { value: 'ARTESANAL',        label: 'Artesanal' },
-  { value: 'EDICION_LIMITADA', label: 'Edición limitada' },
-  { value: 'SET_X3',           label: 'Set x3' },
-  { value: 'VERANO',           label: 'Verano' },
-];
 
 interface Props {
   initial: ProductUpsertRequest;
@@ -31,7 +22,6 @@ function slugify(text: string): string {
 export function ProductForm({ initial, submitLabel, onSubmit }: Props) {
   const [form, setForm] = useState<ProductUpsertRequest>(initial);
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(initial.slug !== '');
-  const [colorsText, setColorsText] = useState(initial.colors.join(', '));
   const [categories, setCategories] = useState<Category[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -56,22 +46,9 @@ export function ProductForm({ initial, submitLabel, onSubmit }: Props) {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
-
-    // Parse colors from text.
-    const colors = colorsText
-      .split(/[,\n]/)
-      .map(s => s.trim())
-      .filter(s => s.length > 0);
-    // Basic client-side hex format check to catch typos early.
-    const bad = colors.find(c => !/^#[0-9A-Fa-f]{6}$/.test(c));
-    if (bad) {
-      setError(`Color inválido: "${bad}". Usá el formato #AABBCC.`);
-      return;
-    }
-
     setSubmitting(true);
     try {
-      await onSubmit({ ...form, colors });
+      await onSubmit(form);
     } catch (err) {
       setError(extractError(err));
     } finally {
@@ -119,22 +96,6 @@ export function ProductForm({ initial, submitLabel, onSubmit }: Props) {
             <option value="">— Elegí una —</option>
             {categories.map(c => (
               <option key={c.id} value={c.id}>{c.name}</option>
-            ))}
-          </select>
-        </Field>
-
-        <Field label="Badge">
-          <select
-            value={form.badge ?? ''}
-            onChange={e => setForm(f => ({
-              ...f,
-              badge: (e.target.value || null) as ProductBadge | null,
-            }))}
-            className={inputCls}
-          >
-            <option value="">Ninguno</option>
-            {BADGES.map(b => (
-              <option key={b.value} value={b.value}>{b.label}</option>
             ))}
           </select>
         </Field>
@@ -192,31 +153,6 @@ export function ProductForm({ initial, submitLabel, onSubmit }: Props) {
           onChange={e => setForm(f => ({ ...f, description: e.target.value || null }))}
           className={inputCls + ' resize-y'}
         />
-      </Field>
-
-      <Field label="Colores" hint="Hex codes separados por coma o salto de línea (ej: #6B4029, #2B2A28)">
-        <textarea
-          rows={2}
-          value={colorsText}
-          onChange={e => setColorsText(e.target.value)}
-          className={inputCls + ' resize-y font-mono text-sm'}
-        />
-        {form.imageUrl && (
-          <div className="mt-3 flex gap-2 items-center flex-wrap">
-            {colorsText
-              .split(/[,\n]/)
-              .map(s => s.trim())
-              .filter(s => /^#[0-9A-Fa-f]{6}$/.test(s))
-              .map((hex, i) => (
-                <span
-                  key={i}
-                  style={{ backgroundColor: hex }}
-                  title={hex}
-                  className="w-6 h-6 rounded-sm border border-black/10"
-                />
-              ))}
-          </div>
-        )}
       </Field>
 
       <div className="flex items-center gap-3 pt-4">

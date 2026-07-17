@@ -6,7 +6,6 @@ import { getProduct } from '../api/catalog';
 import { useCart } from '../hooks/useCart';
 import { Header } from '../components/layout/Header';
 import { Footer } from '../components/layout/Footer';
-import { Badge } from '../components/catalog/Badge';
 import { StarRating } from '../components/catalog/StarRating';
 import { Skeleton } from '../components/ui/Skeleton';
 import { formatArs } from '../lib/price';
@@ -18,7 +17,6 @@ export default function ProductPage() {
   const { addItem } = useCart();
   const [status, setStatus] = useState<Status>('loading');
   const [product, setProduct] = useState<ProductDetail | null>(null);
-  const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [wishlisted, setWishlisted] = useState(false);
   const [addedFeedback, setAddedFeedback] = useState(false);
@@ -31,7 +29,6 @@ export default function ProductPage() {
       name: product.name,
       imageUrl: product.imageUrl,
       priceArs: product.priceArs,
-      color: selectedColor,
       quantity,
     });
     setAddedFeedback(true);
@@ -43,7 +40,6 @@ export default function ProductPage() {
     getProduct(slug)
       .then(p => {
         setProduct(p);
-        setSelectedColor(p.colors[0] ?? null);
         setStatus('ok');
       })
       .catch(err => {
@@ -102,11 +98,6 @@ export default function ProductPage() {
                     className="w-full h-full object-cover"
                   />
                 </div>
-                {product.badge && (
-                  <div className="absolute top-4 left-4">
-                    <Badge kind={product.badge} />
-                  </div>
-                )}
               </div>
 
               {/* Info */}
@@ -124,35 +115,6 @@ export default function ProductPage() {
                 <p className="text-3xl font-semibold text-terracotta mb-8">
                   {formatArs(product.priceArs)}
                 </p>
-
-                {product.colors.length > 0 && (
-                  <div className="mb-8">
-                    <p className="text-xs tracking-wider text-muted mb-3">
-                      COLOR
-                      {selectedColor && (
-                        <span className="ml-2 text-ink">{selectedColor}</span>
-                      )}
-                    </p>
-                    <div className="flex gap-3">
-                      {product.colors.map(hex => (
-                        <button
-                          key={hex}
-                          type="button"
-                          onClick={() => setSelectedColor(hex)}
-                          aria-label={`Color ${hex}`}
-                          aria-pressed={selectedColor === hex}
-                          style={{ backgroundColor: hex }}
-                          className={
-                            'w-10 h-10 rounded-sm border-2 transition-colors ' +
-                            (selectedColor === hex
-                              ? 'border-brown-dark'
-                              : 'border-transparent hover:border-cream-card')
-                          }
-                        />
-                      ))}
-                    </div>
-                  </div>
-                )}
 
                 {product.description && (
                   <div className="mb-8">

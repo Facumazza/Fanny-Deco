@@ -1,4 +1,5 @@
-import { Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import ProductPage from './pages/ProductPage';
 import CartPage from './pages/CartPage';
@@ -33,10 +34,20 @@ import { CartProvider } from './hooks/useCart';
 import { ProtectedRoute } from './components/admin/ProtectedRoute';
 import { WhatsAppButton } from './components/layout/WhatsAppButton';
 
+// Reset scroll on every route change. Without this, react-router keeps the
+// previous page's scroll position, so clicking a product card near the bottom
+// of the home lands you at the bottom of the product page.
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+}
+
 export default function App() {
   return (
     <AuthProvider>
       <CartProvider>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/producto/:slug" element={<ProductPage />} />

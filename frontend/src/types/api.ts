@@ -1,7 +1,3 @@
-export type ProductBadge =
-  | 'MAS_VENDIDO' | 'NUEVO' | 'ARTESANAL'
-  | 'EDICION_LIMITADA' | 'SET_X3' | 'VERANO';
-
 export interface Category {
   id: number;
   slug: string;
@@ -16,11 +12,9 @@ export interface ProductSummary {
   name: string;
   priceArs: number;
   imageUrl: string;
-  badge: ProductBadge | null;
   ratingAvg: number;
   ratingCount: number;
   categorySlug: string;
-  colors: string[];
 }
 
 export interface ProductDetail extends ProductSummary {
@@ -69,12 +63,10 @@ export interface AdminProduct {
   description: string | null;
   priceArs: number;
   imageUrl: string;
-  badge: ProductBadge | null;
   ratingAvg: number;
   ratingCount: number;
   categoryId: number;
   categoryName: string;
-  colors: string[];
   createdAt: string;
 }
 
@@ -84,11 +76,9 @@ export interface ProductUpsertRequest {
   description: string | null;
   priceArs: number;
   imageUrl: string;
-  badge: ProductBadge | null;
   ratingAvg: number;
   ratingCount: number;
   categoryId: number;
-  colors: string[];
 }
 
 export interface AdminCategory {
@@ -119,7 +109,6 @@ export interface OrderItem {
   productSlug: string;
   productName: string;
   productImageUrl: string;
-  color: string | null;
   quantity: number;
   unitPriceArs: number;
   lineTotalArs: number;
@@ -155,7 +144,6 @@ export interface CreateOrderRequest {
   items: {
     productId: number;
     quantity: number;
-    color?: string | null;
   }[];
 }
 
