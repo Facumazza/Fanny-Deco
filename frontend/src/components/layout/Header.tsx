@@ -1,8 +1,23 @@
-import { Link } from 'react-router-dom';
+import { FormEvent, useEffect, useState } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useCart } from '../../hooks/useCart';
 
 export function Header() {
   const { itemCount } = useCart();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  // Reflect the URL's ?q= so the input stays in sync when the user hits back,
+  // clears the search from the collection heading, or types a new query.
+  const urlQ = searchParams.get('q') ?? '';
+  const [query, setQuery] = useState(urlQ);
+  useEffect(() => { setQuery(urlQ); }, [urlQ]);
+
+  function submitSearch(e: FormEvent) {
+    e.preventDefault();
+    const trimmed = query.trim();
+    // Empty submit clears the search and lands on the plain home.
+    navigate(trimmed ? `/?q=${encodeURIComponent(trimmed)}#coleccion` : '/');
+  }
 
   return (
     <header>
@@ -32,12 +47,33 @@ export function Header() {
             <span className="font-display text-3xl tracking-widest text-ink">ARTESA</span>
             <span className="font-sans text-[10px] tracking-[0.3em] text-muted mt-1">CUERO &amp; CERÁMICA</span>
           </Link>
-          <nav className="flex items-center gap-10 text-sm text-ink">
+          <nav className="hidden md:flex items-center gap-8 text-sm text-ink">
             <Link to="/#coleccion" className="hover:text-terracotta">Colecciones</Link>
             <Link to="/?categoria=carteras-cuero" className="hover:text-terracotta">Cuero</Link>
             <Link to="/?categoria=ceramica-deco" className="hover:text-terracotta">Cerámica</Link>
             <Link to="/nosotros" className="hover:text-terracotta">Nosotros</Link>
           </nav>
+          <form
+            role="search"
+            onSubmit={submitSearch}
+            className="hidden md:flex items-center bg-white border border-cream-card focus-within:border-brown-dark transition-colors"
+          >
+            <input
+              type="search"
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              placeholder="Buscar productos…"
+              aria-label="Buscar productos"
+              className="px-3 py-2 w-40 lg:w-56 text-sm focus:outline-none bg-transparent"
+            />
+            <button
+              type="submit"
+              aria-label="Buscar"
+              className="px-3 py-2 text-muted hover:text-terracotta"
+            >
+              🔍
+            </button>
+          </form>
           <Link
             to="/carrito"
             aria-label={`Carrito (${itemCount} ${itemCount === 1 ? 'ítem' : 'ítems'})`}

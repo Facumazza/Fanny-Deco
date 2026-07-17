@@ -31,15 +31,17 @@ export default function HomePage() {
   const collectionRef = useRef<HTMLElement | null>(null);
 
   const activeTab: TabValue = searchParams.get('categoria') || null;
+  const searchQuery = searchParams.get('q')?.trim() || null;
 
-  // Tab-change fetch: swallows errors so a transient failure doesn't wipe the
-  // category grid we already had. Only used AFTER initial load succeeded.
-  const refetchProductsForTab = useCallback(async (category: TabValue) => {
+  // Fetch after a filter change (category tab OR search query). Swallows errors
+  // so a transient failure doesn't wipe the grid we already had.
+  const refetchProducts = useCallback(async (category: TabValue, q: string | null) => {
     setProductsLoading(true);
     try {
       const prods = await getProducts({
         size: 12,
         category: category ?? undefined,
+        q: q ?? undefined,
       });
       setProducts((prods as Page<ProductSummary>).content);
     } catch (e) {
@@ -55,7 +57,11 @@ export default function HomePage() {
     try {
       const [cats, prods] = await Promise.all([
         getCategories(),
-        getProducts({ size: 12, category: activeTab ?? undefined }),
+        getProducts({
+          size: 12,
+          category: activeTab ?? undefined,
+          q: searchQuery ?? undefined,
+        }),
       ]);
       setCategories(cats);
       setProducts((prods as Page<ProductSummary>).content);
@@ -64,22 +70,22 @@ export default function HomePage() {
       console.error(e);
       setStatus('error');
     }
-  }, [activeTab]);
+  }, [activeTab, searchQuery]);
 
   // First mount only — hydrates both lists.
   useEffect(() => { void initialLoad(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, []);
 
   // React to URL changes after the first load (e.g. user clicks a category link
-  // in the header — only the query param changes, no full navigation).
+  // in the header, or submits a search — only query params change).
   useEffect(() => {
     if (status !== 'ok') return;
-    void refetchProductsForTab(activeTab);
-    // Scroll the collection into view when the user arrived via a category link.
-    if (searchParams.get('categoria')) {
+    void refetchProducts(activeTab, searchQuery);
+    // Scroll the collection into view when the user arrived via a filter link.
+    if (searchParams.get('categoria') || searchQuery) {
       collectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab]);
+  }, [activeTab, searchQuery]);
 
   // Also scroll when arriving with #coleccion in the URL (e.g. header "Colecciones").
   useEffect(() => {
@@ -91,9 +97,17 @@ export default function HomePage() {
 
   const changeTab = useCallback((next: TabValue) => {
     // Writing to the URL is enough — the effect above listens and refetches.
+    // Picking a category also clears an active search (they'd overconstrain).
     const params = new URLSearchParams(searchParams);
     if (next) params.set('categoria', next);
     else      params.delete('categoria');
+    params.delete('q');
+    setSearchParams(params, { replace: false });
+  }, [searchParams, setSearchParams]);
+
+  const clearSearch = useCallback(() => {
+    const params = new URLSearchParams(searchParams);
+    params.delete('q');
     setSearchParams(params, { replace: false });
   }, [searchParams, setSearchParams]);
 
@@ -133,17 +147,35 @@ export default function HomePage() {
               </div>
             </section>
             <section id="coleccion" ref={collectionRef} className="scroll-mt-24">
-              <p className="text-terracotta text-xs tracking-[0.3em] mb-2">TIENDA</p>
-              <h2 className="font-display text-4xl mb-6">
-                {activeTab
-                  ? categories.find(c => c.slug === activeTab)?.name ?? 'Nuestra Colección'
-                  : 'Nuestra Colección'}
-              </h2>
-              <CategoryTabs
-                categories={categories}
-                value={activeTab}
-                onChange={changeTab}
-              />
+              <p className="text-terracotta text-xs tracking-[0.3em] mb-2">
+                {searchQuery ? 'RESULTADOS DE BÚSQUEDA' : 'TIENDA'}
+              </p>
+              <div className="flex items-baseline gap-4 flex-wrap mb-6">
+                <h2 className="font-display text-4xl">
+                  {searchQuery
+                    ? `"${searchQuery}"`
+                    : activeTab
+                      ? categories.find(c => c.slug === activeTab)?.name ?? 'Nuestra Colección'
+                      : 'Nuestra Colección'}
+                </h2>
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={clearSearch}
+                    className="text-sm text-muted hover:text-terracotta underline"
+                  >
+                    Limpiar búsqueda
+                  </button>
+                )}
+              </div>
+              {/* Category tabs are meaningless while a text search is active — hide them. */}
+              {!searchQuery && (
+                <CategoryTabs
+                  categories={categories}
+                  value={activeTab}
+                  onChange={changeTab}
+                />
+              )}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 min-h-[200px]">
                 {productsLoading
                   ? Array.from({ length: 4 }).map((_, i) => (
@@ -153,7 +185,9 @@ export default function HomePage() {
                     ? products.map(p => <ProductCard key={p.id} product={p} />)
                     : (
                         <p className="col-span-full text-muted text-center py-12">
-                          No hay productos en esta categoría.
+                          {searchQuery
+                            ? `Sin resultados para "${searchQuery}".`
+                            : 'No hay productos en esta categoría.'}
                         </p>
                       )}
               </div>
