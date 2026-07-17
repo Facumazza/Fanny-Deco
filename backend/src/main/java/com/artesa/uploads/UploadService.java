@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -43,7 +44,21 @@ public class UploadService {
                 "Tipo no permitido. Solo JPG, PNG, WebP o GIF.");
         }
 
-        String ext = extensionFor(mime);
+        // Content-Type is client-declared and trivially spoofable, so we also
+        // inspect the file's magic bytes. This catches an attacker uploading
+        // e.g. a PHP script renamed to .jpg with a faked Content-Type header.
+        String detectedMime = detectMimeFromMagic(file);
+        if (detectedMime == null) {
+            throw new UploadException("UNSUPPORTED_TYPE",
+                "El archivo no parece ser una imagen válida (JPG/PNG/WebP/GIF).");
+        }
+        if (!detectedMime.equalsIgnoreCase(mime.toLowerCase())) {
+            throw new UploadException("MIME_MISMATCH",
+                "El tipo declarado (" + mime + ") no coincide con el contenido real ("
+                    + detectedMime + ").");
+        }
+
+        String ext = extensionFor(detectedMime);
         String filename = UUID.randomUUID() + ext;
         Path target = baseDir.resolve(filename).normalize();
 
@@ -59,6 +74,46 @@ public class UploadService {
         }
 
         return new StoredFile(filename, "/uploads/" + filename);
+    }
+
+    /**
+     * Reads the first 12 bytes and matches known image-format signatures.
+     * Returns the canonical MIME type or null if none match — so an attacker
+     * can't sneak past by claiming Content-Type: image/jpeg on a .exe.
+     */
+    static String detectMimeFromMagic(MultipartFile file) {
+        byte[] head = new byte[12];
+        int read;
+        try (InputStream in = file.getInputStream()) {
+            read = in.read(head);
+        } catch (IOException e) {
+            return null;
+        }
+        if (read < 4) return null;
+
+        // JPEG: FF D8 FF
+        if (head[0] == (byte) 0xFF && head[1] == (byte) 0xD8 && head[2] == (byte) 0xFF) {
+            return "image/jpeg";
+        }
+        // PNG: 89 50 4E 47 0D 0A 1A 0A
+        if (read >= 8
+            && head[0] == (byte) 0x89 && head[1] == 'P' && head[2] == 'N' && head[3] == 'G'
+            && head[4] == 0x0D && head[5] == 0x0A && head[6] == 0x1A && head[7] == 0x0A) {
+            return "image/png";
+        }
+        // GIF: "GIF87a" or "GIF89a"
+        if (read >= 6
+            && head[0] == 'G' && head[1] == 'I' && head[2] == 'F' && head[3] == '8'
+            && (head[4] == '7' || head[4] == '9') && head[5] == 'a') {
+            return "image/gif";
+        }
+        // WebP: "RIFF" .... "WEBP"
+        if (read >= 12
+            && head[0] == 'R' && head[1] == 'I' && head[2] == 'F' && head[3] == 'F'
+            && head[8] == 'W' && head[9] == 'E' && head[10] == 'B' && head[11] == 'P') {
+            return "image/webp";
+        }
+        return null;
     }
 
     private String extensionFor(String mime) {

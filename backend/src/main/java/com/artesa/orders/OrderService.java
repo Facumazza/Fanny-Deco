@@ -25,7 +25,11 @@ public class OrderService {
     /** Alphabet excludes 0, O, 1, I, L to avoid confusion when reading references. */
     private static final char[] REF_ALPHABET =
         "ABCDEFGHJKMNPQRSTUVWXYZ23456789".toCharArray();
-    private static final int REF_LENGTH = 6;
+    // 12 chars from a 31-symbol alphabet ≈ 8e17 combinations. GET /api/orders/{ref}
+    // is public (guest customers can't authenticate), so the reference doubles as an
+    // unguessable capability token; 8e17 is well past any realistic enumeration budget
+    // even without rate limiting. Was 6 chars (~900M) which was in scraping range.
+    private static final int REF_LENGTH = 12;
     private static final SecureRandom RNG = new SecureRandom();
 
     private final OrderRepository orderRepo;
@@ -103,8 +107,9 @@ public class OrderService {
     }
 
     private String generateUniqueReference() {
-        // Very small collision surface (6 chars from 31-symbol alphabet ~= 900M combos)
-        // but we still recheck to be safe.
+        // 31^12 combos means a collision is astronomically unlikely, but we
+        // still recheck for defence in depth (and because tests can seed
+        // fixed refs into the same table).
         for (int i = 0; i < 5; i++) {
             String candidate = "ARTESA-" + randomToken();
             if (!orderRepo.existsByReference(candidate)) return candidate;
