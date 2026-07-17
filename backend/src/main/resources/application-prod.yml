@@ -24,6 +24,19 @@ server:
         secure: true
 
 artesa:
+  uploads:
+    # Cloudflare R2 in prod — Railway containers are ephemeral, local disk
+    # gets wiped on every deploy so we can't use LocalStorageBackend here.
+    provider: r2
+    r2:
+      account-id:        ${R2_ACCOUNT_ID:?R2_ACCOUNT_ID required}
+      access-key-id:     ${R2_ACCESS_KEY_ID:?R2_ACCESS_KEY_ID required}
+      secret-access-key: ${R2_SECRET_ACCESS_KEY:?R2_SECRET_ACCESS_KEY required}
+      bucket:            ${R2_BUCKET:?R2_BUCKET required (e.g. fannydeco-uploads)}
+      # The public URL prefix objects will be served under. R2 gives a
+      # `https://pub-<hash>.r2.dev` URL when you enable public access on the
+      # bucket, or set a custom domain and put it here.
+      public-base-url:   ${R2_PUBLIC_BASE_URL:?R2_PUBLIC_BASE_URL required (e.g. https://pub-abc.r2.dev)}
   admin:
     email:    ${ARTESA_ADMIN_EMAIL:?ARTESA_ADMIN_EMAIL required}
     password: ${ARTESA_ADMIN_PASSWORD:?ARTESA_ADMIN_PASSWORD required (use a strong, unique password)}

@@ -43,7 +43,8 @@ class UploadControllerIT {
 
     @Test
     void unauthenticated_returns401() throws Exception {
-        var file = new MockMultipartFile("file", "img.jpg", "image/jpeg", fakePngBytes());
+        // The auth check runs before body validation, so any bytes will do.
+        var file = new MockMultipartFile("file", "img.jpg", "image/jpeg", fakeJpegBytes());
         mvc.perform(multipart("/api/admin/uploads").file(file))
             .andExpect(status().isUnauthorized());
     }
@@ -51,12 +52,23 @@ class UploadControllerIT {
     @Test
     @WithMockUser(roles = "ADMIN")
     void uploadJpeg_returnsUrl() throws Exception {
-        var file = new MockMultipartFile("file", "photo.jpg", "image/jpeg", fakePngBytes());
+        var file = new MockMultipartFile("file", "photo.jpg", "image/jpeg", fakeJpegBytes());
         mvc.perform(multipart("/api/admin/uploads").file(file))
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.filename").exists())
             .andExpect(jsonPath("$.url").value(org.hamcrest.Matchers.startsWith("/uploads/")))
             .andExpect(jsonPath("$.url").value(org.hamcrest.Matchers.endsWith(".jpg")));
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void mimeMismatch_returns400() throws Exception {
+        // Declared as JPEG but the bytes are PNG — should be caught by the
+        // magic-byte check even though both are in the allow-list.
+        var file = new MockMultipartFile("file", "sneak.jpg", "image/jpeg", fakePngBytes());
+        mvc.perform(multipart("/api/admin/uploads").file(file))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("MIME_MISMATCH"));
     }
 
     @Test
@@ -86,11 +98,19 @@ class UploadControllerIT {
             .andExpect(jsonPath("$.code").value("EMPTY_FILE"));
     }
 
-    /** Minimal PNG header + a tiny payload — enough for MultipartFile to accept as content. */
+    /** Minimal PNG magic bytes — passes the format sniffer without being a valid PNG. */
     private static byte[] fakePngBytes() {
         return new byte[] {
             (byte) 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A,  // PNG magic
             0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52          // IHDR chunk header
+        };
+    }
+
+    /** JPEG magic bytes (SOI + APP0 marker) — enough for the format sniffer. */
+    private static byte[] fakeJpegBytes() {
+        return new byte[] {
+            (byte) 0xFF, (byte) 0xD8, (byte) 0xFF, (byte) 0xE0,     // SOI + APP0
+            0x00, 0x10, 'J', 'F', 'I', 'F', 0x00, 0x01              // JFIF header
         };
     }
 }

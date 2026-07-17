@@ -1,17 +1,19 @@
 package com.artesa.uploads;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * Validates uploads (size, MIME, magic bytes) and delegates the actual byte
+ * persistence to a StorageBackend (local filesystem in dev, R2 in prod). This
+ * class stays storage-agnostic so tests exercise the security-relevant logic
+ * (MIME sniff, spoof detection) without any I/O.
+ */
 @Service
 public class UploadService {
 
@@ -19,15 +21,10 @@ public class UploadService {
         Set.of("image/jpeg", "image/png", "image/webp", "image/gif");
     private static final long MAX_SIZE_BYTES = 5L * 1024 * 1024;  // 5 MB
 
-    private final Path baseDir;
+    private final StorageBackend backend;
 
-    public UploadService(@Value("${artesa.uploads.directory:./uploads}") String directory) {
-        this.baseDir = Paths.get(directory).toAbsolutePath().normalize();
-        try {
-            Files.createDirectories(baseDir);
-        } catch (IOException e) {
-            throw new IllegalStateException("Cannot create uploads directory: " + baseDir, e);
-        }
+    public UploadService(StorageBackend backend) {
+        this.backend = backend;
     }
 
     public StoredFile store(MultipartFile file) {
@@ -60,20 +57,15 @@ public class UploadService {
 
         String ext = extensionFor(detectedMime);
         String filename = UUID.randomUUID() + ext;
-        Path target = baseDir.resolve(filename).normalize();
 
-        // Defensive: reject if resolution escaped the base dir (shouldn't happen with UUID).
-        if (!target.startsWith(baseDir)) {
-            throw new UploadException("BAD_PATH", "Nombre de archivo inválido");
-        }
-
-        try {
-            Files.copy(file.getInputStream(), target);
+        String url;
+        try (InputStream in = file.getInputStream()) {
+            url = backend.store(filename, detectedMime, file.getSize(), in);
         } catch (IOException e) {
-            throw new UploadException("IO_ERROR", "No se pudo guardar el archivo");
+            throw new UploadException("IO_ERROR", "No se pudo leer el archivo");
         }
 
-        return new StoredFile(filename, "/uploads/" + filename);
+        return new StoredFile(filename, url);
     }
 
     /**

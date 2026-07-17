@@ -40,6 +40,9 @@ artesa:
     email: admin@artesa.com
     password: changeme123
   uploads:
+    # `local` writes to `directory` on disk and serves /uploads/** statically.
+    # In prod, application-prod.yml sets provider=r2 and the app talks to R2 instead.
+    provider: local
     directory: ./uploads
   payments:
     # `mercadopago` for real integration, or leave blank/other for tests-with-fake.

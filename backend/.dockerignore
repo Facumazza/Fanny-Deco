@@ -1,0 +1,17 @@
+# Everything Maven produces locally — the build stage compiles fresh.
+target/
+
+# IDE + OS junk that would bust the docker layer cache for no reason.
+.idea/
+.vscode/
+*.iml
+.DS_Store
+
+# Local dev state that should never enter the image.
+.env
+.env.local
+uploads/
+logs/
+
+# Test artifacts (surefire reports, testcontainers-managed dirs, etc.)
+.mvn/wrapper/maven-wrapper.jar.orig
