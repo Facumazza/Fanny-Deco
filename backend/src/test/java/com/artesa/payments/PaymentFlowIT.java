@@ -82,6 +82,21 @@ class PaymentFlowIT {
     }
 
     @Test
+    void initiate_refusesOnAlreadyPaidOrder() throws Exception {
+        // Simulate the attack: someone with the reference of a paid order tries
+        // to spawn a fresh MP preference on our account.
+        Order order = seedOrder();
+        String paymentId = gateway.recordPayment(order.getReference(), "approved",
+            "credit_card", new BigDecimal("342000.00"));
+        mvc.perform(post("/api/webhooks/mercadopago?topic=payment&id=" + paymentId))
+            .andExpect(status().isOk());
+
+        mvc.perform(post("/api/orders/" + order.getReference() + "/payment"))
+            .andExpect(status().isBadGateway())
+            .andExpect(jsonPath("$.code").value("ORDER_NOT_PENDING"));
+    }
+
+    @Test
     void webhook_approvedPayment_transitionsOrderToPaid() throws Exception {
         Order order = seedOrder();
         String paymentId = gateway.recordPayment(order.getReference(), "approved",

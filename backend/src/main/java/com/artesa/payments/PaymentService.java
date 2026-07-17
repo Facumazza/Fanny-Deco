@@ -40,10 +40,17 @@ public class PaymentService {
 
     /**
      * Creates a MercadoPago preference for the given order and stores the preference id.
-     * Idempotent per order: if a preference already exists we just return the same one
-     * (avoids charging duplicate fees if the user reloads /checkout).
+     * Only valid for PENDING orders — once the payment has landed (or the order was
+     * cancelled/refunded), reinitiating makes no sense and would let anyone with the
+     * order reference spawn arbitrary MP preferences on our account. That surface
+     * matters because GET /api/orders/{ref} is public (guest checkout).
      */
     public PaymentInitiation initiatePaymentFor(Order order) {
+        if (order.getStatus() != OrderStatus.PENDING) {
+            throw new PaymentException("ORDER_NOT_PENDING",
+                "La orden ya no acepta pagos (estado actual: " + order.getStatus() + ")");
+        }
+
         PaymentContext ctx = new PaymentContext(
             frontendBaseUrl + "/orden/" + order.getReference() + "/success",
             frontendBaseUrl + "/orden/" + order.getReference() + "/fallo",
