@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { InstagramIcon, INSTAGRAM_URL } from '../icons/InstagramIcon';
 
 interface FooterLink {
   label: string;
@@ -69,11 +70,8 @@ export function Footer() {
           <p className="text-xs tracking-[0.3em] text-white/60 mb-4">SEGUINOS EN REDES</p>
           <div className="flex items-center justify-center gap-8">
             {[
-              { label: 'INSTAGRAM', icon: '◎',  href: 'https://instagram.com/artesa' },
-              { label: 'FACEBOOK',  icon: 'f',  href: 'https://facebook.com/artesa'  },
-              { label: 'TWITTER / X', icon: '𝕏', href: 'https://twitter.com/artesa' },
-              { label: 'YOUTUBE',   icon: '▶',  href: 'https://youtube.com/@artesa'  },
-              { label: 'WHATSAPP',  icon: '💬', href: 'https://wa.me/5491112345678'  },
+              { label: 'INSTAGRAM', href: INSTAGRAM_URL,
+                icon: <InstagramIcon size={22} /> },
             ].map(s => (
               <a
                 key={s.label}
@@ -82,7 +80,7 @@ export function Footer() {
                 rel="noopener noreferrer"
                 className="flex flex-col items-center gap-2 hover:text-white"
               >
-                <span className="w-10 h-10 border border-white/20 flex items-center justify-center text-lg">
+                <span className="w-10 h-10 border border-white/20 flex items-center justify-center">
                   {s.icon}
                 </span>
                 <span className="text-[10px] tracking-widest">{s.label}</span>

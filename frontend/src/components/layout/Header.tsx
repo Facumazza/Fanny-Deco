@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useCart } from '../../hooks/useCart';
+import { InstagramIcon, INSTAGRAM_URL } from '../icons/InstagramIcon';
 
 export function Header() {
   const { itemCount } = useCart();
@@ -31,11 +32,15 @@ export function Header() {
             <Link to="/contacto" className="hover:opacity-80">Contacto</Link>
           </nav>
           <div className="flex items-center gap-3 text-lg" aria-label="Redes sociales">
-            <a href="#" aria-label="Instagram">◎</a>
-            <a href="#" aria-label="Facebook">f</a>
-            <a href="#" aria-label="Twitter">𝕏</a>
-            <a href="#" aria-label="YouTube">▶</a>
-            <a href="#" aria-label="Chat">💬</a>
+            <a
+              href={INSTAGRAM_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram — @fanny.deco"
+              className="inline-flex items-center hover:opacity-80"
+            >
+              <InstagramIcon size={18} />
+            </a>
           </div>
         </div>
       </div>

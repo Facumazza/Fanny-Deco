@@ -22,7 +22,7 @@ export default function ContactoPage() {
         </li>
         <li>
           <strong>Instagram</strong>:
-          <a href="https://instagram.com/artesa" target="_blank" rel="noreferrer"> @artesa</a>
+          <a href="https://www.instagram.com/fanny.deco/" target="_blank" rel="noreferrer"> @fanny.deco</a>
         </li>
       </ul>
 
