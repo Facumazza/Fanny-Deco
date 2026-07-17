@@ -7,6 +7,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class WebhookSignatureVerifierTest {
 
@@ -14,22 +15,44 @@ class WebhookSignatureVerifierTest {
 
     @Test
     void disabled_whenSecretIsBlank_acceptsEverything() {
-        WebhookSignatureVerifier v = new WebhookSignatureVerifier("");
+        WebhookSignatureVerifier v = new WebhookSignatureVerifier("", false);
         assertThat(v.isDisabled()).isTrue();
         assertThat(v.verify(null, null, "12345")).isTrue();
         assertThat(v.verify("garbage", "req-1", "12345")).isTrue();
     }
 
+    // ---- Fail-closed contract: prod refuses to boot without a real secret. ----
+
+    @Test
+    void failClosed_requiredButBlank_throwsAtConstruction() {
+        assertThatThrownBy(() -> new WebhookSignatureVerifier("", true))
+            .isInstanceOf(IllegalStateException.class)
+            .hasMessageContaining("require-signature=true")
+            .hasMessageContaining("webhook-secret is empty");
+    }
+
+    @Test
+    void failClosed_requiredButNull_alsoThrows() {
+        assertThatThrownBy(() -> new WebhookSignatureVerifier(null, true))
+            .isInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
+    void failClosed_requiredWithSecret_constructsFine() {
+        WebhookSignatureVerifier v = new WebhookSignatureVerifier(SECRET, true);
+        assertThat(v.isDisabled()).isFalse();
+    }
+
     @Test
     void enabled_rejectsMissingHeader() {
-        WebhookSignatureVerifier v = new WebhookSignatureVerifier(SECRET);
+        WebhookSignatureVerifier v = new WebhookSignatureVerifier(SECRET, false);
         assertThat(v.verify(null, "req-1", "12345")).isFalse();
         assertThat(v.verify("",   "req-1", "12345")).isFalse();
     }
 
     @Test
     void enabled_rejectsMalformedHeader() {
-        WebhookSignatureVerifier v = new WebhookSignatureVerifier(SECRET);
+        WebhookSignatureVerifier v = new WebhookSignatureVerifier(SECRET, false);
         // Missing v1 segment
         assertThat(v.verify("ts=1000", "req-1", "12345")).isFalse();
         // Missing ts segment
@@ -40,7 +63,7 @@ class WebhookSignatureVerifierTest {
 
     @Test
     void enabled_rejectsMissingPaymentId() {
-        WebhookSignatureVerifier v = new WebhookSignatureVerifier(SECRET);
+        WebhookSignatureVerifier v = new WebhookSignatureVerifier(SECRET, false);
         String sig = sign(SECRET, "id:X;request-id:req-1;ts:1000;");
         assertThat(v.verify("ts=1000,v1=" + sig, "req-1", null)).isFalse();
         assertThat(v.verify("ts=1000,v1=" + sig, "req-1", "")).isFalse();
@@ -48,7 +71,7 @@ class WebhookSignatureVerifierTest {
 
     @Test
     void enabled_acceptsValidSignature() {
-        WebhookSignatureVerifier v = new WebhookSignatureVerifier(SECRET);
+        WebhookSignatureVerifier v = new WebhookSignatureVerifier(SECRET, false);
         String paymentId = "1234567890";
         String ts = "1730000000";
         String requestId = "abc-def-123";
@@ -64,7 +87,7 @@ class WebhookSignatureVerifierTest {
 
     @Test
     void enabled_rejectsTamperedPaymentId() {
-        WebhookSignatureVerifier v = new WebhookSignatureVerifier(SECRET);
+        WebhookSignatureVerifier v = new WebhookSignatureVerifier(SECRET, false);
         String sig = sign(SECRET, "id:1234567890;request-id:r1;ts:1000;");
         String header = "ts=1000,v1=" + sig;
         // Attacker submits a different payment id with the original signature.
@@ -73,7 +96,7 @@ class WebhookSignatureVerifierTest {
 
     @Test
     void enabled_rejectsWrongSecret() {
-        WebhookSignatureVerifier v = new WebhookSignatureVerifier(SECRET);
+        WebhookSignatureVerifier v = new WebhookSignatureVerifier(SECRET, false);
         // Attacker used a guessed secret to build the signature.
         String sig = sign("wrong-secret", "id:1;request-id:r;ts:1;");
         assertThat(v.verify("ts=1,v1=" + sig, "r", "1")).isFalse();
@@ -81,7 +104,7 @@ class WebhookSignatureVerifierTest {
 
     @Test
     void enabled_handlesMissingRequestIdAsEmptyString() {
-        WebhookSignatureVerifier v = new WebhookSignatureVerifier(SECRET);
+        WebhookSignatureVerifier v = new WebhookSignatureVerifier(SECRET, false);
         String canonical = "id:1;request-id:;ts:100;";
         String sig = sign(SECRET, canonical);
         assertThat(v.verify("ts=100,v1=" + sig, null, "1")).isTrue();

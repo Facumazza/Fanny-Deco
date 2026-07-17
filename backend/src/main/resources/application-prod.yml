@@ -1,0 +1,44 @@
+# Production profile — activate with SPRING_PROFILES_ACTIVE=prod.
+#
+# Every value below is a REQUIRED env var: the `${VAR:?message}` syntax makes
+# Spring throw a clear IllegalArgumentException at boot if the var is missing.
+# That is intentional — we would rather refuse to start than come up with
+# insecure defaults ("changeme123") from application.yml quietly winning.
+
+spring:
+  datasource:
+    url:      ${ARTESA_DB_URL:?ARTESA_DB_URL required (e.g. jdbc:postgresql://host:5432/artesa)}
+    username: ${ARTESA_DB_USER:?ARTESA_DB_USER required}
+    password: ${ARTESA_DB_PASSWORD:?ARTESA_DB_PASSWORD required}
+
+server:
+  servlet:
+    session:
+      # Shorter than dev's 7 days: admins with full write access should re-auth
+      # more often. Adjust if this is too aggressive for your team.
+      timeout: 12h
+      cookie:
+        # HTTPS-only cookie. The app is expected to sit behind a TLS-terminating
+        # reverse proxy (Cloudflare, nginx, Caddy) — the proxy sets the
+        # X-Forwarded-Proto header Spring uses to decide.
+        secure: true
+
+artesa:
+  admin:
+    email:    ${ARTESA_ADMIN_EMAIL:?ARTESA_ADMIN_EMAIL required}
+    password: ${ARTESA_ADMIN_PASSWORD:?ARTESA_ADMIN_PASSWORD required (use a strong, unique password)}
+  payments:
+    mercadopago:
+      access-token:      ${MERCADOPAGO_ACCESS_TOKEN:?MERCADOPAGO_ACCESS_TOKEN required (prod token from MP dashboard)}
+      webhook-secret:    ${MERCADOPAGO_WEBHOOK_SECRET:?MERCADOPAGO_WEBHOOK_SECRET required (HMAC secret from MP dashboard)}
+      # Fail-closed: WebhookSignatureVerifier throws at construction if
+      # webhook-secret is empty while this is true. Do not disable in prod.
+      require-signature: true
+
+logging:
+  level:
+    # Silence the DEBUG SQL firehose from dev.
+    org.hibernate.SQL: INFO
+    # Keep app logs at INFO; bump to DEBUG per-package temporarily via env var
+    # if you need to trace something without redeploying.
+    com.artesa: INFO

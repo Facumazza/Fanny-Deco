@@ -33,8 +33,19 @@ public class WebhookSignatureVerifier {
     private final String secret;
 
     public WebhookSignatureVerifier(
-        @Value("${artesa.payments.mercadopago.webhook-secret:}") String secret
+        @Value("${artesa.payments.mercadopago.webhook-secret:}") String secret,
+        @Value("${artesa.payments.mercadopago.require-signature:false}") boolean required
     ) {
+        // Fail-closed in prod: the app refuses to start if we said signatures are
+        // mandatory but no secret was provided. Beats silently accepting forged
+        // notifications because someone forgot the env var on deploy.
+        if (required && (secret == null || secret.isBlank())) {
+            throw new IllegalStateException(
+                "artesa.payments.mercadopago.require-signature=true but " +
+                "artesa.payments.mercadopago.webhook-secret is empty. " +
+                "Set MERCADOPAGO_WEBHOOK_SECRET from the MP dashboard, " +
+                "or set require-signature=false in dev.");
+        }
         this.secret = secret;
     }
 

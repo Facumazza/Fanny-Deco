@@ -29,9 +29,12 @@ server:
         name: ARTESA_ADMIN_SESSION
         http-only: true
         same-site: lax
-        # secure: true    # enable in production behind HTTPS
+        # secure: true is set by application-prod.yml — do NOT enable here
+        # because dev runs over plain HTTP and the browser would drop the cookie.
 
-# Default admin credentials — CHANGE BEFORE DEPLOYING
+# Dev-friendly defaults. Production overrides these in application-prod.yml
+# (activated via SPRING_PROFILES_ACTIVE=prod) and there they are REQUIRED
+# env vars — the app fails to start if they're missing.
 artesa:
   admin:
     email: admin@artesa.com
@@ -42,10 +45,13 @@ artesa:
     # `mercadopago` for real integration, or leave blank/other for tests-with-fake.
     provider: ${ARTESA_PAYMENT_PROVIDER:mercadopago}
     mercadopago:
-      access-token:    ${MERCADOPAGO_ACCESS_TOKEN:}
+      access-token:      ${MERCADOPAGO_ACCESS_TOKEN:}
       # HMAC secret from the MP dashboard → Notificaciones → Webhooks → Firma.
-      # When empty, incoming webhooks are NOT verified (dev only).
-      webhook-secret:  ${MERCADOPAGO_WEBHOOK_SECRET:}
+      # In dev, empty is fine: incoming webhooks pass through with a startup warning.
+      # In prod, application-prod.yml sets require-signature=true and the app
+      # refuses to start unless MERCADOPAGO_WEBHOOK_SECRET is provided.
+      webhook-secret:    ${MERCADOPAGO_WEBHOOK_SECRET:}
+      require-signature: false
     # Public URL of the backend as reachable from MercadoPago's servers.
     # In dev, this is your ngrok URL (e.g. https://abc123.ngrok-free.app).
     public-base-url: ${ARTESA_PUBLIC_BASE_URL:http://localhost:8080}
