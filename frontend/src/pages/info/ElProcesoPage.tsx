@@ -4,7 +4,7 @@ export default function ElProcesoPage() {
   return (
     <ContentPage eyebrow="EL TALLER" title="El proceso">
       <p>
-        Cada pieza ARTESA sigue un proceso lento. No es un slogan —
+        Cada pieza FannyDeco sigue un proceso lento. No es un slogan —
         literalmente, un bolso Tote tarda unas 40 horas de trabajo. Una taza
         de gres pasa por siete etapas antes de estar lista para tu casa.
       </p>

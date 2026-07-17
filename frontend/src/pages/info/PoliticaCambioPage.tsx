@@ -4,7 +4,7 @@ export default function PoliticaCambioPage() {
   return (
     <ContentPage eyebrow="INFORMACIÓN" title="Política de cambio y devolución">
       <p>
-        En ARTESA trabajamos cada pieza a mano. Cada bolso, cada cerámica es
+        En FannyDeco trabajamos cada pieza a mano. Cada bolso, cada cerámica es
         distinta a la anterior — pequeñas variaciones en tono, veta o textura son
         parte de la naturaleza artesanal y no constituyen defectos. Aún así, si
         una pieza llega dañada o no cumple con lo prometido, la cambiamos o

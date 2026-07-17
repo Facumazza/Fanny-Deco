@@ -14,7 +14,7 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-4 gap-10">
         {/* Brand column */}
         <div>
-          <p className="font-display text-2xl text-white tracking-widest mb-4">ARTESA</p>
+          <p className="font-display text-2xl text-white tracking-widest mb-4">FannyDeco</p>
           <p className="text-sm mb-6">
             Taller propio en Buenos Aires.<br />
             Envíos a toda Latinoamérica.
@@ -95,7 +95,7 @@ export function Footer() {
       {/* Bottom bar */}
       <div className="border-t border-white/10">
         <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col md:flex-row items-center justify-between text-xs text-white/50">
-          <p>© {year} Artesa. Todos los derechos reservados.</p>
+          <p>© {year} FannyDeco. Todos los derechos reservados.</p>
           <p>Hecho con amor artesanal en Buenos Aires, Argentina.</p>
         </div>
       </div>

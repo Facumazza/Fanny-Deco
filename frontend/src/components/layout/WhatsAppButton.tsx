@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 // Number in international format WITHOUT + or spaces/dashes — wa.me expects raw digits.
 // TODO: replace with the real number before deploying, or move to VITE_ env var.
 const PHONE = '5491112345678';
-const PREFILL = '¡Hola ARTESA! Estoy mirando la tienda y tengo una consulta.';
+const PREFILL = '¡Hola FannyDeco! Estoy mirando la tienda y tengo una consulta.';
 
 /**
  * Floating WhatsApp CTA rendered at the app root. Hidden on admin routes since

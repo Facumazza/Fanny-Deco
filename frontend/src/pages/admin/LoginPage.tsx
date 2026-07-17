@@ -39,7 +39,7 @@ export default function LoginPage() {
     <main className="min-h-screen bg-cream-bg flex items-center justify-center px-6">
       <div className="w-full max-w-sm bg-white p-8 rounded-card shadow-sm">
         <div className="text-center mb-8">
-          <p className="font-display text-2xl tracking-widest text-ink">ARTESA</p>
+          <p className="font-display text-2xl tracking-widest text-ink">FannyDeco</p>
           <p className="text-xs tracking-[0.3em] text-muted mt-1">PANEL ADMIN</p>
         </div>
 

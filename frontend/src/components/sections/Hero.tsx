@@ -31,7 +31,7 @@ export function Hero() {
           <div className="aspect-square overflow-hidden rounded-sm">
             <img
               src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=1200"
-              alt="Bolso destacado ARTESA"
+              alt="Bolso destacado FannyDeco"
               className="w-full h-full object-cover"
             />
           </div>

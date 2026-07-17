@@ -60,9 +60,9 @@ artesa:
   emails:
     # `resend` for real integration, `console` to log emails to stdout (dev).
     provider: ${ARTESA_EMAIL_PROVIDER:console}
-    from: ${ARTESA_EMAIL_FROM:ARTESA <no-reply@artesa.com>}
-    admin-to: ${ARTESA_EMAIL_ADMIN_TO:admin@artesa.com}
-    shop-name: ${ARTESA_EMAIL_SHOP_NAME:ARTESA}
+    from: ${ARTESA_EMAIL_FROM:FannyDeco <no-reply@fannydeco.com>}
+    admin-to: ${ARTESA_EMAIL_ADMIN_TO:admin@fannydeco.com}
+    shop-name: ${ARTESA_EMAIL_SHOP_NAME:FannyDeco}
     resend:
       api-key: ${RESEND_API_KEY:}
 

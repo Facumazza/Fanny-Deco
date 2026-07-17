@@ -5,7 +5,7 @@ export default function PrensaPage() {
     <ContentPage eyebrow="MEDIOS" title="Prensa">
       <p>
         Si sos periodista, medio, editor o creador de contenido y querés escribir
-        o filmar sobre ARTESA, estamos disponibles. Podemos coordinar visita al
+        o filmar sobre FannyDeco, estamos disponibles. Podemos coordinar visita al
         taller, entrevistas con el equipo o préstamo de piezas para
         producciones.
       </p>

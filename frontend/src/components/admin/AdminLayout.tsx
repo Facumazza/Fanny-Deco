@@ -23,7 +23,7 @@ export function AdminLayout({ children }: Props) {
       <header className="bg-brown-dark text-white">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link to="/admin" className="flex flex-col leading-none">
-            <span className="font-display text-xl tracking-widest">ARTESA</span>
+            <span className="font-display text-xl tracking-widest">FannyDeco</span>
             <span className="text-[10px] tracking-[0.3em] opacity-70">PANEL ADMIN</span>
           </Link>
           <nav className="hidden md:flex items-center gap-6 text-sm">

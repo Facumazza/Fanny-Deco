@@ -29,7 +29,7 @@ export default function OpcionesPagoPage() {
       <h2>Seguridad</h2>
       <p>
         MercadoPago cumple con los estándares PCI-DSS y encripta cada transacción.
-        Como vendedor, ARTESA no accede a los datos de tu tarjeta en ningún
+        Como vendedor, FannyDeco no accede a los datos de tu tarjeta en ningún
         momento.
       </p>
 

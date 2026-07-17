@@ -5,7 +5,7 @@ export default function SustentabilidadPage() {
     <ContentPage eyebrow="COMPROMISO" title="Sustentabilidad">
       <p>
         Hacer piezas que duren <strong>toda la vida</strong> es, en sí mismo,
-        una decisión ambiental. Cada bolso ARTESA reemplaza tres o cuatro bolsos
+        una decisión ambiental. Cada bolso FannyDeco reemplaza tres o cuatro bolsos
         de fast-fashion que hoy están en un vertedero. No lo decimos como slogan;
         lo diseñamos así.
       </p>

@@ -13,7 +13,7 @@ export function Newsletter() {
   return (
     <section className="bg-brown-dark text-white py-20">
       <div className="max-w-2xl mx-auto px-6 text-center">
-        <p className="text-cream-bg/80 text-xs tracking-[0.3em] mb-4">COMUNIDAD ARTESA</p>
+        <p className="text-cream-bg/80 text-xs tracking-[0.3em] mb-4">COMUNIDAD FANNYDECO</p>
         <h2 className="font-display text-4xl md:text-5xl leading-tight mb-6">
           Sé el primero en conocer nuevas piezas
         </h2>

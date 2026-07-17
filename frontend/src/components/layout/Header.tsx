@@ -44,7 +44,7 @@ export function Header() {
       <div className="bg-cream-bg">
         <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
           <Link to="/" className="flex flex-col leading-none">
-            <span className="font-display text-3xl tracking-widest text-ink">ARTESA</span>
+            <span className="font-display text-3xl tracking-widest text-ink">FannyDeco</span>
             <span className="font-sans text-[10px] tracking-[0.3em] text-muted mt-1">CUERO &amp; CERÁMICA</span>
           </Link>
           <nav className="hidden md:flex items-center gap-8 text-sm text-ink">

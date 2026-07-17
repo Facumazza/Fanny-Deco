@@ -4,7 +4,7 @@ export default function NosotrosPage() {
   return (
     <ContentPage eyebrow="NUESTRA HISTORIA" title="Nosotros">
       <p>
-        ARTESA nació en 2019, en un taller de dos plantas en el barrio de San
+        FannyDeco nació en 2019, en un taller de dos plantas en el barrio de San
         Cristóbal, Buenos Aires. Empezamos siendo tres personas y una idea
         simple: hacer objetos que duren toda la vida, con materiales que sepamos
         de dónde vienen.
