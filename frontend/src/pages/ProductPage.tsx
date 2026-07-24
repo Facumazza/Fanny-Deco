@@ -6,7 +6,6 @@ import { getProduct } from '../api/catalog';
 import { useCart } from '../hooks/useCart';
 import { Header } from '../components/layout/Header';
 import { Footer } from '../components/layout/Footer';
-import { StarRating } from '../components/catalog/StarRating';
 import { Skeleton } from '../components/ui/Skeleton';
 import { formatArs } from '../lib/price';
 
@@ -108,9 +107,6 @@ export default function ProductPage() {
                 <h1 className="font-display text-5xl leading-tight text-ink mb-4">
                   {product.name}
                 </h1>
-                <div className="mb-6">
-                  <StarRating value={product.ratingAvg} count={product.ratingCount} />
-                </div>
 
                 <p className="text-3xl font-semibold text-terracotta mb-8">
                   {formatArs(product.priceArs)}

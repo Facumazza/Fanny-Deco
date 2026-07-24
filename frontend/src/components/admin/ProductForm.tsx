@@ -120,30 +120,6 @@ export function ProductForm({ initial, submitLabel, onSubmit }: Props) {
           />
         </div>
 
-        <Field label="Rating promedio" hint="0.0 a 5.0" required>
-          <input
-            type="number"
-            required
-            min="0"
-            max="5"
-            step="0.1"
-            value={form.ratingAvg}
-            onChange={e => setForm(f => ({ ...f, ratingAvg: Number(e.target.value) }))}
-            className={inputCls}
-          />
-        </Field>
-
-        <Field label="Cantidad de reseñas" required>
-          <input
-            type="number"
-            required
-            min="0"
-            step="1"
-            value={form.ratingCount}
-            onChange={e => setForm(f => ({ ...f, ratingCount: Number(e.target.value) }))}
-            className={inputCls}
-          />
-        </Field>
       </div>
 
       <Field label="Descripción">

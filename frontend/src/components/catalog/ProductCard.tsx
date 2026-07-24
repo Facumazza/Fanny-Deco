@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import type { ProductSummary } from '../../types/api';
-import { StarRating } from './StarRating';
 import { formatArs } from '../../lib/price';
 
 export function ProductCard({ product }: { product: ProductSummary }) {
@@ -26,7 +25,6 @@ export function ProductCard({ product }: { product: ProductSummary }) {
         </button>
       </Link>
       <div className="p-4 flex flex-col gap-2">
-        <StarRating value={product.ratingAvg} count={product.ratingCount} />
         <Link
           to={`/producto/${product.slug}`}
           className="font-display text-lg leading-snug text-ink hover:text-terracotta transition-colors"

@@ -11,7 +11,6 @@ import { Skeleton } from '../components/ui/Skeleton';
 import { ErrorState } from '../components/ui/ErrorState';
 import { Hero } from '../components/sections/Hero';
 import { ProcessSection } from '../components/sections/ProcessSection';
-import { ReviewsSection } from '../components/sections/ReviewsSection';
 import { Newsletter } from '../components/sections/Newsletter';
 
 type Status = 'loading' | 'error' | 'ok';
@@ -199,7 +198,6 @@ export default function HomePage() {
       {status === 'ok' && (
         <>
           <ProcessSection />
-          <ReviewsSection />
           <Newsletter />
         </>
       )}
