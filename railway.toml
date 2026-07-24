@@ -1,0 +1,26 @@
+# Railway deploy config for the backend service.
+#
+# Lives at repo root because Railway looks for railway.toml at the root of
+# the branch it deploys, not inside the Root Directory. This forces the
+# Dockerfile builder to use backend/Dockerfile even if the UI's "Root
+# Directory" field is empty or ignored (which happened during initial setup).
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "backend/Dockerfile"
+# buildContext defaults to the repo root when unset; setting it to backend/
+# keeps the Docker build context small (no need to send /frontend and /docs
+# to the daemon) and matches the paths Dockerfile expects (COPY .mvn/, etc).
+buildContext = "backend"
+
+[deploy]
+# The health endpoint we added in HealthController. Railway routes traffic
+# to a new deploy only after this returns 200, and rolls back on failure.
+healthcheckPath = "/api/health"
+# Give the JVM enough time to boot Spring + run Flyway migrations. Cold
+# starts on Railway's smallest instance run 30-60s; 100s is comfortable.
+healthcheckTimeout = 100
+# On crash, retry a few times before giving up — buys us safety against
+# transient DB connection blips during Railway's rolling deploy of Postgres.
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
