@@ -32,10 +32,15 @@ COPY --from=build /workspace/target/*.jar app.jar
 ENV PORT=8080
 EXPOSE 8080
 
-# JVM tuning for a container: honor cgroup memory limits, cap heap at 75%
-# of the container's memory allowance so the OOM killer doesn't hit us
-# because native + heap combined blew past the limit.
-ENV JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=75 -XX:+UseContainerSupport"
+# JVM tuning for a container:
+# - MaxRAMPercentage/UseContainerSupport: honor cgroup limits so the OOM
+#   killer doesn't hit us because native + heap combined blew past the limit.
+# - preferIPv6Addresses: Railway's private DNS (*.railway.internal) is
+#   IPv6-only. Java defaults to IPv4, so without this flag the JDBC connection
+#   to postgres.railway.internal fails with 'connection attempt failed'
+#   (SQLState 08001) even though the URL is perfectly valid. Applies to any
+#   host with an IPv6-only DNS record; harmless when talking to IPv4 hosts.
+ENV JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=75 -XX:+UseContainerSupport -Djava.net.preferIPv6Addresses=true"
 
 # Exec form so signals (SIGTERM from Railway on redeploy) reach the JVM,
 # not a shell wrapper.
