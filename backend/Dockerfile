@@ -1,6 +1,6 @@
 # ---- Build stage ----
 # JDK image with Maven — used only to compile + package the fat JAR.
-FROM eclipse-temurin:17-jdk-alpine AS build
+FROM eclipse-temurin:17-jdk-jammy AS build
 WORKDIR /workspace
 
 # Cache dependencies in their own layer: only re-download if pom.xml changes.
@@ -16,12 +16,13 @@ RUN ./mvnw -q -B -DskipTests package
 
 # ---- Runtime stage ----
 # Slim JRE — no Maven, no build tools, ~80MB smaller than the JDK image.
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:17-jre-jammy
 WORKDIR /app
 
 # Run as a non-root user. If someone breaks out of the JVM, they're 'app'
-# with a read-only home instead of root.
-RUN addgroup -S app && adduser -S app -G app
+# with a read-only home instead of root. Debian-style syntax (Alpine's
+# addgroup/adduser -S doesn't exist here).
+RUN groupadd --system app && useradd --system --gid app app
 USER app
 
 # Copy just the fat JAR from the build stage — no source, no .m2 cache.
