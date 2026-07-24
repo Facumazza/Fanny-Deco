@@ -166,6 +166,23 @@ export default function OrderDetailPage() {
             </section>
           </div>
 
+          {order.receiptUrl && (
+            <section className="bg-white rounded-card p-6 mb-6 border-l-4 border-terracotta">
+              <p className="text-xs tracking-[0.3em] text-terracotta mb-2">COMPROBANTE DE TRANSFERENCIA</p>
+              <p className="text-sm text-muted mb-3">
+                El cliente subió un comprobante. Verificalo en el banco antes de marcar la orden como pagada.
+              </p>
+              <a
+                href={order.receiptUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-block bg-brown-dark hover:bg-brown text-white px-5 py-2 text-sm tracking-wider font-semibold transition-colors"
+              >
+                VER COMPROBANTE →
+              </a>
+            </section>
+          )}
+
           <TrackingEditor
             order={order}
             onUpdated={updated => { setOrder(updated); setFeedback('Seguimiento guardado.'); setTimeout(() => setFeedback(null), 3000); }}

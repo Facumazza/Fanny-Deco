@@ -69,11 +69,12 @@ public class UploadService {
     }
 
     /**
-     * Reads the first 12 bytes and matches known image-format signatures.
+     * Reads the first 12 bytes and matches known file-format signatures.
      * Returns the canonical MIME type or null if none match — so an attacker
      * can't sneak past by claiming Content-Type: image/jpeg on a .exe.
+     * Caller filters the returned MIME against its own allow-list.
      */
-    static String detectMimeFromMagic(MultipartFile file) {
+    public static String detectMimeFromMagic(MultipartFile file) {
         byte[] head = new byte[12];
         int read;
         try (InputStream in = file.getInputStream()) {
@@ -104,6 +105,15 @@ public class UploadService {
             && head[0] == 'R' && head[1] == 'I' && head[2] == 'F' && head[3] == 'F'
             && head[8] == 'W' && head[9] == 'E' && head[10] == 'B' && head[11] == 'P') {
             return "image/webp";
+        }
+        // PDF: "%PDF-" (25 50 44 46 2D). Not accepted by UploadService itself
+        // (product images are images only) but ReceiptService needs to accept
+        // PDFs from home-banking apps, so we detect it here and let the caller
+        // decide via its allow-list.
+        if (read >= 5
+            && head[0] == 0x25 && head[1] == 'P' && head[2] == 'D' && head[3] == 'F'
+            && head[4] == 0x2D) {
+            return "application/pdf";
         }
         return null;
     }

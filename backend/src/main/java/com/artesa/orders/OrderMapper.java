@@ -21,6 +21,7 @@ public class OrderMapper {
             o.getSubtotalArs(),
             o.getStatus(),
             o.getTrackingInfo(),
+            o.getReceiptUrl(),
             o.getCreatedAt(),
             o.getItems().stream()
                 .map(this::toItem)

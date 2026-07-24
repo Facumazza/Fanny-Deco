@@ -51,6 +51,7 @@ public class SecurityConfig {
                 // Public storefront endpoints for orders + payments.
                 .requestMatchers(HttpMethod.POST, "/api/orders").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/orders/*/payment").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/orders/*/receipt").permitAll()
                 .requestMatchers(HttpMethod.GET,  "/api/orders/*").permitAll()
                 // Webhook must be public — MP has no session with us.
                 .requestMatchers("/api/webhooks/**").permitAll()

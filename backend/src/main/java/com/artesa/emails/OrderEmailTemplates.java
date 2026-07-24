@@ -153,6 +153,37 @@ public class OrderEmailTemplates {
         return new EmailMessage(adminEmail, subject, body);
     }
 
+    /** Customer uploaded a transfer receipt. Includes a link to the file so admin can verify. */
+    public EmailMessage adminReceiptUploaded(String adminEmail, Order o) {
+        String subject = "📎 Comprobante recibido — " + o.getReference() + " · " + ARS.format(o.getSubtotalArs());
+        // receiptUrl may be a relative /uploads/xxx path (dev) or absolute https URL (R2).
+        // Prefix relative paths with the storefront URL so the link works in email clients.
+        String rawUrl = o.getReceiptUrl();
+        String receiptHref = rawUrl == null ? "#"
+            : (rawUrl.startsWith("http") ? rawUrl : storefrontUrl + rawUrl);
+        String adminOrderHref = storefrontUrl + "/admin/orders";
+        String body = shell(
+            "Comprobante recibido",
+            "El cliente <strong>" + escape(o.getCustomerName()) + "</strong> subió el comprobante " +
+            "de transferencia para la orden <strong>" + o.getReference() + "</strong> " +
+            "(<strong>" + ARS.format(o.getSubtotalArs()) + "</strong>).<br><br>" +
+            "<strong>Cliente</strong>: " + escape(o.getCustomerEmail()) +
+                (o.getPhone() != null ? " · " + escape(o.getPhone()) : "") + "<br><br>" +
+            "<a href=\"" + receiptHref + "\" style=\"display:inline-block;background:#5C3A28;color:white;" +
+                "padding:12px 20px;text-decoration:none;letter-spacing:2px;font-size:12px;font-weight:600;\">" +
+                "VER COMPROBANTE</a>" +
+            "&nbsp;&nbsp;" +
+            "<a href=\"" + adminOrderHref + "\" style=\"display:inline-block;color:#B85C38;text-decoration:none;" +
+                "padding:12px 0;letter-spacing:2px;font-size:12px;font-weight:600;\">" +
+                "IR AL PANEL →</a><br><br>" +
+            "Verificá el ingreso en el banco y marcá la orden como <em>Pagada</em> " +
+            "desde el panel para disparar el email de confirmación al cliente.",
+            renderOrderBlock(o),
+            null
+        );
+        return new EmailMessage(adminEmail, subject, body);
+    }
+
     // -------------- Layout helpers --------------
 
     private String shell(String heading, String intro, String orderBlock, String footerNote) {

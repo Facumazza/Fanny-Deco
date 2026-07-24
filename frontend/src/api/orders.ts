@@ -51,3 +51,25 @@ export async function getBankTransferInfo(): Promise<BankTransferInfo | null> {
     return null;
   }
 }
+
+/**
+ * Uploads a transfer receipt for the given order. Multipart POST — the fetch
+ * client below sets the boundary automatically (we don't set Content-Type
+ * manually, that would break the multipart form).
+ */
+export async function uploadReceipt(reference: string, file: File): Promise<Order> {
+  const form = new FormData();
+  form.append('file', file);
+  const res = await fetch(`/api/orders/${encodeURIComponent(reference)}/receipt`, {
+    method: 'POST',
+    body: form,
+  });
+  if (!res.ok) {
+    // Use the same shape apiFetch uses so callers can inspect ApiRequestError.
+    let body = null;
+    try { body = await res.json(); } catch { /* not JSON */ }
+    const { ApiRequestError } = await import('../types/api');
+    throw new ApiRequestError(res.status, body);
+  }
+  return res.json() as Promise<Order>;
+}

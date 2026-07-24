@@ -60,6 +60,11 @@ public class OrderMailer {
         safeSend(templates.orderRefunded(order));
     }
 
+    /** Customer uploaded a transfer receipt — ping the admin so they verify it in the bank. */
+    public void onReceiptUploaded(Order order) {
+        safeSend(templates.adminReceiptUploaded(adminEmail, order));
+    }
+
     /**
      * Dispatch based on a status transition. Called by AdminOrderService when the
      * admin flips the status manually. `from` may be null on the very first assignment.

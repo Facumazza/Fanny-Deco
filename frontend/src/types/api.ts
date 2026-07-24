@@ -128,6 +128,7 @@ export interface Order {
   subtotalArs: number;
   status: OrderStatus;
   trackingInfo: string | null;
+  receiptUrl: string | null;
   createdAt: string;
   items: OrderItem[];
 }

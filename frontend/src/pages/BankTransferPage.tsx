@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Header } from '../components/layout/Header';
 import { Footer } from '../components/layout/Footer';
-import { getBankTransferInfo, getOrderByReference, type BankTransferInfo } from '../api/orders';
+import { getBankTransferInfo, getOrderByReference, uploadReceipt, type BankTransferInfo } from '../api/orders';
+import { ApiRequestError } from '../types/api';
 import type { Order } from '../types/api';
 import { formatArs } from '../lib/price';
 
@@ -69,7 +70,7 @@ export default function BankTransferPage() {
               </dl>
             </section>
 
-            <section className="bg-cream-card/60 border border-cream-card rounded-card p-6">
+            <section className="bg-cream-card/60 border border-cream-card rounded-card p-6 mb-6">
               <p className="text-xs tracking-[0.3em] text-brown-dark mb-3">
                 IMPORTANTE — CÓMO CONFIRMAR TU PAGO
               </p>
@@ -83,15 +84,20 @@ export default function BankTransferPage() {
                   en el concepto/observación de la transferencia.
                 </li>
                 <li>
-                  Enviá el comprobante por {bank.contactMethod} indicando tu email
-                  ({order.customerEmail}) para que asociemos el pago con tu orden.
+                  Subí el comprobante acá abajo, o mandalo por {bank.contactMethod}.
                 </li>
                 <li>
-                  Una vez que verifiquemos el ingreso te enviamos el email de
-                  confirmación y coordinamos el envío. Tarda 1 día hábil.
+                  Verificamos el ingreso y te enviamos el email de confirmación.
+                  Suele tardar 1 día hábil.
                 </li>
               </ol>
             </section>
+
+            <ReceiptUploader
+              orderReference={order.reference}
+              initialReceiptUrl={order.receiptUrl}
+              onUploaded={updated => setOrder(updated)}
+            />
 
             <div className="mt-8 text-center">
               <Link
@@ -103,9 +109,104 @@ export default function BankTransferPage() {
             </div>
           </>
         )}
+
+        {status === 'ok' && order && !bank && (
+          <div className="bg-white p-8 rounded-card text-center">
+            <p className="text-terracotta">
+              La opción de transferencia no está disponible ahora mismo.
+            </p>
+          </div>
+        )}
       </main>
       <Footer />
     </>
+  );
+}
+
+/**
+ * Wrapped in its own component so the file input + upload state don't cause
+ * the whole page to re-render on every keystroke of a picker or preview.
+ */
+function ReceiptUploader({ orderReference, initialReceiptUrl, onUploaded }: {
+  orderReference: string;
+  initialReceiptUrl: string | null;
+  onUploaded: (o: Order) => void;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [receiptUrl, setReceiptUrl] = useState<string | null>(initialReceiptUrl);
+  const [justUploaded, setJustUploaded] = useState(false);
+
+  async function handlePick(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setError(null);
+    setUploading(true);
+    try {
+      const updated = await uploadReceipt(orderReference, file);
+      setReceiptUrl(updated.receiptUrl);
+      setJustUploaded(true);
+      onUploaded(updated);
+      // Toast auto-hides so re-uploads feel snappy.
+      setTimeout(() => setJustUploaded(false), 4000);
+    } catch (err) {
+      const body = (err instanceof ApiRequestError) ? err.body : null;
+      setError(body?.message ?? 'No se pudo subir el archivo. Intentá de nuevo.');
+    } finally {
+      setUploading(false);
+      // Reset so the same file can be re-picked (change event only fires on change).
+      if (inputRef.current) inputRef.current.value = '';
+    }
+  }
+
+  return (
+    <section className="bg-white rounded-card p-6">
+      <p className="text-xs tracking-[0.3em] text-muted mb-2">SUBIR COMPROBANTE</p>
+      <p className="text-sm text-muted mb-4">
+        Aceptamos JPG, PNG, WebP o PDF (máx 5 MB). Apenas lo subís se lo
+        notificamos al equipo para que verifique tu pago.
+      </p>
+
+      {receiptUrl && !justUploaded && (
+        <div className="mb-4 bg-cream-bg border border-cream-card px-4 py-3 rounded-card text-sm">
+          Ya subiste un comprobante para esta orden.{' '}
+          <a
+            href={receiptUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="text-terracotta hover:underline"
+          >
+            Ver comprobante actual
+          </a>
+          . Podés subir otro si lo elegiste mal.
+        </div>
+      )}
+
+      {justUploaded && (
+        <div role="status" className="mb-4 bg-terracotta/10 border border-terracotta/40 text-terracotta px-4 py-3 rounded-card text-sm">
+          Comprobante recibido. Te avisamos por email cuando verifiquemos el pago.
+        </div>
+      )}
+
+      <label className="inline-flex items-center gap-3 cursor-pointer bg-brown-dark hover:bg-brown text-white px-5 py-3 text-sm tracking-wider font-semibold transition-colors">
+        <input
+          ref={inputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp,application/pdf"
+          onChange={handlePick}
+          disabled={uploading}
+          className="hidden"
+        />
+        {uploading ? 'SUBIENDO…' : (receiptUrl ? 'SUBIR OTRO ARCHIVO' : 'ELEGIR ARCHIVO')}
+      </label>
+
+      {error && (
+        <p role="alert" className="text-terracotta text-xs mt-3">
+          {error}
+        </p>
+      )}
+    </section>
   );
 }
 

@@ -28,5 +28,11 @@ public class RateLimitConfig implements WebMvcConfigurer {
         // Order creation: 10 orders per minute per IP.
         registry.addInterceptor(new RateLimitInterceptor(limiter, 10, 60_000L))
             .addPathPatterns("/api/orders");
+
+        // Receipt upload: 5 per minute per IP. Public endpoint that writes to
+        // storage, so more strict — a legit customer uploads once, maybe twice
+        // if they picked the wrong file.
+        registry.addInterceptor(new RateLimitInterceptor(limiter, 5, 60_000L))
+            .addPathPatterns("/api/orders/*/receipt");
     }
 }
