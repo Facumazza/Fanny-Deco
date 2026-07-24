@@ -1,17 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-
-  "//": [
-    "REPLACE the destination URLs below with your actual Railway backend URL",
-    "after creating the Railway service. Vercel doesn't interpolate env vars",
-    "into rewrites, so this file is the single source of truth.",
-    "",
-    "Why rewrites and not direct CORS: browser sees only fanny-deco.vercel.app",
-    "as the origin, so session cookies from the backend are stored under the",
-    "visible domain and get sent back on the next request. No CORS config",
-    "needed on the Spring Boot side."
-  ],
-
   "rewrites": [
     {
       "source": "/api/:path*",
