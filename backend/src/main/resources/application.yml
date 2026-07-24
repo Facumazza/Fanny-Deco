@@ -21,7 +21,10 @@ spring:
       max-request-size: 6MB
 
 server:
-  port: 8080
+  # Railway/Heroku-style hosts inject $PORT with a dynamic port per deploy;
+  # Spring's auto-binding only covers SERVER_PORT, so we read PORT explicitly
+  # and fall back to 8080 for local dev where $PORT is unset.
+  port: ${PORT:8080}
   servlet:
     session:
       timeout: 7d
