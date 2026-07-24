@@ -5,14 +5,14 @@ export function ProcessSection() {
         {/* Overlapping images */}
         <div className="relative h-[500px]">
           <img
-            src="https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=800"
-            alt="Herramientas del taller"
+            src="https://pub-7896d0aa228b4afab2513f70f3375892.r2.dev/691473ba-0990-4799-a220-6a35b1372ab1.jpg"
+            alt="Piezas de cerámica en proceso en el taller"
             loading="lazy"
             className="absolute top-0 left-0 w-[55%] h-[65%] object-cover rounded-sm shadow-lg"
           />
           <img
-            src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800"
-            alt="Materiales artesanales"
+            src="https://pub-7896d0aa228b4afab2513f70f3375892.r2.dev/ea192507-a05e-4d5c-9dab-2af6f569df16.jpg"
+            alt="Costura de cuero a máquina en el taller"
             loading="lazy"
             className="absolute bottom-0 right-0 w-[50%] h-[45%] object-cover rounded-sm shadow-lg"
           />
