@@ -6,6 +6,7 @@ import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import OrderConfirmationPage from './pages/OrderConfirmationPage';
 import OrderStatusPage from './pages/OrderStatusPage';
+import BankTransferPage from './pages/BankTransferPage';
 import NotFoundPage from './pages/NotFoundPage';
 import PoliticaCambioPage from './pages/info/PoliticaCambioPage';
 import OpcionesPagoPage from './pages/info/OpcionesPagoPage';
@@ -54,6 +55,7 @@ export default function App() {
         <Route path="/carrito" element={<CartPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/orden/:reference" element={<OrderConfirmationPage />} />
+        <Route path="/orden/:reference/transferencia" element={<BankTransferPage />} />
         <Route path="/orden/:reference/success" element={<OrderStatusPage kind="success" />} />
         <Route path="/orden/:reference/fallo" element={<OrderStatusPage kind="failure" />} />
         <Route path="/orden/:reference/pendiente" element={<OrderStatusPage kind="pending" />} />

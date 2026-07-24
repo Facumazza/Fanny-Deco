@@ -60,6 +60,19 @@ artesa:
     public-base-url: ${ARTESA_PUBLIC_BASE_URL:http://localhost:8080}
     # URL of the storefront where the customer will be sent after payment.
     frontend-base-url: ${ARTESA_FRONTEND_BASE_URL:http://localhost:5173}
+  # Bank transfer as an alternative payment method. Static config — the shop
+  # has one bank account and displays it to customers who choose "pagar por
+  # transferencia" at checkout. Fields left blank in dev; production sets
+  # them via env vars. If cbu + alias are both blank the endpoint returns
+  # 404 and the frontend hides the option.
+  bank-transfer:
+    enabled:        ${ARTESA_BANK_TRANSFER_ENABLED:true}
+    bank-name:      ${ARTESA_BANK_TRANSFER_BANK_NAME:Banco Galicia}
+    account-holder: ${ARTESA_BANK_TRANSFER_ACCOUNT_HOLDER:}
+    cbu:            ${ARTESA_BANK_TRANSFER_CBU:}
+    alias:          ${ARTESA_BANK_TRANSFER_ALIAS:}
+    cuit:           ${ARTESA_BANK_TRANSFER_CUIT:}
+    contact-method: ${ARTESA_BANK_TRANSFER_CONTACT_METHOD:WhatsApp al +54 9 11 1234-5678}
   emails:
     # `resend` for real integration, `console` to log emails to stdout (dev).
     provider: ${ARTESA_EMAIL_PROVIDER:console}
