@@ -84,7 +84,7 @@ export default function BankTransferPage() {
                   en el concepto/observación de la transferencia.
                 </li>
                 <li>
-                  Subí el comprobante acá abajo, o mandalo por {bank.contactMethod}.
+                  Subí el comprobante acá abajo.
                 </li>
                 <li>
                   Verificamos el ingreso y te enviamos el email de confirmación.

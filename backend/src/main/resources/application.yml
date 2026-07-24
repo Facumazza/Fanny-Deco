@@ -42,8 +42,18 @@ artesa:
   uploads:
     # `local` writes to `directory` on disk and serves /uploads/** statically.
     # In prod, application-prod.yml sets provider=r2 and the app talks to R2 instead.
-    provider: local
+    provider: ${ARTESA_UPLOADS_PROVIDER:local}
     directory: ./uploads
+    # R2 config lives here with empty defaults so a dev can flip provider=r2
+    # via env var to smoke-test R2 locally without activating the whole prod
+    # profile (which would demand real DB/MP creds). Prod overrides these to
+    # required env vars via application-prod.yml (\${VAR:?...}).
+    r2:
+      account-id:        ${R2_ACCOUNT_ID:}
+      access-key-id:     ${R2_ACCESS_KEY_ID:}
+      secret-access-key: ${R2_SECRET_ACCESS_KEY:}
+      bucket:            ${R2_BUCKET:}
+      public-base-url:   ${R2_PUBLIC_BASE_URL:}
   payments:
     # `mercadopago` for real integration, or leave blank/other for tests-with-fake.
     provider: ${ARTESA_PAYMENT_PROVIDER:mercadopago}
