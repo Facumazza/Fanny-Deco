@@ -1,14 +1,12 @@
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { Header } from '../components/layout/Header';
 import { Footer } from '../components/layout/Footer';
 import { useCart } from '../hooks/useCart';
-import { createOrder, initiatePayment, getBankTransferInfo } from '../api/orders';
+import { createOrder } from '../api/orders';
 import { ApiRequestError } from '../types/api';
 
 import { formatArs } from '../lib/price';
-
-type PaymentMethod = 'mercadopago' | 'bank_transfer';
 
 const inputCls =
   'w-full border border-cream-card px-3 py-2 focus:outline-none focus:border-brown-dark bg-white';
@@ -40,16 +38,8 @@ export default function CheckoutPage() {
   const navigate = useNavigate();
 
   const [form, setForm] = useState<FormState>(INITIAL);
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('mercadopago');
-  const [bankTransferAvailable, setBankTransferAvailable] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  // Poll the shop's bank-transfer config once on mount. Endpoint 404s (→ null)
-  // when the shop doesn't offer transfers, in which case we don't render the radio.
-  useEffect(() => {
-    getBankTransferInfo().then(info => setBankTransferAvailable(info !== null));
-  }, []);
 
   // If the user lands here with an empty cart, send them back — nothing to check out.
   if (items.length === 0) {
@@ -79,20 +69,9 @@ export default function CheckoutPage() {
           quantity: it.quantity,
         })),
       });
-
-      // Both branches: empty the cart only after order creation succeeded,
-      // so a network hiccup on that first call doesn't wipe the user's items.
-      if (paymentMethod === 'bank_transfer') {
-        clear();
-        navigate(`/orden/${order.reference}/transferencia`);
-        return;
-      }
-
-      // MP branch: initiate MP preference; only clear cart once we know we're
-      // bouncing to their checkout (if init fails we keep the cart for retry).
-      const initiation = await initiatePayment(order.reference);
+      // Only method available is bank transfer — go straight to the details page.
       clear();
-      window.location.href = initiation.initPoint;
+      navigate(`/orden/${order.reference}/transferencia`);
     } catch (err) {
       if (err instanceof ApiRequestError && err.body?.message) {
         setError(err.body.message);
@@ -205,29 +184,18 @@ export default function CheckoutPage() {
               />
             </section>
 
-            {/* Payment method — only render the choice when the shop actually
-                offers bank transfer; otherwise there's nothing to pick. */}
-            {bankTransferAvailable && (
-              <section className="bg-white p-6 rounded-card">
-                <h2 className="font-display text-2xl text-ink mb-4">Método de pago</h2>
-                <div className="space-y-3">
-                  <PaymentOption
-                    id="pm-mp"
-                    label="Mercado Pago"
-                    description="Tarjeta de crédito / débito, saldo Mercado Pago, Rapipago, PagoFácil. Cuotas disponibles."
-                    checked={paymentMethod === 'mercadopago'}
-                    onChange={() => setPaymentMethod('mercadopago')}
-                  />
-                  <PaymentOption
-                    id="pm-bt"
-                    label="Transferencia bancaria"
-                    description="Te mostramos CBU + Alias en el paso siguiente. Coordiná el envío del comprobante para confirmar tu pago."
-                    checked={paymentMethod === 'bank_transfer'}
-                    onChange={() => setPaymentMethod('bank_transfer')}
-                  />
-                </div>
-              </section>
-            )}
+            {/* Payment method info — bank transfer is the only option for now.
+                No radio: showing a picker with a single choice is UX noise. */}
+            <section className="bg-white p-6 rounded-card">
+              <h2 className="font-display text-2xl text-ink mb-4">Método de pago</h2>
+              <div className="border border-brown-dark bg-cream-bg p-4 rounded-card">
+                <p className="font-medium text-ink">Transferencia bancaria</p>
+                <p className="text-xs text-muted mt-1">
+                  Te mostramos CBU + Alias en el paso siguiente. Después de transferir,
+                  subís el comprobante y verificamos el pago para despachar tu pedido.
+                </p>
+              </div>
+            </section>
           </div>
 
           {/* Summary */}
@@ -253,9 +221,7 @@ export default function CheckoutPage() {
                 <span>{formatArs(subtotalArs)}</span>
               </div>
               <p className="text-xs text-muted">
-                {paymentMethod === 'bank_transfer'
-                  ? 'Te mostramos los datos bancarios en el paso siguiente.'
-                  : 'Al continuar te redirigimos a MercadoPago para completar el pago.'}
+                Te mostramos los datos bancarios en el paso siguiente.
               </p>
             </div>
             <button
@@ -263,10 +229,7 @@ export default function CheckoutPage() {
               disabled={submitting}
               className="w-full bg-brown-dark hover:bg-brown text-white py-4 text-sm tracking-wider font-semibold transition-colors disabled:opacity-60"
             >
-              {submitting
-                ? (paymentMethod === 'bank_transfer' ? 'CREANDO ORDEN…' : 'YENDO A MERCADOPAGO…')
-                : (paymentMethod === 'bank_transfer' ? 'CONTINUAR CON TRANSFERENCIA →' : 'PAGAR CON MERCADOPAGO →')
-              }
+              {submitting ? 'CREANDO ORDEN…' : 'CONTINUAR CON TRANSFERENCIA →'}
             </button>
           </aside>
         </form>
@@ -286,37 +249,6 @@ function Field({ label, hint, required, children }: {
       </span>
       {children}
       {hint && <span className="block text-xs text-muted mt-1">{hint}</span>}
-    </label>
-  );
-}
-
-function PaymentOption({ id, label, description, checked, onChange }: {
-  id: string;
-  label: string;
-  description: string;
-  checked: boolean;
-  onChange: () => void;
-}) {
-  return (
-    <label
-      htmlFor={id}
-      className={
-        'flex items-start gap-3 border p-4 rounded-card cursor-pointer transition-colors ' +
-        (checked ? 'border-brown-dark bg-cream-bg' : 'border-cream-card hover:border-brown/40')
-      }
-    >
-      <input
-        id={id}
-        type="radio"
-        name="paymentMethod"
-        checked={checked}
-        onChange={onChange}
-        className="mt-1 accent-brown-dark"
-      />
-      <div>
-        <p className="font-medium text-ink">{label}</p>
-        <p className="text-xs text-muted mt-1">{description}</p>
-      </div>
     </label>
   );
 }
