@@ -16,6 +16,7 @@ export default function ProductPage() {
   const { addItem } = useCart();
   const [status, setStatus] = useState<Status>('loading');
   const [product, setProduct] = useState<ProductDetail | null>(null);
+  const [activeImage, setActiveImage] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [wishlisted, setWishlisted] = useState(false);
   const [addedFeedback, setAddedFeedback] = useState(false);
@@ -36,9 +37,11 @@ export default function ProductPage() {
 
   useEffect(() => {
     setStatus('loading');
+    setActiveImage(null);
     getProduct(slug)
       .then(p => {
         setProduct(p);
+        setActiveImage(p.imageUrl);
         setStatus('ok');
       })
       .catch(err => {
@@ -88,15 +91,43 @@ export default function ProductPage() {
             </nav>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-              {/* Image */}
+              {/* Image gallery — primary is imageUrl, extras come from additionalImages */}
               <div className="relative">
                 <div className="aspect-square bg-cream-card overflow-hidden rounded-sm">
                   <img
-                    src={product.imageUrl}
+                    src={activeImage ?? product.imageUrl}
                     alt={product.name}
                     className="w-full h-full object-cover"
                   />
                 </div>
+                {product.additionalImages.length > 0 && (
+                  <ul className="mt-4 grid grid-cols-5 gap-2">
+                    {[product.imageUrl, ...product.additionalImages].map((url, i) => {
+                      const isActive = (activeImage ?? product.imageUrl) === url;
+                      return (
+                        <li key={`${url}-${i}`}>
+                          <button
+                            type="button"
+                            onClick={() => setActiveImage(url)}
+                            aria-label={`Ver imagen ${i + 1}`}
+                            aria-pressed={isActive}
+                            className={
+                              'aspect-square block w-full overflow-hidden rounded-sm bg-cream-card border-2 transition-colors ' +
+                              (isActive ? 'border-brown-dark' : 'border-transparent hover:border-cream-card')
+                            }
+                          >
+                            <img
+                              src={url}
+                              alt=""
+                              loading="lazy"
+                              className="w-full h-full object-cover"
+                            />
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
               </div>
 
               {/* Info */}

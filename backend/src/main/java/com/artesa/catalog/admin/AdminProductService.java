@@ -105,6 +105,22 @@ public class AdminProductService {
         // so we manage them explicitly via EntityManager to avoid cascade
         // subtleties. This service owns the write side.
         replaceColors(p, req.colors());
+        replaceAdditionalImages(p, req.additionalImages());
+    }
+
+    /**
+     * Replace the extra gallery images. Simpler than replaceColors because
+     * these are just strings in an @ElementCollection — no child entity to
+     * hydrate, JPA rewrites the join table when we mutate the list.
+     */
+    private void replaceAdditionalImages(Product p, List<String> urls) {
+        p.getAdditionalImages().clear();
+        if (urls == null) return;
+        for (String url : urls) {
+            if (url != null && !url.isBlank()) {
+                p.getAdditionalImages().add(url.trim());
+            }
+        }
     }
 
     private void replaceColors(Product p, List<String> hexes) {

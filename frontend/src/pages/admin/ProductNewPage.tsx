@@ -13,6 +13,7 @@ const EMPTY: ProductUpsertRequest = {
   ratingAvg: 5,
   ratingCount: 0,
   categoryId: 0,
+  additionalImages: [],
 };
 
 export default function ProductNewPage() {

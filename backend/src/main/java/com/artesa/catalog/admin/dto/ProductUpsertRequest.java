@@ -44,5 +44,8 @@ public record ProductUpsertRequest(
     Long categoryId,
 
     List<@Pattern(regexp = "^#[0-9A-Fa-f]{6}$",
-                  message = "Cada color debe ser un hex de 6 dígitos con # (ej: #6B4029)") String> colors
+                  message = "Cada color debe ser un hex de 6 dígitos con # (ej: #6B4029)") String> colors,
+
+    /** Extra images for the detail-page gallery; primary image lives in imageUrl. */
+    List<@NotBlank @Size(max = 2000) String> additionalImages
 ) {}

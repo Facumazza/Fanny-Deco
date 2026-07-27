@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import type { Category, ProductUpsertRequest } from '../../types/api';
 import { getCategories } from '../../api/catalog';
 import { ImageUploadField } from './ImageUploadField';
+import { ImageListUploadField } from './ImageListUploadField';
 
 interface Props {
   initial: ProductUpsertRequest;
@@ -115,12 +116,19 @@ export function ProductForm({ initial, submitLabel, onSubmit }: Props) {
         <div>
           <ImageUploadField
             required
+            label="Imagen principal"
             value={form.imageUrl}
             onChange={url => setForm(f => ({ ...f, imageUrl: url }))}
           />
         </div>
 
       </div>
+
+      <ImageListUploadField
+        values={form.additionalImages}
+        onChange={urls => setForm(f => ({ ...f, additionalImages: urls }))}
+        hint="Se muestran en la galería de la ficha del producto. La principal (arriba) es la que aparece en las cards del catálogo y en emails."
+      />
 
       <Field label="Descripción">
         <textarea

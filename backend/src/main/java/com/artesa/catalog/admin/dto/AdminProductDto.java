@@ -19,5 +19,6 @@ public record AdminProductDto(
     Long categoryId,
     String categoryName,
     List<String> colors,
+    List<String> additionalImages,
     Instant createdAt
 ) {}

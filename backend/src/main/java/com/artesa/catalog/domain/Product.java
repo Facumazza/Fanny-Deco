@@ -51,6 +51,21 @@ public class Product {
     @OrderBy("displayOrder ASC")
     private List<ProductColor> colors = new ArrayList<>();
 
+    /**
+     * Extra gallery images shown on the product detail page, in display order.
+     * imageUrl above is the primary — still what cards, order history, and
+     * email templates reference. This list is optional and only rendered on
+     * /producto/:slug as thumbnails the customer can click through.
+     */
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(
+        name = "product_additional_images",
+        joinColumns = @JoinColumn(name = "product_id")
+    )
+    @OrderColumn(name = "display_order")
+    @Column(name = "image_url", length = 2000, nullable = false)
+    private List<String> additionalImages = new ArrayList<>();
+
     public Product() {}
 
     public Long getId() { return id; }
@@ -65,4 +80,5 @@ public class Product {
     public Category getCategory() { return category; }
     public Instant getCreatedAt() { return createdAt; }
     public List<ProductColor> getColors() { return colors; }
+    public List<String> getAdditionalImages() { return additionalImages; }
 }

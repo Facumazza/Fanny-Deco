@@ -5,6 +5,8 @@ import com.artesa.catalog.domain.Product;
 import com.artesa.catalog.domain.ProductColor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class AdminProductMapper {
 
@@ -22,6 +24,7 @@ public class AdminProductMapper {
             p.getCategory().getId(),
             p.getCategory().getName(),
             p.getColors().stream().map(ProductColor::getHex).toList(),
+            List.copyOf(p.getAdditionalImages()),
             p.getCreatedAt()
         );
     }

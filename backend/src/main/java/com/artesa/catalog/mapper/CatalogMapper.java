@@ -31,7 +31,10 @@ public class CatalogMapper {
             p.getBadge(), p.getRatingAvg(), p.getRatingCount(),
             p.getCategory().getSlug(), p.getCategory().getName(),
             p.getDescription(),
-            p.getColors().stream().map(ProductColor::getHex).toList()
+            p.getColors().stream().map(ProductColor::getHex).toList(),
+            // Defensive copy: additionalImages is a Hibernate-managed list; we
+            // don't want the DTO leaking a handle that mutations could ride.
+            List.copyOf(p.getAdditionalImages())
         );
     }
 

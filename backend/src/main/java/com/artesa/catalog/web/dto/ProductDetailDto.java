@@ -16,5 +16,6 @@ public record ProductDetailDto(
     String categorySlug,
     String categoryName,
     String description,
-    List<String> colors
+    List<String> colors,
+    List<String> additionalImages
 ) {}

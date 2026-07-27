@@ -39,6 +39,7 @@ export default function ProductEditPage() {
     ratingAvg: product.ratingAvg,
     ratingCount: product.ratingCount,
     categoryId: product.categoryId,
+    additionalImages: product.additionalImages ?? [],
   };
 
   return (

@@ -20,6 +20,7 @@ export interface ProductSummary {
 export interface ProductDetail extends ProductSummary {
   description: string | null;
   categoryName: string;
+  additionalImages: string[];
 }
 
 export interface Review {
@@ -67,6 +68,7 @@ export interface AdminProduct {
   ratingCount: number;
   categoryId: number;
   categoryName: string;
+  additionalImages: string[];
   createdAt: string;
 }
 
@@ -79,6 +81,7 @@ export interface ProductUpsertRequest {
   ratingAvg: number;
   ratingCount: number;
   categoryId: number;
+  additionalImages: string[];
 }
 
 export interface AdminCategory {
