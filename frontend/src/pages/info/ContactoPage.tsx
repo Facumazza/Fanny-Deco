@@ -12,7 +12,7 @@ export default function ContactoPage() {
       <ul>
         <li>
           <strong>Email</strong>:
-          <a href="mailto:hola@artesa.com"> hola@artesa.com</a>
+          <a href="mailto:fannydecoarte@gmail.com"> fannydecoarte@gmail.com</a>
           <br />
           Respondemos dentro de las 24 hs hábiles.
         </li>
@@ -43,7 +43,7 @@ export default function ContactoPage() {
       <h2>Prensa y colaboraciones</h2>
       <p>
         Consultas de prensa, catálogos, eventos o showrooms:
-        <a href="mailto:prensa@artesa.com"> prensa@artesa.com</a>.
+        <a href="mailto:fannydecoarte@gmail.com"> fannydecoarte@gmail.com</a>.
       </p>
     </ContentPage>
   );

@@ -27,7 +27,7 @@ export default function PoliticaCambioPage() {
 
       <h2>Cómo hacerlo</h2>
       <ol>
-        <li>Escribinos a <a href="mailto:hola@artesa.com">hola@artesa.com</a> o por WhatsApp indicando tu número de orden.</li>
+        <li>Escribinos a <a href="mailto:fannydecoarte@gmail.com">fannydecoarte@gmail.com</a> o por WhatsApp indicando tu número de orden.</li>
         <li>Coordinamos el retiro o punto de entrega según tu ciudad.</li>
         <li>Una vez recibida la pieza y verificado su estado, procesamos el reintegro (hasta 10 días hábiles) o despachamos la nueva pieza.</li>
       </ol>

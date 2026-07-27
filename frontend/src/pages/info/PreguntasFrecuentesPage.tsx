@@ -37,7 +37,7 @@ export default function PreguntasFrecuentesPage() {
       <h3>¿Puedo modificar mi pedido después de pagarlo?</h3>
       <p>
         Solo si todavía no despachamos. Escribinos a
-        <a href="mailto:hola@artesa.com"> hola@artesa.com</a> lo antes posible
+        <a href="mailto:fannydecoarte@gmail.com"> fannydecoarte@gmail.com</a> lo antes posible
         con el número de orden.
       </p>
 
@@ -80,7 +80,7 @@ export default function PreguntasFrecuentesPage() {
       <h3>¿Puedo visitar el taller?</h3>
       <p>
         Sí, con cita previa. Escribinos a
-        <a href="mailto:hola@artesa.com"> hola@artesa.com</a> con dos o tres días
+        <a href="mailto:fannydecoarte@gmail.com"> fannydecoarte@gmail.com</a> con dos o tres días
         de anticipación.
       </p>
 

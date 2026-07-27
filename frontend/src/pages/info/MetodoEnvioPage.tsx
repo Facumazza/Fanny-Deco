@@ -46,7 +46,7 @@ export default function MetodoEnvioPage() {
 
       <p>
         ¿Consultas sobre tu envío? Escribinos con el número de orden a
-        <a href="mailto:hola@artesa.com"> hola@artesa.com</a>.
+        <a href="mailto:fannydecoarte@gmail.com"> fannydecoarte@gmail.com</a>.
       </p>
     </ContentPage>
   );

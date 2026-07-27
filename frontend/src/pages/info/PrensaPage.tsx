@@ -12,7 +12,7 @@ export default function PrensaPage() {
 
       <h2>Contacto de prensa</h2>
       <p>
-        <a href="mailto:prensa@artesa.com">prensa@artesa.com</a>
+        <a href="mailto:fannydecoarte@gmail.com">fannydecoarte@gmail.com</a>
         <br />
         Coordinamos respuestas dentro de las 24 hs hábiles. Para deadlines
         urgentes, indicanos "URGENTE" en el asunto.

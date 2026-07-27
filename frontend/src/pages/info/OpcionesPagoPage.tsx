@@ -41,7 +41,7 @@ export default function OpcionesPagoPage() {
       </p>
 
       <p>
-        ¿Dudas sobre un pago? Escribinos a <a href="mailto:hola@artesa.com">hola@artesa.com</a> con el número de orden.
+        ¿Dudas sobre un pago? Escribinos a <a href="mailto:fannydecoarte@gmail.com">fannydecoarte@gmail.com</a> con el número de orden.
       </p>
     </ContentPage>
   );

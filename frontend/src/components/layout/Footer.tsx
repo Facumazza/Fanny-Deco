@@ -29,7 +29,7 @@ export function Footer() {
             </li>
             <li className="flex items-center gap-2">
               <span aria-hidden>✉</span>
-              <a href="mailto:hola@artesa.com" className="hover:text-white">hola@artesa.com</a>
+              <a href="mailto:fannydecoarte@gmail.com" className="hover:text-white">fannydecoarte@gmail.com</a>
             </li>
           </ul>
         </div>
