@@ -2,7 +2,7 @@ import { useLocation } from 'react-router-dom';
 
 // Number in international format WITHOUT + or spaces/dashes — wa.me expects raw digits.
 // TODO: replace with the real number before deploying, or move to VITE_ env var.
-const PHONE = '5491112345678';
+const PHONE = '5491165896153';
 const PREFILL = '¡Hola FannyDeco! Estoy mirando la tienda y tengo una consulta.';
 
 /**

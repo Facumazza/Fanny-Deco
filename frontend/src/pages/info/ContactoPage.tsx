@@ -18,7 +18,7 @@ export default function ContactoPage() {
         </li>
         <li>
           <strong>WhatsApp</strong>: usá el botón verde flotante abajo a la
-          derecha, o llamanos al <strong>+54 9 11 1234-5678</strong>.
+          derecha, o llamanos al <strong>+54 9 11 6589-6153</strong>.
         </li>
         <li>
           <strong>Instagram</strong>:
