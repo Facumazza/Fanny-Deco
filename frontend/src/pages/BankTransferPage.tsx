@@ -2,10 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Header } from '../components/layout/Header';
 import { Footer } from '../components/layout/Footer';
-import { getBankTransferInfo, getOrderByReference, uploadReceipt, type BankTransferInfo } from '../api/orders';
+import { getOrderByReference, uploadReceipt } from '../api/orders';
 import { ApiRequestError } from '../types/api';
 import type { Order } from '../types/api';
 import { formatArs } from '../lib/price';
+import { BANK_INFO } from '../config/bank';
 
 type Status = 'loading' | 'ok' | 'error';
 
@@ -13,18 +14,13 @@ export default function BankTransferPage() {
   const { reference = '' } = useParams<{ reference: string }>();
   const [status, setStatus] = useState<Status>('loading');
   const [order, setOrder] = useState<Order | null>(null);
-  const [bank, setBank] = useState<BankTransferInfo | null>(null);
 
   useEffect(() => {
-    // Load order + bank config in parallel; either failing sends us to the
-    // error state (a customer landing here without a valid ref is the main
-    // legitimate reason this happens).
-    Promise.all([getOrderByReference(reference), getBankTransferInfo()])
-      .then(([o, b]) => {
-        setOrder(o);
-        setBank(b);
-        setStatus(b ? 'ok' : 'error');
-      })
+    // Bank data is hardcoded (see src/config/bank.ts) so this only fetches
+    // the order — the previous parallel promise was overkill once the bank
+    // endpoint became a compile-time constant.
+    getOrderByReference(reference)
+      .then(o => { setOrder(o); setStatus('ok'); })
       .catch(() => setStatus('error'));
   }, [reference]);
 
@@ -46,7 +42,7 @@ export default function BankTransferPage() {
           </div>
         )}
 
-        {status === 'ok' && order && bank && (
+        {status === 'ok' && order && (
           <>
             <section className="bg-white rounded-card p-6 mb-6">
               <p className="text-xs tracking-[0.3em] text-muted mb-2">TU ORDEN</p>
@@ -62,11 +58,11 @@ export default function BankTransferPage() {
             <section className="bg-white rounded-card p-6 mb-6">
               <p className="text-xs tracking-[0.3em] text-muted mb-4">DATOS DE LA CUENTA</p>
               <dl className="space-y-4">
-                <BankField label="Banco" value={bank.bankName} />
-                <BankField label="Titular" value={bank.accountHolder} />
-                {bank.cuit && <BankField label="CUIT" value={bank.cuit} copyable />}
-                {bank.alias && <BankField label="Alias" value={bank.alias} copyable emphasize />}
-                {bank.cbu && <BankField label="CBU" value={bank.cbu} copyable emphasize />}
+                <BankField label="Banco" value={BANK_INFO.bankName} />
+                <BankField label="Titular" value={BANK_INFO.accountHolder} />
+                <BankField label="CUIT" value={BANK_INFO.cuit} copyable />
+                <BankField label="Alias" value={BANK_INFO.alias} copyable emphasize />
+                <BankField label="CBU" value={BANK_INFO.cbu} copyable emphasize />
               </dl>
             </section>
 
@@ -108,14 +104,6 @@ export default function BankTransferPage() {
               </Link>
             </div>
           </>
-        )}
-
-        {status === 'ok' && order && !bank && (
-          <div className="bg-white p-8 rounded-card text-center">
-            <p className="text-terracotta">
-              La opción de transferencia no está disponible ahora mismo.
-            </p>
-          </div>
         )}
       </main>
       <Footer />

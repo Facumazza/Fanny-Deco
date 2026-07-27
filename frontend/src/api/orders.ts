@@ -29,29 +29,6 @@ export function initiatePayment(reference: string): Promise<PaymentInitiation> {
   );
 }
 
-export interface BankTransferInfo {
-  bankName: string;
-  accountHolder: string;
-  cbu: string;
-  alias: string;
-  cuit: string;
-  contactMethod: string;
-}
-
-/**
- * Fetches the shop's bank details for customers who choose to transfer
- * instead of paying by card. Returns null when the endpoint 404s — that
- * means the shop hasn't configured a bank account (or disabled the
- * option), so the checkout should hide the transfer radio.
- */
-export async function getBankTransferInfo(): Promise<BankTransferInfo | null> {
-  try {
-    return await apiFetch<BankTransferInfo>('/payment-methods/bank-transfer');
-  } catch (e) {
-    return null;
-  }
-}
-
 /**
  * Uploads a transfer receipt for the given order. Multipart POST — the fetch
  * client below sets the boundary automatically (we don't set Content-Type
