@@ -32,7 +32,11 @@ export function Hero() {
             <img
               src="https://pub-7896d0aa228b4afab2513f70f3375892.r2.dev/13926e33-da31-44c2-bca7-4e0f936d2d40.jpg"
               alt="Bolso destacado FannyDeco"
-              className="w-full h-full object-cover"
+              // object-[center_65%] anchors the crop lower in the source so the
+              // bag (which sits below center in the original photo) shifts up
+              // into the middle of the visible square instead of getting
+              // clipped at the bottom.
+              className="w-full h-full object-cover object-[center_65%]"
             />
           </div>
           <div className="absolute bottom-6 left-6 bg-white px-6 py-4 shadow-lg">
