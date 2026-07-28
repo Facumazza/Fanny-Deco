@@ -100,9 +100,9 @@ export default function ProductPage() {
                     className="w-full h-full object-cover"
                   />
                 </div>
-                {product.additionalImages.length > 0 && (
+                {(product.additionalImages?.length ?? 0) > 0 && (
                   <ul className="mt-4 grid grid-cols-5 gap-2">
-                    {[product.imageUrl, ...product.additionalImages].map((url, i) => {
+                    {[product.imageUrl, ...(product.additionalImages ?? [])].map((url, i) => {
                       const isActive = (activeImage ?? product.imageUrl) === url;
                       return (
                         <li key={`${url}-${i}`}>
