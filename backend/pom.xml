@@ -55,6 +55,15 @@
             <version>2.5.0</version>
         </dependency>
 
+        <!-- Gmail SMTP transport for the GmailEmailService. Only loaded into
+             the JVM; no auto-configured JavaMailSender bean is created
+             because we build one manually inside GmailEmailService (avoids
+             polluting the context when a different email provider is used). -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
         <!-- S3-compatible client. Used to talk to Cloudflare R2 in production;
              in dev the local filesystem backend is used so this dep is loaded
              but the S3Client bean is never created (ConditionalOnProperty). -->

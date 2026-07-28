@@ -94,6 +94,12 @@ artesa:
     shop-name: ${ARTESA_EMAIL_SHOP_NAME:FannyDeco}
     resend:
       api-key: ${RESEND_API_KEY:}
+    # Gmail SMTP transport — used when artesa.emails.provider=gmail. Requires
+    # an App Password generated in the Google account with 2FA enabled
+    # (myaccount.google.com → Security → 2-Step Verification → App passwords).
+    gmail:
+      username:     ${ARTESA_EMAIL_GMAIL_USERNAME:}
+      app-password: ${ARTESA_EMAIL_GMAIL_APP_PASSWORD:}
 
 logging:
   level:
