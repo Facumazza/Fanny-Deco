@@ -30,14 +30,14 @@ export function Hero() {
         <div className="relative">
           <div className="aspect-square overflow-hidden rounded-sm">
             <img
-              src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=1200"
+              src="https://pub-7896d0aa228b4afab2513f70f3375892.r2.dev/13926e33-da31-44c2-bca7-4e0f936d2d40.jpg"
               alt="Bolso destacado FannyDeco"
               className="w-full h-full object-cover"
             />
           </div>
           <div className="absolute bottom-6 left-6 bg-white px-6 py-4 shadow-lg">
             <p className="text-[10px] tracking-[0.25em] text-muted mb-1">CUERO ITALIANO</p>
-            <p className="font-display text-2xl text-ink">Full-grain vegetale</p>
+            <p className="font-display text-2xl text-ink">Cuero de primera</p>
           </div>
         </div>
       </div>
