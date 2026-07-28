@@ -40,7 +40,6 @@ export function Hero() {
             />
           </div>
           <div className="absolute bottom-6 left-6 bg-white px-6 py-4 shadow-lg">
-            <p className="text-[10px] tracking-[0.25em] text-muted mb-1">CUERO ITALIANO</p>
             <p className="font-display text-2xl text-ink">Cuero de primera</p>
           </div>
         </div>
