@@ -28,9 +28,8 @@ export default function ContactoPage() {
 
       <h2>Visitanos</h2>
       <p>
-        Taller y showroom: <strong>Av. Corrientes 1234, CABA</strong>, Argentina.
-        <br />
-        Horario: lunes a viernes de 10 a 18 hs. Sábados con cita previa.
+        Para venir al taller, coordinamos por WhatsApp al{' '}
+        <strong>+54 9 11 6589-6153</strong>.
       </p>
 
       <h2>Piezas por encargo</h2>
