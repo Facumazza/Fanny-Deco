@@ -22,10 +22,10 @@ export function Footer() {
           </p>
           <ul className="space-y-2 text-sm">
             <li className="flex items-center gap-2">
-              <span aria-hidden>📍</span> Av. Corrientes 1234, CABA
+              <span aria-hidden>📍</span> Lomas de Zamora, Buenos Aires
             </li>
             <li className="flex items-center gap-2">
-              <span aria-hidden>📞</span> +54 11 1234 5678
+              <span aria-hidden>📞</span> +54 9 11 6589-6153
             </li>
             <li className="flex items-center gap-2">
               <span aria-hidden>✉</span>
@@ -48,8 +48,6 @@ export function Footer() {
           links={[
             { label: 'Nosotros',          to: '/nosotros' },
             { label: 'El proceso',        to: '/el-proceso' },
-            { label: 'Sustentabilidad',   to: '/sustentabilidad' },
-            { label: 'Prensa',            to: '/prensa' },
           ]}
         />
         <FooterColumn

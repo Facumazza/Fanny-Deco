@@ -14,8 +14,6 @@ import MetodoEnvioPage from './pages/info/MetodoEnvioPage';
 import ContactoPage from './pages/info/ContactoPage';
 import NosotrosPage from './pages/info/NosotrosPage';
 import ElProcesoPage from './pages/info/ElProcesoPage';
-import SustentabilidadPage from './pages/info/SustentabilidadPage';
-import PrensaPage from './pages/info/PrensaPage';
 import PreguntasFrecuentesPage from './pages/info/PreguntasFrecuentesPage';
 import LoginPage from './pages/admin/LoginPage';
 import DashboardPage from './pages/admin/DashboardPage';
@@ -66,8 +64,6 @@ export default function App() {
         <Route path="/contacto" element={<ContactoPage />} />
         <Route path="/nosotros" element={<NosotrosPage />} />
         <Route path="/el-proceso" element={<ElProcesoPage />} />
-        <Route path="/sustentabilidad" element={<SustentabilidadPage />} />
-        <Route path="/prensa" element={<PrensaPage />} />
         <Route path="/preguntas-frecuentes" element={<PreguntasFrecuentesPage />} />
         <Route path="/admin/login" element={<LoginPage />} />
         <Route
