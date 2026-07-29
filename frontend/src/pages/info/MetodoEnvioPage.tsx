@@ -35,9 +35,8 @@ export default function MetodoEnvioPage() {
 
       <h2>Retiro en el taller</h2>
       <p>
-        Si estás en Buenos Aires y preferís retirar personalmente, podés coordinar
-        el retiro en nuestro taller de <strong>Av. Corrientes 1234, CABA</strong>,
-        de lunes a viernes de 10 a 18 hs.
+        Si preferís retirar personalmente, escribinos por WhatsApp al{' '}
+        <strong>+54 9 11 6589-6153</strong> para arreglar fecha y lugar.
       </p>
 
       <p>
