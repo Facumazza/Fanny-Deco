@@ -4,45 +4,41 @@ export default function NosotrosPage() {
   return (
     <ContentPage eyebrow="NUESTRA HISTORIA" title="Nosotros">
       <p>
-        FannyDeco nació en 2019, en un taller de dos plantas en el barrio de San
-        Cristóbal, Buenos Aires. Empezamos siendo tres personas y una idea
-        simple: hacer objetos que duren toda la vida, con materiales que sepamos
-        de dónde vienen.
+        Fanny nació en 2019 en Lomas de Zamora, Provincia de Buenos Aires.
+        Junto a mi madre seguimos trabajando en el mismo taller, aquel en el
+        que inició sus trabajos de carpintería mi padre. El trabajo artesanal
+        siempre estuvo presente y, aunque cambie el material, es el valor de
+        la pieza que se crea lo que perdura.
       </p>
 
       <p>
-        Hoy somos siete, seguimos trabajando en el mismo taller, y cada bolso,
-        cada pieza de cerámica que sale por la puerta pasó por nuestras manos —
-        no por una línea de producción.
-      </p>
-
-      <h2>Lo que hacemos</h2>
-      <p>
-        Trabajamos con dos materiales nobles: <strong>cuero full-grain curtido
-        al vegetal</strong> (con trazabilidad del origen) y <strong>arcilla</strong>
-        de yacimientos argentinos, sin aditivos sintéticos.
+        Cada pieza tejida, cosida y horneada pasa por nuestras manos. Los
+        diseños de pintura con paisajes y cholitas del norte son propios. Hay
+        piezas cerámicas realizadas con molde, plancha u otras formas de
+        construcción ancestral.
       </p>
 
       <p>
-        Los diseños son propios. Las herramientas también, en gran parte —
-        aprendimos a hacer nuestras propias hormas, moldes y herramientas de
-        corte. Eso nos permite iterar rápido y no depender de proveedores para
-        cosas que sabemos hacer.
+        El cuero se cose a máquina o a mano, se colocan avíos y otros herrajes
+        que seleccionamos de acuerdo a nuestros criterios estéticos. Si bien
+        pueden encontrarse modelos similares, no hay productos iguales — no
+        trabajamos con producción de stock.
       </p>
 
-      <h2>Nuestro compromiso</h2>
-      <ul>
-        <li><strong>Piezas únicas</strong>: nunca hacemos dos iguales. Cada bolso lleva un número serial.</li>
-        <li><strong>Garantía de por vida</strong> en costuras estructurales.</li>
-        <li><strong>Reparaciones</strong>: si algo se rompe, arreglamos o rehacemos. Envianos la pieza y la ponemos como nueva.</li>
-        <li><strong>Producción justa</strong>: el 100% del equipo cobra por encima del convenio del sector.</li>
-      </ul>
-
-      <h2>El equipo</h2>
+      <h2>El nombre</h2>
       <p>
-        Siete personas: dos diseñadoras, tres artesanos en cuero, dos ceramistas.
-        Todos aprendimos en el taller, no en escuelas. Cada uno firma sus piezas
-        con una inicial que va dentro del bolso o en el fondo de la cerámica.
+        La tienda lleva el nombre de quien me inspiró en la costura. Fanny es
+        la tía que cosía bolsos para los recién nacidos de toda la familia,
+        organizadores para colgar en las puertas con detalles increíbles de
+        fruncidos y puntillas, toallitas de mano con pasamanería y tela de
+        ositos, almohadones con drapeados, cortinas, servilletas y todo lo
+        que se te ocurra. Hacía fácil lo complejo que tiene la costura.
+      </p>
+
+      <p>
+        Desde este taller creemos que nuestros productos reflejan la
+        dedicación y el valor de lo artesanal, y queremos que cada pieza que
+        te lleves no solo sea única sino especial para vos.
       </p>
     </ContentPage>
   );
