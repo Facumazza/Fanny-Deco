@@ -21,8 +21,14 @@ export function AdminLayout({ children }: Props) {
     <div className="min-h-screen bg-cream-bg">
       <header className="bg-brown-dark text-white">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/admin" className="flex flex-col leading-none">
-            <span className="font-display text-xl tracking-widest">FannyDeco</span>
+          <Link to="/admin" className="flex flex-col leading-none" aria-label="FannyDeco — panel admin">
+            {/* Admin bar is dark so the black-ink signature would disappear;
+                invert to white with a CSS filter so the same asset works. */}
+            <img
+              src="/logo-fanny.png"
+              alt="FannyDeco"
+              className="h-8 w-auto object-contain invert brightness-0"
+            />
             <span className="text-[10px] tracking-[0.3em] opacity-70">PANEL ADMIN</span>
           </Link>
           <nav className="hidden md:flex items-center gap-6 text-sm">
