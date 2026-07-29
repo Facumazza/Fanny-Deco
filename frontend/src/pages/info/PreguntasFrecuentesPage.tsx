@@ -43,8 +43,7 @@ export default function PreguntasFrecuentesPage() {
 
       <h3>¿Hacen envíos al exterior?</h3>
       <p>
-        Sí, a toda Latinoamérica y a algunos destinos en Europa/Norteamérica.
-        Los costos y tiempos varían.
+        Por ahora no. Solo enviamos dentro de Argentina.
       </p>
 
       <h2>Sobre pagos</h2>

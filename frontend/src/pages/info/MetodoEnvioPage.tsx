@@ -4,24 +4,20 @@ export default function MetodoEnvioPage() {
   return (
     <ContentPage eyebrow="INFORMACIÓN" title="Método de envío">
       <p>
-        Hacemos envíos desde nuestro taller en Buenos Aires a todo el país y a
-        Latinoamérica. Cada pieza se empaqueta con cuidado y viaja con seguro
-        contra roturas.
+        Hacemos envíos desde nuestro taller en Buenos Aires a toda Argentina.
+        Cada pieza se empaqueta con cuidado y viaja con seguro contra roturas.
       </p>
 
       <h2>Zonas y plazos</h2>
       <ul>
         <li><strong>CABA y GBA</strong>: 24 a 72 horas hábiles.</li>
         <li><strong>Interior de Argentina</strong>: 3 a 7 días hábiles.</li>
-        <li><strong>Uruguay, Chile, Paraguay</strong>: 7 a 10 días hábiles.</li>
-        <li><strong>Resto de Latinoamérica</strong>: 10 a 15 días hábiles, según destino.</li>
       </ul>
 
       <h2>Correos y couriers</h2>
       <p>
         Trabajamos con <strong>Correo Argentino</strong>, <strong>OCA</strong> y
-        <strong> Andreani</strong> para envíos nacionales, y con couriers
-        internacionales para exterior. El costo depende del peso, volumen y destino,
+        <strong> Andreani</strong>. El costo depende del peso, volumen y destino,
         y se calcula al momento del checkout.
       </p>
 

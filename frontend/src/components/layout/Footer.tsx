@@ -18,7 +18,7 @@ export function Footer() {
           <p className="font-display text-2xl text-white tracking-widest mb-4">FannyDeco</p>
           <p className="text-sm mb-6">
             Taller propio en Buenos Aires.<br />
-            Envíos a toda Latinoamérica.
+            Envíos a toda Argentina.
           </p>
           <ul className="space-y-2 text-sm">
             <li className="flex items-center gap-2">
