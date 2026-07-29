@@ -87,19 +87,22 @@ artesa:
     cuit:           ${ARTESA_BANK_TRANSFER_CUIT:}
     contact-method: ${ARTESA_BANK_TRANSFER_CONTACT_METHOD:WhatsApp al +54 9 11 1234-5678}
   emails:
-    # `resend` for real integration, `console` to log emails to stdout (dev).
-    provider: ${ARTESA_EMAIL_PROVIDER:console}
-    from: ${ARTESA_EMAIL_FROM:FannyDeco <no-reply@fannydeco.com>}
-    admin-to: ${ARTESA_EMAIL_ADMIN_TO:admin@fannydeco.com}
-    shop-name: ${ARTESA_EMAIL_SHOP_NAME:FannyDeco}
+    # `resend` for real integration, `gmail` for Gmail SMTP, `console` to log
+    # emails to stdout (dev). Env var names use the plural `EMAILS_` prefix so
+    # they match the Java property structure (@Value keys are artesa.emails.*)
+    # and Spring's relaxed binding handles the mapping symmetrically.
+    provider: ${ARTESA_EMAILS_PROVIDER:console}
+    from: ${ARTESA_EMAILS_FROM:FannyDeco <no-reply@fannydeco.com>}
+    admin-to: ${ARTESA_EMAILS_ADMIN_TO:admin@fannydeco.com}
+    shop-name: ${ARTESA_EMAILS_SHOP_NAME:FannyDeco}
     resend:
       api-key: ${RESEND_API_KEY:}
     # Gmail SMTP transport — used when artesa.emails.provider=gmail. Requires
     # an App Password generated in the Google account with 2FA enabled
     # (myaccount.google.com → Security → 2-Step Verification → App passwords).
     gmail:
-      username:     ${ARTESA_EMAIL_GMAIL_USERNAME:}
-      app-password: ${ARTESA_EMAIL_GMAIL_APP_PASSWORD:}
+      username:     ${ARTESA_EMAILS_GMAIL_USERNAME:}
+      app-password: ${ARTESA_EMAILS_GMAIL_APP_PASSWORD:}
 
 logging:
   level:
