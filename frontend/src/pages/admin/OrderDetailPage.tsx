@@ -104,35 +104,7 @@ export default function OrderDetailPage() {
           )}
 
           {/* Status changer */}
-          <section className="bg-white rounded-card p-6 mb-6">
-            <p className="text-xs tracking-[0.3em] text-muted mb-3">ESTADO ACTUAL</p>
-            {TERMINAL.includes(order.status) ? (
-              <p className="text-sm text-muted">
-                Esta orden está en estado terminal (
-                <strong>{STATUS_LABEL[order.status]}</strong>) y no se puede
-                cambiar más.
-              </p>
-            ) : (
-              <div className="flex items-center gap-3 flex-wrap">
-                {STATUSES.map(s => (
-                  <button
-                    key={s}
-                    type="button"
-                    onClick={() => void handleStatusChange(s)}
-                    disabled={saving || s === order.status}
-                    className={
-                      'px-4 py-2 text-xs tracking-wider font-semibold border transition-colors ' +
-                      (s === order.status
-                        ? 'bg-brown-dark text-white border-brown-dark cursor-default'
-                        : 'bg-white text-ink border-cream-card hover:border-brown-dark disabled:opacity-40')
-                    }
-                  >
-                    {STATUS_LABEL[s].toUpperCase()}
-                  </button>
-                ))}
-              </div>
-            )}
-          </section>
+          <StatusChanger order={order} saving={saving} onChange={handleStatusChange} />
 
           {/* Refund action — only relevant while the payment is live. */}
           {REFUNDABLE.includes(order.status) && (
@@ -230,6 +202,53 @@ export default function OrderDetailPage() {
         </>
       )}
     </AdminLayout>
+  );
+}
+
+function StatusChanger({ order, saving, onChange }: {
+  order: Order;
+  saving: boolean;
+  onChange: (next: OrderStatus) => void | Promise<void>;
+}) {
+  const [pending, setPending] = useState<OrderStatus>(order.status);
+  useEffect(() => { setPending(order.status); }, [order.status]);
+
+  const dirty = pending !== order.status;
+  const terminal = TERMINAL.includes(order.status);
+
+  return (
+    <section className="bg-white rounded-card p-6 mb-6">
+      <p className="text-xs tracking-[0.3em] text-muted mb-3">ESTADO</p>
+      {terminal ? (
+        <p className="text-sm text-muted">
+          Esta orden está en estado terminal (
+          <strong>{STATUS_LABEL[order.status]}</strong>) y no se puede
+          cambiar más.
+        </p>
+      ) : (
+        <div className="flex items-center gap-3 flex-wrap">
+          <select
+            value={pending}
+            onChange={e => setPending(e.target.value as OrderStatus)}
+            disabled={saving}
+            className="min-w-[220px] border border-cream-card px-3 py-2 focus:outline-none focus:border-brown-dark bg-white text-ink"
+            aria-label="Cambiar estado de la orden"
+          >
+            {STATUSES.map(s => (
+              <option key={s} value={s}>{STATUS_LABEL[s]}</option>
+            ))}
+          </select>
+          <button
+            type="button"
+            onClick={() => void onChange(pending)}
+            disabled={!dirty || saving}
+            className="bg-brown-dark hover:bg-brown text-white px-5 py-2 text-sm tracking-wider font-semibold disabled:opacity-40"
+          >
+            {saving ? 'GUARDANDO…' : 'GUARDAR'}
+          </button>
+        </div>
+      )}
+    </section>
   );
 }
 
