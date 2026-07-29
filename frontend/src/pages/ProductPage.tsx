@@ -18,7 +18,6 @@ export default function ProductPage() {
   const [product, setProduct] = useState<ProductDetail | null>(null);
   const [activeImage, setActiveImage] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
-  const [wishlisted, setWishlisted] = useState(false);
   const [addedFeedback, setAddedFeedback] = useState(false);
 
   function handleAddToCart() {
@@ -178,29 +177,13 @@ export default function ProductPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 mt-auto">
+                <div className="mt-auto">
                   <button
                     type="button"
                     onClick={handleAddToCart}
-                    className="flex-1 bg-brown-dark hover:bg-brown text-white py-4 text-sm tracking-wider font-semibold transition-colors"
+                    className="w-full bg-brown-dark hover:bg-brown text-white py-4 text-sm tracking-wider font-semibold transition-colors"
                   >
                     AGREGAR AL CARRITO
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setWishlisted(w => !w)}
-                    aria-label="Agregar a favoritos"
-                    aria-pressed={wishlisted}
-                    className="w-14 h-14 flex items-center justify-center border border-cream-card hover:border-brown-dark transition-colors"
-                  >
-                    <svg
-                      width="20" height="20" viewBox="0 0 24 24"
-                      fill={wishlisted ? 'currentColor' : 'none'}
-                      stroke="currentColor" strokeWidth="2"
-                      className={wishlisted ? 'text-terracotta' : 'text-ink'}
-                    >
-                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                    </svg>
                   </button>
                 </div>
 

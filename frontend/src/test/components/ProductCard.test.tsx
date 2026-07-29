@@ -21,11 +21,6 @@ describe('ProductCard', () => {
     expect(screen.getByText(/342\.000/)).toBeInTheDocument();
   });
 
-  it('renders wishlist heart (inert)', () => {
-    const { container } = renderCard();
-    expect(container.querySelector('[data-wishlist]')).not.toBeNull();
-  });
-
   it('links product name and image to /producto/:slug', () => {
     const { container } = renderCard();
     const links = container.querySelectorAll('a[href="/producto/bolso-tote-milano"]');
