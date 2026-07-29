@@ -2,6 +2,7 @@ package com.artesa.emails;
 
 import com.artesa.orders.Order;
 import com.artesa.orders.OrderStatus;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,6 +32,15 @@ public class OrderMailer {
         this.email = email;
         this.templates = templates;
         this.adminEmail = adminEmail;
+    }
+
+    @PostConstruct
+    void logWiring() {
+        // Surface at startup which provider actually got wired and where admin
+        // notifications will land, so a misconfigured deployment shows up in the
+        // boot log instead of only when a transactional email silently no-ops.
+        log.info("OrderMailer wired: emailService={} adminTo={}",
+                 email.getClass().getSimpleName(), adminEmail);
     }
 
     /** Order was just created; payment is still pending. */
