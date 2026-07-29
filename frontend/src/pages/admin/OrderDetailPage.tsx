@@ -5,6 +5,7 @@ import { getAdminOrder, refundOrder, updateOrderStatus, updateOrderTracking } fr
 import { ApiRequestError } from '../../types/api';
 import type { Order, OrderStatus } from '../../types/api';
 import { formatArs } from '../../lib/price';
+import { buildStatusWhatsAppUrl } from '../../lib/whatsapp';
 
 // Statuses the admin can flip TO with the status buttons. REFUNDED is intentionally
 // excluded — it's set only via the refund action so the money-movement side effect
@@ -39,6 +40,10 @@ export default function OrderDetailPage() {
   const [order, setOrder] = useState<Order | null>(null);
   const [saving, setSaving] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
+  // Set when the last action was a successful status change, so we can render
+  // the "Avisar por WhatsApp" CTA with the template that matches the new
+  // status. Cleared on dismiss or on the next action.
+  const [lastTransition, setLastTransition] = useState<OrderStatus | null>(null);
 
   useEffect(() => {
     getAdminOrder(orderId)
@@ -53,17 +58,27 @@ export default function OrderDetailPage() {
     if (!order || next === order.status) return;
     setSaving(true);
     setFeedback(null);
+    setLastTransition(null);
     try {
       const updated = await updateOrderStatus(orderId, next);
       setOrder(updated);
       setFeedback(`Estado cambiado a "${STATUS_LABEL[next]}".`);
-      setTimeout(() => setFeedback(null), 3000);
+      setLastTransition(next);
+      // Feedback used to auto-dismiss after 3s. That's too fast now — Laura
+      // needs to see and click the WhatsApp CTA below it. She dismisses the
+      // banner explicitly via the × button.
     } catch (e) {
       console.error(e);
       setFeedback('No se pudo actualizar el estado.');
+      setTimeout(() => setFeedback(null), 4000);
     } finally {
       setSaving(false);
     }
+  }
+
+  function dismissFeedback() {
+    setFeedback(null);
+    setLastTransition(null);
   }
 
   return (
@@ -98,9 +113,12 @@ export default function OrderDetailPage() {
           </div>
 
           {feedback && (
-            <div role="status" className="mb-6 bg-cream-card text-ink px-4 py-3 rounded-card text-sm">
-              {feedback}
-            </div>
+            <FeedbackBanner
+              feedback={feedback}
+              order={order}
+              transitioned={lastTransition}
+              onDismiss={dismissFeedback}
+            />
           )}
 
           {/* Status changer */}
@@ -202,6 +220,60 @@ export default function OrderDetailPage() {
         </>
       )}
     </AdminLayout>
+  );
+}
+
+function FeedbackBanner({
+  feedback,
+  order,
+  transitioned,
+  onDismiss,
+}: {
+  feedback: string;
+  order: Order;
+  transitioned: OrderStatus | null;
+  onDismiss: () => void;
+}) {
+  const waUrl = transitioned ? buildStatusWhatsAppUrl(order, transitioned) : null;
+  const hasPhone = Boolean(order.phone && order.phone.trim());
+
+  return (
+    <div
+      role="status"
+      className="mb-6 bg-cream-card text-ink px-4 py-3 rounded-card text-sm flex items-start justify-between gap-3"
+    >
+      <div className="flex-1 flex flex-col sm:flex-row sm:items-center gap-3">
+        <span>{feedback}</span>
+        {waUrl && (
+          <a
+            href={waUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#1EAE55] text-white px-4 py-2 rounded text-xs tracking-wider font-semibold transition-colors"
+          >
+            💬 AVISAR POR WHATSAPP
+          </a>
+        )}
+        {transitioned && !waUrl && hasPhone && (
+          <span className="text-xs text-muted italic">
+            (sin plantilla de WhatsApp para este estado)
+          </span>
+        )}
+        {transitioned && !hasPhone && (
+          <span className="text-xs text-muted italic">
+            (la orden no tiene teléfono — no puedo abrir WhatsApp)
+          </span>
+        )}
+      </div>
+      <button
+        type="button"
+        onClick={onDismiss}
+        aria-label="Cerrar"
+        className="text-muted hover:text-ink text-lg leading-none px-2"
+      >
+        ×
+      </button>
+    </div>
   );
 }
 
