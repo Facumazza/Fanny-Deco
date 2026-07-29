@@ -42,14 +42,19 @@ public class GmailEmailService implements EmailService {
     public GmailEmailService(
         @Value("${artesa.emails.gmail.username:}") String username,
         @Value("${artesa.emails.gmail.app-password:}") String appPassword,
-        @Value("${artesa.emails.from}") String from
+        @Value("${artesa.emails.from}") String from,
+        // Port + SSL are overridable so we can flip 465↔587 without a rebuild
+        // when a host blocks one but not the other (Railway defaults blocked
+        // 587 outbound in earlier tests here, forcing us to 465).
+        @Value("${artesa.emails.gmail.port:465}") int port,
+        @Value("${artesa.emails.gmail.ssl:true}") boolean useSsl
     ) {
         this.from = from;
         this.configured = !username.isBlank() && !appPassword.isBlank();
 
         this.mailSender = new JavaMailSenderImpl();
         this.mailSender.setHost("smtp.gmail.com");
-        this.mailSender.setPort(587);
+        this.mailSender.setPort(port);
         this.mailSender.setUsername(username);
         // Google shows app passwords as 4 groups of 4 chars for readability
         // ('abcd efgh ijkl mnop'). The SMTP AUTH LOGIN command works with or
@@ -60,8 +65,16 @@ public class GmailEmailService implements EmailService {
         Properties props = this.mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.starttls.required", "true");
+        if (useSsl) {
+            // Implicit SSL (typically port 465). The handshake starts encrypted;
+            // no plaintext at all on the wire.
+            props.put("mail.smtp.ssl.enable", "true");
+        } else {
+            // STARTTLS upgrade (typically port 587). Connection starts plaintext,
+            // then upgrades before AUTH.
+            props.put("mail.smtp.starttls.enable", "true");
+            props.put("mail.smtp.starttls.required", "true");
+        }
         // Fail fast if smtp.gmail.com is unreachable — a hung SMTP handshake
         // would otherwise block the request thread the mailer is called on
         // (order-created, status-change) for the full Java default of
@@ -70,9 +83,11 @@ public class GmailEmailService implements EmailService {
         props.put("mail.smtp.timeout", "10000");
         props.put("mail.smtp.writetimeout", "10000");
 
+        log.info("GmailEmailService configured: host=smtp.gmail.com port={} ssl={} user={}",
+                 port, useSsl, username.isBlank() ? "(empty)" : username);
         if (!configured) {
-            log.warn("Gmail email provider selected but ARTESA_EMAIL_GMAIL_USERNAME " +
-                "and/or ARTESA_EMAIL_GMAIL_APP_PASSWORD are empty — sends will be skipped.");
+            log.warn("Gmail email provider selected but ARTESA_EMAILS_GMAIL_USERNAME " +
+                "and/or ARTESA_EMAILS_GMAIL_APP_PASSWORD are empty — sends will be skipped.");
         }
     }
 
