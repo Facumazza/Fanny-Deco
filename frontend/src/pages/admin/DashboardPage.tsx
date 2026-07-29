@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AdminLayout } from '../../components/admin/AdminLayout';
-import { getAdminStats } from '../../api/admin';
+import { getAdminStats, sendTestEmail } from '../../api/admin';
 import type { AdminStats, OrderStatus } from '../../types/api';
 import { formatArs } from '../../lib/price';
 
@@ -137,7 +137,7 @@ export default function DashboardPage() {
           </section>
 
           {/* Quick links */}
-          <section>
+          <section className="mb-10">
             <p className="text-xs tracking-[0.3em] text-muted mb-3">GESTIONAR</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <QuickLink to="/admin/products"   title="Productos"   note="Crear, editar, borrar del catálogo" />
@@ -145,9 +145,68 @@ export default function DashboardPage() {
               <QuickLink to="/admin/orders"     title="Órdenes"     note="Ver ventas y cambiar su estado" />
             </div>
           </section>
+
+          <EmailTest />
         </>
       )}
     </AdminLayout>
+  );
+}
+
+function EmailTest() {
+  const [to, setTo] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [result, setResult] = useState<{ kind: 'ok'; text: string } | { kind: 'err'; text: string } | null>(null);
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    setResult(null);
+    try {
+      const r = await sendTestEmail(to.trim() || undefined);
+      setResult({ kind: 'ok', text: `Enviado por ${r.provider} a ${r.to}. Revisá esa casilla.` });
+    } catch (err) {
+      console.error(err);
+      setResult({ kind: 'err', text: 'Falló el envío. Mirá los logs del backend en Railway.' });
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <section>
+      <p className="text-xs tracking-[0.3em] text-muted mb-3">DIAGNÓSTICO DE EMAIL</p>
+      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-card">
+        <p className="text-sm text-muted mb-4">
+          Manda un mail de prueba con el proveedor configurado. Si dejás el campo
+          vacío usa la casilla admin (<code>ARTESA_EMAIL_ADMIN_TO</code>).
+        </p>
+        <div className="flex items-center gap-3 flex-wrap">
+          <input
+            type="email"
+            value={to}
+            onChange={e => setTo(e.target.value)}
+            placeholder="destinatario@ejemplo.com (opcional)"
+            className="flex-1 min-w-[260px] border border-cream-card px-3 py-2 focus:outline-none focus:border-brown-dark bg-white"
+          />
+          <button
+            type="submit"
+            disabled={busy}
+            className="bg-brown-dark hover:bg-brown text-white px-5 py-2 text-sm tracking-wider font-semibold disabled:opacity-40"
+          >
+            {busy ? 'ENVIANDO…' : 'ENVIAR PRUEBA'}
+          </button>
+        </div>
+        {result && (
+          <p
+            role={result.kind === 'err' ? 'alert' : 'status'}
+            className={'text-sm mt-3 ' + (result.kind === 'err' ? 'text-terracotta' : 'text-ink')}
+          >
+            {result.text}
+          </p>
+        )}
+      </form>
+    </section>
   );
 }
 

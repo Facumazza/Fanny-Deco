@@ -179,3 +179,19 @@ export function deleteAdminReview(id: number): Promise<void> {
 export function getAdminStats(): Promise<AdminStats> {
   return adminFetch<AdminStats>('/stats');
 }
+
+// -------- Email diagnostics --------
+
+export interface TestEmailResult {
+  queued: boolean;
+  provider: string;
+  to: string;
+  at: string;
+}
+
+export function sendTestEmail(to?: string): Promise<TestEmailResult> {
+  return adminFetch<TestEmailResult>('/test-email', {
+    method: 'POST',
+    body: JSON.stringify({ to: to ?? null }),
+  });
+}
