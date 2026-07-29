@@ -100,9 +100,17 @@ artesa:
     # Gmail SMTP transport — used when artesa.emails.provider=gmail. Requires
     # an App Password generated in the Google account with 2FA enabled
     # (myaccount.google.com → Security → 2-Step Verification → App passwords).
+    # NOTE: Railway blocks outbound SMTP (ports 25/465/587), so this provider
+    # cannot reach smtp.gmail.com from Railway containers — use `brevo` instead.
     gmail:
       username:     ${ARTESA_EMAILS_GMAIL_USERNAME:}
       app-password: ${ARTESA_EMAILS_GMAIL_APP_PASSWORD:}
+    # Brevo (ex-Sendinblue) HTTPS API transport — used when
+    # artesa.emails.provider=brevo. Only requires a verified single-sender
+    # email (no domain purchase needed) and runs over port 443, so it works
+    # from hosts like Railway that block outbound SMTP.
+    brevo:
+      api-key: ${ARTESA_EMAILS_BREVO_API_KEY:}
 
 logging:
   level:
