@@ -26,7 +26,7 @@ export function ProcessSection() {
           </h2>
           <p className="text-muted leading-relaxed max-w-lg">
             Cada bolso se cose a mano. Cada pieza de cerámica se torna, se
-            glasea y se hornea en nuestro taller. Sin producción en masa.
+            esmalta y se hornea en nuestro taller. Sin producción en masa.
             Sin atajos.
           </p>
         </div>
