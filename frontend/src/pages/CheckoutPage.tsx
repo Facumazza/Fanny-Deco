@@ -11,6 +11,21 @@ import { formatArs } from '../lib/price';
 const inputCls =
   'w-full border border-cream-card px-3 py-2 focus:outline-none focus:border-brown-dark bg-white';
 
+/**
+ * The phone input shows a locked "+54 9" badge, so the value we submit is
+ * `+54 9 <what the user typed>`. If they typed the prefix anyway (out of
+ * habit — "+54 9 11 ..." or "011 ...") we'd end up double-prefixing, so
+ * strip any of the common AR-mobile prefixes from the leading edge before
+ * concatenating.
+ */
+function stripArPrefix(input: string): string {
+  return input
+    .trim()
+    .replace(/^\+?54\s*9?\s*/, '')  // "+54 9 …", "54 9 …", "+54 …", "54 …"
+    .replace(/^0/, '')              // "011 …" → "11 …"
+    .trim();
+}
+
 interface FormState {
   customerEmail: string;
   customerName: string;
@@ -62,7 +77,7 @@ export default function CheckoutPage() {
         city: form.city.trim(),
         postalCode: form.postalCode.trim() || undefined,
         country: form.country.trim(),
-        phone: form.phone.trim() || undefined,
+        phone: form.phone.trim() ? `+54 9 ${stripArPrefix(form.phone)}` : undefined,
         notes: form.notes.trim() || undefined,
         items: items.map(it => ({
           productId: it.productId,
@@ -122,13 +137,23 @@ export default function CheckoutPage() {
                     className={inputCls}
                   />
                 </Field>
-                <Field label="Teléfono" hint="Opcional. Para coordinar la entrega.">
-                  <input
-                    type="tel" maxLength={60}
-                    value={form.phone}
-                    onChange={e => set('phone', e.target.value)}
-                    className={inputCls}
-                  />
+                <Field label="Teléfono" hint="Para coordinar la entrega por WhatsApp. Sólo el número, sin código de país.">
+                  <div className="flex items-stretch">
+                    <span
+                      aria-hidden
+                      className="inline-flex items-center px-3 border border-r-0 border-cream-card bg-cream-card/40 text-muted text-sm select-none"
+                    >
+                      +54 9
+                    </span>
+                    <input
+                      type="tel" maxLength={30}
+                      inputMode="numeric"
+                      placeholder="11 6589 6153"
+                      value={form.phone}
+                      onChange={e => set('phone', e.target.value)}
+                      className={inputCls + ' flex-1'}
+                    />
+                  </div>
                 </Field>
               </div>
             </section>

@@ -2,16 +2,39 @@ import type { Order, OrderStatus } from '../types/api';
 
 /**
  * WhatsApp phone numbers in wa.me URLs must be raw digits, international
- * format, no `+` or separators. Strip anything non-digit from whatever the
- * customer typed at checkout and trust the frontend/backend validated the
- * international prefix. If nothing digit-like remains, return null so callers
- * can hide the "Avisar por WhatsApp" affordance instead of building a broken
- * link.
+ * format, no `+` or separators. Customers at checkout typically type the local
+ * Argentine format ("11 6589 6153" or "011 6589-6153") without the country
+ * code, and WhatsApp then rejects the link ("falta el código de área"). So we
+ * always coerce the value into the international AR-mobile form (54 9 + local
+ * number). If nothing digit-like remains, return null so callers can hide the
+ * "Avisar por WhatsApp" affordance instead of building a broken link.
+ *
+ * Assumes AR mobile numbers only — same assumption as the checkout form,
+ * which locks the +54 9 prefix into the input. If FannyDeco ever sells
+ * outside Argentina we'll need to lift this.
  */
 function normalizePhone(raw: string | null | undefined): string | null {
   if (!raw) return null;
-  const digits = raw.replace(/\D+/g, '');
-  return digits.length >= 8 ? digits : null;
+  let digits = raw.replace(/\D+/g, '');
+  if (!digits) return null;
+
+  // Strip a leading 0 (Argentine local trunk prefix, e.g. "011 6589 6153").
+  if (digits.startsWith('0')) digits = digits.slice(1);
+
+  // Force the +54 9 prefix. WhatsApp for AR mobile requires the "9" after 54
+  // — a number that starts with just "54" (fixed-line-ish) gets the 9
+  // inserted; a number without any country code gets "549" prepended.
+  if (digits.startsWith('549')) {
+    // already good
+  } else if (digits.startsWith('54')) {
+    digits = '549' + digits.slice(2);
+  } else {
+    digits = '549' + digits;
+  }
+
+  // 54 (country) + 9 (mobile) + at least 8 digits for area + number = 11.
+  // Anything shorter is clearly not a real AR mobile; bail out.
+  return digits.length >= 11 ? digits : null;
 }
 
 function firstName(fullName: string): string {
