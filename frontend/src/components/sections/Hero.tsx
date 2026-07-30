@@ -4,7 +4,6 @@ export function Hero() {
       <div className="max-w-7xl mx-auto px-6 py-12 lg:py-16 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
         {/* Left column: copy */}
         <div className="max-w-lg">
-          <p className="text-terracotta text-xs tracking-[0.3em] mb-6">COLECCIÓN VERANO 2025</p>
           <h1 className="font-display text-6xl lg:text-7xl leading-[1.05] text-ink mb-8">
             Hecho a mano,<br />
             <span className="italic">para durar.</span>
