@@ -128,8 +128,20 @@ export default function OrderConfirmationPage() {
             <div className="bg-cream-card p-6 rounded-card mb-8 text-sm text-ink">
               <p className="font-medium mb-1">Próximos pasos</p>
               <p className="text-muted">
-                Vas a recibir un email en <strong>{order.customerEmail}</strong> con
-                los detalles de pago y el seguimiento del envío en las próximas 24 horas.
+                {order.phone ? (
+                  <>
+                    En las próximas horas te vamos a escribir por WhatsApp al{' '}
+                    <strong>{order.phone}</strong> con los datos de pago y el
+                    seguimiento del envío.
+                  </>
+                ) : (
+                  <>
+                    En las próximas horas te vamos a escribir por WhatsApp con
+                    los datos de pago y el seguimiento del envío. Si preferís
+                    adelantarnos algo, escribinos al{' '}
+                    <strong>+54 9 11 6589-6153</strong>.
+                  </>
+                )}
               </p>
             </div>
 
