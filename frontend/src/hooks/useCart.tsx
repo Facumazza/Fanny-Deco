@@ -59,14 +59,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [items]);
 
   const addItem = useCallback<CartState['addItem']>((input) => {
-    const qty = Math.max(1, input.quantity ?? 1);
+    // Every FannyDeco piece is one-of-a-kind (stock = 1). Cap the cart line
+    // at qty 1 here so a second click on "Agregar al carrito" is a silent
+    // no-op instead of stacking phantom units the shop can't actually ship.
     setItems(list => {
       const idx = list.findIndex(it => it.productId === input.productId);
-      if (idx >= 0) {
-        const next = [...list];
-        next[idx] = { ...next[idx], quantity: next[idx].quantity + qty };
-        return next;
-      }
+      if (idx >= 0) return list;
       return [
         ...list,
         {
@@ -75,7 +73,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
           name: input.name,
           imageUrl: input.imageUrl,
           priceArs: input.priceArs,
-          quantity: qty,
+          quantity: 1,
         },
       ];
     });
@@ -86,8 +84,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
       if (quantity <= 0) {
         return list.filter(it => it.productId !== productId);
       }
+      // Same qty=1 cap as addItem — any code path that tries to bump a line
+      // above 1 gets clamped back down.
+      const clamped = Math.min(1, quantity);
       return list.map(it =>
-        it.productId === productId ? { ...it, quantity } : it
+        it.productId === productId ? { ...it, quantity: clamped } : it
       );
     });
   }, []);

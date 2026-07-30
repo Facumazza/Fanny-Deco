@@ -7,7 +7,7 @@ import type { CartItem } from '../hooks/useCart';
 import { formatArs } from '../lib/price';
 
 export default function CartPage() {
-  const { items, itemCount, subtotalArs, updateQuantity, removeItem, clear } = useCart();
+  const { items, itemCount, subtotalArs, removeItem, clear } = useCart();
   const isEmpty = items.length === 0;
 
   return (
@@ -37,8 +37,6 @@ export default function CartPage() {
                 <CartRow
                   key={it.productId}
                   item={it}
-                  onDecrease={() => updateQuantity(it.productId, it.quantity - 1)}
-                  onIncrease={() => updateQuantity(it.productId, it.quantity + 1)}
                   onRemove={() => removeItem(it.productId)}
                 />
               ))}
@@ -84,14 +82,12 @@ export default function CartPage() {
   );
 }
 
-function CartRow({ item, onDecrease, onIncrease, onRemove }: {
+function CartRow({ item, onRemove }: {
   item: CartItem;
-  onDecrease: () => void;
-  onIncrease: () => void;
   onRemove: () => void;
 }) {
-  const lineTotal = item.priceArs * item.quantity;
-
+  // Line total = price × 1. Every product is a unique piece so there's no
+  // qty stepper — one in cart or none.
   return (
     <li className="bg-white rounded-card p-4 flex items-center gap-4 flex-wrap sm:flex-nowrap">
       <Link to={`/producto/${item.slug}`} className="shrink-0">
@@ -110,34 +106,11 @@ function CartRow({ item, onDecrease, onIncrease, onRemove }: {
         >
           {item.name}
         </Link>
-        <p className="text-sm text-muted mt-1">
-          {formatArs(item.priceArs)} c/u
-        </p>
+        <p className="text-xs text-muted italic mt-1">Pieza única</p>
       </div>
 
-      {/* Qty stepper */}
-      <div className="inline-flex items-center border border-cream-card">
-        <button
-          type="button"
-          onClick={onDecrease}
-          aria-label="Disminuir"
-          className="px-3 py-2 text-ink hover:bg-cream-card"
-        >
-          −
-        </button>
-        <span className="px-4 py-2 min-w-[2.5rem] text-center">{item.quantity}</span>
-        <button
-          type="button"
-          onClick={onIncrease}
-          aria-label="Aumentar"
-          className="px-3 py-2 text-ink hover:bg-cream-card"
-        >
-          +
-        </button>
-      </div>
-
-      <p className="font-semibold text-terracotta w-24 text-right">
-        {formatArs(lineTotal)}
+      <p className="font-semibold text-terracotta w-28 text-right">
+        {formatArs(item.priceArs)}
       </p>
 
       <button

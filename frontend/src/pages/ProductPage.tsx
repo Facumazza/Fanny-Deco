@@ -13,12 +13,15 @@ type Status = 'loading' | 'ok' | 'not-found' | 'error';
 
 export default function ProductPage() {
   const { slug = '' } = useParams<{ slug: string }>();
-  const { addItem } = useCart();
+  const { items, addItem } = useCart();
   const [status, setStatus] = useState<Status>('loading');
   const [product, setProduct] = useState<ProductDetail | null>(null);
   const [activeImage, setActiveImage] = useState<string | null>(null);
-  const [quantity, setQuantity] = useState(1);
   const [addedFeedback, setAddedFeedback] = useState(false);
+
+  // Every piece is one-of-a-kind, so a product is either "add" or "already
+  // in cart" — no quantity picker needed.
+  const alreadyInCart = product ? items.some(i => i.productId === product.id) : false;
 
   function handleAddToCart() {
     if (!product) return;
@@ -28,7 +31,6 @@ export default function ProductPage() {
       name: product.name,
       imageUrl: product.imageUrl,
       priceArs: product.priceArs,
-      quantity,
     });
     setAddedFeedback(true);
     setTimeout(() => setAddedFeedback(false), 2500);
@@ -149,42 +151,27 @@ export default function ProductPage() {
                   </div>
                 )}
 
-                <div className="mb-4">
-                  <p className="text-xs tracking-wider text-muted mb-2">CANTIDAD</p>
-                  <div className="inline-flex items-center border border-cream-card">
-                    <button
-                      type="button"
-                      onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                      aria-label="Disminuir cantidad"
-                      className="px-4 py-2 text-ink hover:bg-cream-card"
-                    >
-                      −
-                    </button>
-                    <span
-                      data-quantity
-                      className="px-6 py-2 min-w-[3rem] text-center"
-                    >
-                      {quantity}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setQuantity(q => q + 1)}
-                      aria-label="Aumentar cantidad"
-                      className="px-4 py-2 text-ink hover:bg-cream-card"
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
+                <p className="text-xs text-muted mb-4 italic">
+                  Pieza única, hecha a mano. Stock: 1.
+                </p>
 
                 <div className="mt-auto">
-                  <button
-                    type="button"
-                    onClick={handleAddToCart}
-                    className="w-full bg-brown-dark hover:bg-brown text-white py-4 text-sm tracking-wider font-semibold transition-colors"
-                  >
-                    AGREGAR AL CARRITO
-                  </button>
+                  {alreadyInCart ? (
+                    <Link
+                      to="/carrito"
+                      className="block w-full bg-cream-card text-ink border border-brown-dark py-4 text-sm tracking-wider font-semibold text-center hover:bg-brown-dark hover:text-white transition-colors"
+                    >
+                      YA ESTÁ EN TU CARRITO — VER CARRITO →
+                    </Link>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleAddToCart}
+                      className="w-full bg-brown-dark hover:bg-brown text-white py-4 text-sm tracking-wider font-semibold transition-colors"
+                    >
+                      AGREGAR AL CARRITO
+                    </button>
+                  )}
                 </div>
 
                 {addedFeedback && (
