@@ -9,8 +9,8 @@ export function Hero() {
             <span className="italic">para durar.</span>
           </h1>
           <p className="text-muted text-lg leading-relaxed mb-10 max-w-md">
-            Bolsos de cuero curtido al vegetal y cerámica artesanal. Cada pieza
-            nace de manos expertas y materiales seleccionados.
+            Bolsos de cuero y otros materiales textiles y cerámica artesanal.
+            Cada pieza nace de manos expertas y materiales seleccionados.
           </p>
           <div className="flex items-center gap-6">
             <a
