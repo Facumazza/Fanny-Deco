@@ -24,30 +24,11 @@ export function ProcessSection() {
           <h2 className="font-display text-5xl leading-tight text-ink mb-8">
             Artesanía que se puede ver, tocar y sentir
           </h2>
-          <p className="text-muted leading-relaxed mb-8 max-w-lg">
-            Cada bolso se cose a mano con hilo de lino encerado. Cada pieza de
-            cerámica se torna, se glasea y se hornea en nuestro taller. Sin
-            producción en masa. Sin atajos.
+          <p className="text-muted leading-relaxed max-w-lg">
+            Cada bolso se cose a mano. Cada pieza de cerámica se torna, se
+            glasea y se hornea en nuestro taller. Sin producción en masa.
+            Sin atajos.
           </p>
-          <ul className="space-y-4 mb-8">
-            {[
-              'Cuero full-grain curtido al vegetal, de origen trazado',
-              'Materiales alternativos seleccionados de productores locales',
-              'Arcilla sin aditivos sintéticos, horneada en nuestro taller',
-              'Garantía de por vida en costuras estructurales',
-            ].map((item, i) => (
-              <li key={i} className="flex items-start gap-3 text-ink">
-                <span className="text-terracotta mt-1">›</span>
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-          <a
-            href="#"
-            className="inline-flex items-center gap-2 text-terracotta font-medium underline underline-offset-4 hover:no-underline"
-          >
-            Conocer el taller <span aria-hidden>→</span>
-          </a>
         </div>
       </div>
     </section>
