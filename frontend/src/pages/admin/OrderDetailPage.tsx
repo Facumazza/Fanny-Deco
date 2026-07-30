@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { AdminLayout } from '../../components/admin/AdminLayout';
-import { getAdminOrder, refundOrder, updateOrderStatus, updateOrderTracking } from '../../api/admin';
+import { deleteOrder, getAdminOrder, refundOrder, updateOrderStatus, updateOrderTracking } from '../../api/admin';
 import { ApiRequestError } from '../../types/api';
 import type { Order, OrderStatus } from '../../types/api';
 import { formatArs } from '../../lib/price';
@@ -36,6 +36,7 @@ type Status = 'loading' | 'ok' | 'not-found' | 'error';
 export default function OrderDetailPage() {
   const { id = '' } = useParams<{ id: string }>();
   const orderId = Number(id);
+  const navigate = useNavigate();
   const [status, setStatus] = useState<Status>('loading');
   const [order, setOrder] = useState<Order | null>(null);
   const [saving, setSaving] = useState(false);
@@ -133,6 +134,9 @@ export default function OrderDetailPage() {
             }} />
           )}
 
+          {/* Delete action — housekeeping, no side effects on payment. */}
+          <DeletePanel order={order} onDeleted={() => navigate('/admin/orders')} />
+
           {/* Customer + shipping */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <section className="bg-white rounded-card p-6">
@@ -220,6 +224,58 @@ export default function OrderDetailPage() {
         </>
       )}
     </AdminLayout>
+  );
+}
+
+function DeletePanel({ order, onDeleted }: {
+  order: Order;
+  onDeleted: () => void;
+}) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleDelete() {
+    // Two-step confirm because this is a hard delete with no undo. The
+    // reference in the prompt gives Laura a chance to see exactly which
+    // order she's about to nuke.
+    const ok = window.confirm(
+      `¿Eliminar la orden ${order.reference} permanentemente?\n\n` +
+      `Se borra la orden y todos sus productos del historial. ` +
+      `Esta acción NO se puede deshacer.\n\n` +
+      `(Esto no genera un reembolso. Si necesitás devolverle plata al cliente, ` +
+      `usá el botón de reembolso ANTES de borrar.)`
+    );
+    if (!ok) return;
+    setBusy(true);
+    setError(null);
+    try {
+      await deleteOrder(order.id);
+      onDeleted();
+    } catch (e) {
+      console.error(e);
+      setError('No se pudo eliminar la orden. Probá de nuevo.');
+      setBusy(false);
+    }
+  }
+
+  return (
+    <section className="bg-white rounded-card p-6 mb-6 border border-red-200">
+      <p className="text-xs tracking-[0.3em] text-muted mb-2">ELIMINAR</p>
+      <p className="text-sm text-muted mb-4 max-w-2xl">
+        Borra la orden y sus productos del historial (útil para limpiar
+        órdenes de prueba). No genera reembolso: si necesitás devolverle
+        plata al cliente, hacé el reembolso primero.
+      </p>
+      <button
+        type="button"
+        onClick={() => void handleDelete()}
+        disabled={busy}
+        className="bg-white text-red-600 border border-red-600 hover:bg-red-600 hover:text-white px-5 py-2 text-sm tracking-wider font-semibold transition-colors disabled:opacity-40"
+      >
+        {busy ? 'ELIMINANDO…' : `ELIMINAR ORDEN ${order.reference}`}
+      </button>
+      {error && <p role="alert" className="text-red-600 text-xs mt-3">{error}</p>}
+    </section>
   );
 }
 

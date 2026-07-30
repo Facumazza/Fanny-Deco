@@ -146,6 +146,10 @@ export function refundOrder(id: number): Promise<Order> {
   return adminFetch<Order>(`/orders/${id}/refund`, { method: 'POST' });
 }
 
+export function deleteOrder(id: number): Promise<void> {
+  return adminFetch<void>(`/orders/${id}`, { method: 'DELETE' });
+}
+
 // -------- Reviews --------
 
 export function listAdminReviews(): Promise<Review[]> {

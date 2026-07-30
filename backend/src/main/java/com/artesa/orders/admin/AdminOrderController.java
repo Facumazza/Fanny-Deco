@@ -12,6 +12,7 @@ import com.artesa.payments.PaymentService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -78,5 +79,16 @@ public class AdminOrderController {
         var order = service.getById(id);
         var refunded = paymentService.refundOrder(order);
         return orderMapper.toDto(refunded);
+    }
+
+    /**
+     * Hard-delete an order — used for admin cleanup (test orders, spam, etc.).
+     * Cascades to order_items. Does NOT refund payment: if you need the money
+     * back, POST /refund first, then delete.
+     */
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
+        service.delete(id);
     }
 }

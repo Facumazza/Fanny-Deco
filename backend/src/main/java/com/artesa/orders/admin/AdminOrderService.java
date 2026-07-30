@@ -77,6 +77,20 @@ public class AdminOrderService {
         return orderRepo.save(order);
     }
 
+    /**
+     * Removes the order and (via ON DELETE CASCADE on order_items.order_id)
+     * its line items. Intended as an admin housekeeping action — e.g. after
+     * a test order — not as part of the normal customer/refund flow. 404s
+     * cleanly if the id doesn't exist so the caller doesn't have to
+     * pre-check.
+     */
+    public void delete(Long id) {
+        if (!orderRepo.existsById(id)) {
+            throw new OrderNotFoundException("id=" + id);
+        }
+        orderRepo.deleteById(id);
+    }
+
     private static void setField(Object target, String fieldName, Object value) {
         Field f = ReflectionUtils.findField(target.getClass(), fieldName);
         if (f == null) throw new IllegalStateException("Missing field " + fieldName);
