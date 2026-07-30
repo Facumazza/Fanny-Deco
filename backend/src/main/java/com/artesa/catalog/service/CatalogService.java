@@ -15,6 +15,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,8 +52,17 @@ public class CatalogService {
                 preds.add(cb.equal(root.get("badge"), badge));
             }
             if (q != null && !q.isBlank()) {
-                preds.add(cb.like(cb.lower(root.get("name")),
-                                  "%" + q.toLowerCase() + "%"));
+                // Match "maimara" → "Maimará" by folding accents on both sides
+                // via Postgres' unaccent(). LIKE stays lowercase for case
+                // insensitivity. The V12 migration enables the unaccent
+                // extension in production; tests running against H2 skip
+                // this path via the specification only being exercised in
+                // integration tests that also spin up Postgres.
+                var normalizedName = cb.lower(
+                    cb.function("unaccent", String.class, root.get("name"))
+                );
+                preds.add(cb.like(normalizedName,
+                                  "%" + stripAccents(q).toLowerCase() + "%"));
             }
             return preds.isEmpty() ? cb.conjunction() : cb.and(preds.toArray(new Predicate[0]));
         };
@@ -67,5 +77,15 @@ public class CatalogService {
     public List<Review> latestReviews(int limit) {
         int clamped = Math.max(1, Math.min(20, limit));
         return reviewRepo.findAllByOrderByCreatedAtDesc(PageRequest.of(0, clamped));
+    }
+
+    /**
+     * Fold accented characters to their ASCII equivalents on the query side.
+     * Postgres' unaccent() does the same on the stored side, so the LIKE
+     * matches regardless of whether the customer typed "café" or "cafe".
+     */
+    private static String stripAccents(String s) {
+        return Normalizer.normalize(s, Normalizer.Form.NFD)
+                         .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
     }
 }

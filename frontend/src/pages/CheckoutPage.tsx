@@ -137,7 +137,7 @@ export default function CheckoutPage() {
                     className={inputCls}
                   />
                 </Field>
-                <Field label="Teléfono" hint="Para coordinar la entrega por WhatsApp. Sólo el número, sin código de país.">
+                <Field label="Teléfono" required hint="Te vamos a escribir por WhatsApp para coordinar el pago y la entrega. Sólo el número, sin código de país.">
                   <div className="flex items-stretch">
                     <span
                       aria-hidden
@@ -146,7 +146,7 @@ export default function CheckoutPage() {
                       +54 9
                     </span>
                     <input
-                      type="tel" maxLength={30}
+                      type="tel" required maxLength={30}
                       inputMode="numeric"
                       placeholder="11 6589 6153"
                       value={form.phone}

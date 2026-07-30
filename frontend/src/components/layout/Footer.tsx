@@ -37,8 +37,8 @@ export function Footer() {
         <FooterColumn
           title="TIENDA"
           links={[
-            { label: 'Carteras de Cuero',      to: '/?categoria=carteras-cuero' },
-            { label: 'Carteras Otros Mat.',    to: '/?categoria=carteras-otros' },
+            { label: 'Carteras de Cuero',      to: '/?categoria=cartera-cuero' },
+            { label: 'Carteras Otros Mat.',    to: '/?categoria=carteras-otros-materiales' },
             { label: 'Cerámica Deco',          to: '/?categoria=ceramica-deco' },
             { label: 'Cerámica Casa',          to: '/?categoria=ceramica-casa' },
           ]}
