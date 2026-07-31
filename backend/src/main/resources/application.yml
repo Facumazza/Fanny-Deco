@@ -57,23 +57,7 @@ artesa:
       secret-access-key: ${R2_SECRET_ACCESS_KEY:}
       bucket:            ${R2_BUCKET:}
       public-base-url:   ${R2_PUBLIC_BASE_URL:}
-  payments:
-    # `mercadopago` for real integration, or leave blank/other for tests-with-fake.
-    provider: ${ARTESA_PAYMENT_PROVIDER:mercadopago}
-    mercadopago:
-      access-token:      ${MERCADOPAGO_ACCESS_TOKEN:}
-      # HMAC secret from the MP dashboard → Notificaciones → Webhooks → Firma.
-      # In dev, empty is fine: incoming webhooks pass through with a startup warning.
-      # In prod, application-prod.yml sets require-signature=true and the app
-      # refuses to start unless MERCADOPAGO_WEBHOOK_SECRET is provided.
-      webhook-secret:    ${MERCADOPAGO_WEBHOOK_SECRET:}
-      require-signature: false
-    # Public URL of the backend as reachable from MercadoPago's servers.
-    # In dev, this is your ngrok URL (e.g. https://abc123.ngrok-free.app).
-    public-base-url: ${ARTESA_PUBLIC_BASE_URL:http://localhost:8080}
-    # URL of the storefront where the customer will be sent after payment.
-    frontend-base-url: ${ARTESA_FRONTEND_BASE_URL:http://localhost:5173}
-  # Bank transfer as an alternative payment method. Static config — the shop
+  # Bank transfer as the only payment method. Static config — the shop
   # has one bank account and displays it to customers who choose "pagar por
   # transferencia" at checkout. Fields left blank in dev; production sets
   # them via env vars. If cbu + alias are both blank the endpoint returns

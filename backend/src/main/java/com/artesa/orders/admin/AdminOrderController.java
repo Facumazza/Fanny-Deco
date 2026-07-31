@@ -8,7 +8,6 @@ import com.artesa.orders.admin.dto.AdminOrderSummaryDto;
 import com.artesa.orders.admin.dto.UpdateOrderStatusRequest;
 import com.artesa.orders.admin.dto.UpdateTrackingRequest;
 import com.artesa.orders.dto.OrderDto;
-import com.artesa.payments.PaymentService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -25,18 +24,15 @@ public class AdminOrderController {
     private final AdminOrderMapper adminMapper;
     private final OrderMapper orderMapper;
     private final CatalogMapper catalogMapper;
-    private final PaymentService paymentService;
 
     public AdminOrderController(AdminOrderService service,
                                 AdminOrderMapper adminMapper,
                                 OrderMapper orderMapper,
-                                CatalogMapper catalogMapper,
-                                PaymentService paymentService) {
+                                CatalogMapper catalogMapper) {
         this.service = service;
         this.adminMapper = adminMapper;
         this.orderMapper = orderMapper;
         this.catalogMapper = catalogMapper;
-        this.paymentService = paymentService;
     }
 
     @GetMapping
@@ -73,18 +69,11 @@ public class AdminOrderController {
         return orderMapper.toDto(updated);
     }
 
-    /** Full refund through MP + flips order to REFUNDED + notifies the customer. */
-    @PostMapping("/{id}/refund")
-    public OrderDto refund(@PathVariable Long id) {
-        var order = service.getById(id);
-        var refunded = paymentService.refundOrder(order);
-        return orderMapper.toDto(refunded);
-    }
-
     /**
      * Hard-delete an order — used for admin cleanup (test orders, spam, etc.).
-     * Cascades to order_items. Does NOT refund payment: if you need the money
-     * back, POST /refund first, then delete.
+     * Cascades to order_items. Bank transfer is the only payment method so
+     * there's nothing to reverse on a payment provider; if a customer
+     * already transferred, the shop refunds them manually.
      */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

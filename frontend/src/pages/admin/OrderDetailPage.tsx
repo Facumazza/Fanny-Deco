@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { AdminLayout } from '../../components/admin/AdminLayout';
-import { deleteOrder, getAdminOrder, refundOrder, updateOrderStatus, updateOrderTracking } from '../../api/admin';
+import { deleteOrder, getAdminOrder, updateOrderStatus, updateOrderTracking } from '../../api/admin';
 import { ApiRequestError } from '../../types/api';
 import type { Order, OrderStatus } from '../../types/api';
 import { formatArs } from '../../lib/price';
@@ -23,9 +23,6 @@ const STATUS_LABEL: Record<OrderStatus, string> = {
 
 /** Terminal statuses where "cambiar estado" doesn't make sense anymore. */
 const TERMINAL: OrderStatus[] = ['CANCELLED', 'REFUNDED'];
-
-/** Statuses where a refund still makes sense (payment came through and hasn't been reversed). */
-const REFUNDABLE: OrderStatus[] = ['PAID', 'SHIPPED', 'DELIVERED'];
 
 const dateFmt = new Intl.DateTimeFormat('es-AR', {
   dateStyle: 'long', timeStyle: 'short',
@@ -124,15 +121,6 @@ export default function OrderDetailPage() {
 
           {/* Status changer */}
           <StatusChanger order={order} saving={saving} onChange={handleStatusChange} />
-
-          {/* Refund action — only relevant while the payment is live. */}
-          {REFUNDABLE.includes(order.status) && (
-            <RefundPanel order={order} onRefunded={o => {
-              setOrder(o);
-              setFeedback('Reembolso procesado. Se le notificó al cliente por email.');
-              setTimeout(() => setFeedback(null), 3500);
-            }} />
-          )}
 
           {/* Delete action — housekeeping, no side effects on payment. */}
           <DeletePanel order={order} onDeleted={() => navigate('/admin/orders')} />
@@ -376,54 +364,6 @@ function StatusChanger({ order, saving, onChange }: {
           </button>
         </div>
       )}
-    </section>
-  );
-}
-
-function RefundPanel({ order, onRefunded }: {
-  order: Order;
-  onRefunded: (o: Order) => void;
-}) {
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  async function handleRefund() {
-    const ok = window.confirm(
-      `¿Reembolsar ${formatArs(order.subtotalArs)} al cliente?\n\n` +
-      `MercadoPago va a devolver el importe al medio de pago original y le vamos ` +
-      `a notificar por email. Esta acción no se puede deshacer.`
-    );
-    if (!ok) return;
-    setBusy(true);
-    setError(null);
-    try {
-      const refunded = await refundOrder(order.id);
-      onRefunded(refunded);
-    } catch (e) {
-      console.error(e);
-      const body = (e as { body?: { message?: string } }).body;
-      setError(body?.message ?? 'No se pudo procesar el reembolso.');
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  return (
-    <section className="bg-white rounded-card p-6 mb-6 border border-orange-100">
-      <p className="text-xs tracking-[0.3em] text-muted mb-2">REEMBOLSO</p>
-      <p className="text-sm text-muted mb-4 max-w-2xl">
-        Devuelve el importe total al medio de pago original vía MercadoPago.
-        El cliente recibe el email de confirmación automáticamente.
-      </p>
-      <button
-        type="button"
-        onClick={() => void handleRefund()}
-        disabled={busy}
-        className="bg-white text-terracotta border border-terracotta hover:bg-terracotta hover:text-white px-5 py-2 text-sm tracking-wider font-semibold transition-colors disabled:opacity-40"
-      >
-        {busy ? 'REEMBOLSANDO…' : `REEMBOLSAR ${formatArs(order.subtotalArs)}`}
-      </button>
-      {error && <p role="alert" className="text-terracotta text-xs mt-3">{error}</p>}
     </section>
   );
 }

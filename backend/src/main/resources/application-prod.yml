@@ -40,13 +40,6 @@ artesa:
   admin:
     email:    ${ARTESA_ADMIN_EMAIL:?ARTESA_ADMIN_EMAIL required}
     password: ${ARTESA_ADMIN_PASSWORD:?ARTESA_ADMIN_PASSWORD required (use a strong, unique password)}
-  payments:
-    mercadopago:
-      access-token:      ${MERCADOPAGO_ACCESS_TOKEN:?MERCADOPAGO_ACCESS_TOKEN required (prod token from MP dashboard)}
-      webhook-secret:    ${MERCADOPAGO_WEBHOOK_SECRET:?MERCADOPAGO_WEBHOOK_SECRET required (HMAC secret from MP dashboard)}
-      # Fail-closed: WebhookSignatureVerifier throws at construction if
-      # webhook-secret is empty while this is true. Do not disable in prod.
-      require-signature: true
 
 logging:
   level:

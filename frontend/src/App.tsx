@@ -5,7 +5,6 @@ import ProductPage from './pages/ProductPage';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import OrderConfirmationPage from './pages/OrderConfirmationPage';
-import OrderStatusPage from './pages/OrderStatusPage';
 import BankTransferPage from './pages/BankTransferPage';
 import NotFoundPage from './pages/NotFoundPage';
 import PoliticaCambioPage from './pages/info/PoliticaCambioPage';
@@ -54,9 +53,6 @@ export default function App() {
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/orden/:reference" element={<OrderConfirmationPage />} />
         <Route path="/orden/:reference/transferencia" element={<BankTransferPage />} />
-        <Route path="/orden/:reference/success" element={<OrderStatusPage kind="success" />} />
-        <Route path="/orden/:reference/fallo" element={<OrderStatusPage kind="failure" />} />
-        <Route path="/orden/:reference/pendiente" element={<OrderStatusPage kind="pending" />} />
         {/* Content / info pages */}
         <Route path="/politica-de-cambio-y-devolucion" element={<PoliticaCambioPage />} />
         <Route path="/opciones-de-pago" element={<OpcionesPagoPage />} />

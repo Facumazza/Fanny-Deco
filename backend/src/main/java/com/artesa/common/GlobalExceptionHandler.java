@@ -5,7 +5,6 @@ import com.artesa.catalog.admin.CategoryNotFoundException;
 import com.artesa.catalog.admin.SlugAlreadyExistsException;
 import com.artesa.catalog.service.ProductNotFoundException;
 import com.artesa.orders.OrderNotFoundException;
-import com.artesa.payments.PaymentException;
 import com.artesa.reviews.ReviewNotFoundException;
 import com.artesa.uploads.UploadException;
 import org.springframework.http.HttpStatus;
@@ -41,12 +40,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UploadException.class)
     public ResponseEntity<ApiError> uploadError(UploadException e) {
         return ResponseEntity.badRequest()
-            .body(ApiError.of(e.getCode(), e.getMessage()));
-    }
-
-    @ExceptionHandler(PaymentException.class)
-    public ResponseEntity<ApiError> paymentError(PaymentException e) {
-        return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
             .body(ApiError.of(e.getCode(), e.getMessage()));
     }
 
