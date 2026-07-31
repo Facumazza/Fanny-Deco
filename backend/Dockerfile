@@ -36,6 +36,12 @@ EXPOSE 8080
 # JVM tuning for a container:
 # - MaxRAMPercentage/UseContainerSupport: honor cgroup limits so the OOM
 #   killer doesn't hit us because native + heap combined blew past the limit.
+#   Kept at 50% (not the JDK default of 75%) because on Railway's smaller
+#   plans the JVM overhead (metaspace, threads, native buffers, direct
+#   memory) plus a 75%-heap comfortably exceeds the container limit under
+#   real traffic and the kernel silently SIGKILLs the process — no stack
+#   trace, just a restart loop every few hours. 50% leaves ~250MB of
+#   headroom on a 512MB plan, which is enough for this app's working set.
 #
 # We do NOT set -Djava.net.preferIPv6Addresses=true here: on Debian (jammy)
 # glibc's dual-stack resolver picks IPv6 automatically when a host is
@@ -44,7 +50,7 @@ EXPOSE 8080
 # containers only have IPv6 routing to internal services, not to the public
 # IPv6 internet — the SDK would get 'Network is unreachable' trying to POST
 # to r2.cloudflarestorage.com over v6.
-ENV JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=75 -XX:+UseContainerSupport"
+ENV JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=50 -XX:+UseContainerSupport"
 
 # Exec form so signals (SIGTERM from Railway on redeploy) reach the JVM,
 # not a shell wrapper.
