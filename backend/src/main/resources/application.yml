@@ -70,6 +70,10 @@ artesa:
     alias:          ${ARTESA_BANK_TRANSFER_ALIAS:}
     cuit:           ${ARTESA_BANK_TRANSFER_CUIT:}
     contact-method: ${ARTESA_BANK_TRANSFER_CONTACT_METHOD:WhatsApp al +54 9 11 1234-5678}
+  # Public URL of the storefront (used in email templates that link back to
+  # the customer's order page). Formerly under artesa.payments — moved here
+  # after MP was removed so it isn't tied to a payment concept.
+  frontend-base-url: ${ARTESA_FRONTEND_BASE_URL:http://localhost:5173}
   emails:
     # Only `console` is wired today — customer notifications go via the
     # WhatsApp handoff in the admin panel. The env vars stay optional so that

@@ -29,7 +29,7 @@ public class OrderEmailTemplates {
     private final String shopName;
 
     public OrderEmailTemplates(
-        @Value("${artesa.payments.frontend-base-url}") String storefrontUrl,
+        @Value("${artesa.frontend-base-url:http://localhost:5173}") String storefrontUrl,
         @Value("${artesa.emails.shop-name:FannyDeco}") String shopName
     ) {
         this.storefrontUrl = storefrontUrl.replaceAll("/$", "");
