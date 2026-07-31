@@ -6,7 +6,6 @@ import com.artesa.orders.OrderRepository;
 import com.artesa.orders.OrderService;
 import com.artesa.orders.OrderStatus;
 import com.artesa.orders.dto.CreateOrderRequest;
-import com.artesa.payments.FakePaymentGateway;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +33,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Testcontainers
 @Transactional
-@Import({FakeEmailService.Config.class, FakePaymentGateway.Config.class})
+@Import({FakeEmailService.Config.class})
 @TestPropertySource(properties = {
-    "artesa.emails.provider=fake",
-    "artesa.payments.provider=fake"
+    "artesa.emails.provider=fake"
 })
 class OrderTrackingIT {
 
