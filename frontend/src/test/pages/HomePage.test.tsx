@@ -34,6 +34,27 @@ describe('HomePage', () => {
     expect(screen.getAllByText(/342\.000/)).toHaveLength(mockProductsPage.content.length);
   });
 
+  it('every ?categoria= link points at a slug that actually exists', async () => {
+    // El header y el footer tienen la lista de categorías hardcodeada, así que
+    // es fácil que se desincronice de los slugs reales (pasó: "cartera-cuero"
+    // y "carteras-otros-materiales" filtraban por categorías inexistentes y
+    // dejaban la grilla vacía).
+    const { container } = renderWithRouter();
+    await screen.findByText('Bolso Tote Milano');
+
+    const slugs = new Set(mockCategories.map(c => c.slug));
+    const links = Array.from(container.querySelectorAll('a[href*="categoria="]'));
+    expect(links.length).toBeGreaterThan(0);
+
+    for (const link of links) {
+      const href = link.getAttribute('href') ?? '';
+      // Con URL() en vez de partir el string a mano: varios links traen
+      // además el ancla #coleccion después del slug.
+      const slug = new URL(href, 'http://test.local').searchParams.get('categoria');
+      expect(slugs.has(slug ?? ''), `link roto: ${href}`).toBe(true);
+    }
+  });
+
   it('shows retry button on error and recovers on click', async () => {
     server.use(
       http.get('/api/categories', () =>
