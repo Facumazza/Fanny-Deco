@@ -3,11 +3,15 @@ import { Header } from '../components/layout/Header';
 import { Footer } from '../components/layout/Footer';
 import { useCart } from '../hooks/useCart';
 import type { CartItem } from '../hooks/useCart';
+import { CompanionWarning } from '../components/catalog/CompanionWarning';
 
 import { formatArs } from '../lib/price';
 
 export default function CartPage() {
-  const { items, itemCount, subtotalArs, removeItem, clear } = useCart();
+  const {
+    items, itemCount, subtotalArs, removeItem, clear,
+    companionMissing, companionBlockedNames,
+  } = useCart();
   const isEmpty = items.length === 0;
 
   return (
@@ -32,14 +36,19 @@ export default function CartPage() {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Items */}
-            <ul className="lg:col-span-2 space-y-4">
-              {items.map(it => (
-                <CartRow
-                  key={it.productId}
-                  item={it}
-                  onRemove={() => removeItem(it.productId)}
-                />
-              ))}
+            <div className="lg:col-span-2 space-y-4">
+              {companionMissing && (
+                <CompanionWarning names={companionBlockedNames} />
+              )}
+              <ul className="space-y-4">
+                {items.map(it => (
+                  <CartRow
+                    key={it.productId}
+                    item={it}
+                    onRemove={() => removeItem(it.productId)}
+                  />
+                ))}
+              </ul>
               <button
                 type="button"
                 onClick={() => {
@@ -49,7 +58,7 @@ export default function CartPage() {
               >
                 Vaciar carrito
               </button>
-            </ul>
+            </div>
 
             {/* Summary */}
             <aside className="bg-white rounded-card p-6 h-fit lg:sticky lg:top-6">
@@ -61,12 +70,26 @@ export default function CartPage() {
               <p className="text-xs text-muted mb-6">
                 Envío y descuentos se calculan en el próximo paso.
               </p>
-              <Link
-                to="/checkout"
-                className="block bg-brown-dark hover:bg-brown text-white text-center py-4 text-sm tracking-wider font-semibold transition-colors"
-              >
-                CONTINUAR AL CHECKOUT →
-              </Link>
+              {companionMissing ? (
+                <>
+                  <span
+                    aria-disabled="true"
+                    className="block bg-brown-dark/40 text-white text-center py-4 text-sm tracking-wider font-semibold cursor-not-allowed"
+                  >
+                    CONTINUAR AL CHECKOUT →
+                  </span>
+                  <p className="text-xs text-terracotta mt-2 text-center">
+                    Falta una cartera en el carrito.
+                  </p>
+                </>
+              ) : (
+                <Link
+                  to="/checkout"
+                  className="block bg-brown-dark hover:bg-brown text-white text-center py-4 text-sm tracking-wider font-semibold transition-colors"
+                >
+                  CONTINUAR AL CHECKOUT →
+                </Link>
+              )}
               <Link
                 to="/"
                 className="block text-center text-muted hover:text-terracotta mt-4 text-sm"

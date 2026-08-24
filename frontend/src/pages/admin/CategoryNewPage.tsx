@@ -10,6 +10,8 @@ const EMPTY: CategoryUpsertRequest = {
   subtitle: '',
   imageUrl: '',
   displayOrder: 10,
+  requiresCompanion: false,
+  isCompanion: false,
 };
 
 export default function CategoryNewPage() {

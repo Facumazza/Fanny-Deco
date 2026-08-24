@@ -14,5 +14,9 @@ public record ProductSummaryDto(
     BigDecimal ratingAvg,
     int ratingCount,
     String categorySlug,
+    // Copia de los flags de la categoría, para que el carrito pueda decidir
+    // sin tener que volver a pedir /api/categories.
+    boolean requiresCompanion,
+    boolean isCompanion,
     List<String> colors
 ) {}

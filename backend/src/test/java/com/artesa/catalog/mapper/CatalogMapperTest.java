@@ -27,11 +27,32 @@ class CatalogMapperTest {
         ReflectionTestUtils.setField(c, "subtitle", "Full-grain");
         ReflectionTestUtils.setField(c, "imageUrl", "https://x/y.jpg");
         ReflectionTestUtils.setField(c, "displayOrder", 1);
+        ReflectionTestUtils.setField(c, "companion", true);
 
         CategoryDto dto = mapper.toDto(c);
 
         assertThat(dto).isEqualTo(new CategoryDto(1L, "carteras-cuero", "Carteras de Cuero",
-                                                  "Full-grain", "https://x/y.jpg"));
+                                                  "Full-grain", "https://x/y.jpg",
+                                                  false, true));
+    }
+
+    @Test
+    void toSummary_carriesCompanionRulesFromCategory() {
+        Category accesorios = new Category();
+        ReflectionTestUtils.setField(accesorios, "slug", "accesorios");
+        ReflectionTestUtils.setField(accesorios, "requiresCompanion", true);
+
+        Product p = new Product();
+        ReflectionTestUtils.setField(p, "id", 99L);
+        ReflectionTestUtils.setField(p, "priceArs", new BigDecimal("25000.00"));
+        ReflectionTestUtils.setField(p, "ratingAvg", new BigDecimal("5.0"));
+        ReflectionTestUtils.setField(p, "category", accesorios);
+        ReflectionTestUtils.setField(p, "colors", List.of());
+
+        ProductSummaryDto dto = mapper.toSummary(p);
+
+        assertThat(dto.requiresCompanion()).isTrue();
+        assertThat(dto.isCompanion()).isFalse();
     }
 
     @Test

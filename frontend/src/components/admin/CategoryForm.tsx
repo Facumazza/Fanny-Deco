@@ -105,6 +105,28 @@ export function CategoryForm({ initial, submitLabel, onSubmit }: Props) {
         />
       </Field>
 
+      {/* Reglas de venta. Definen qué categorías no se pueden comprar solas
+          (Accesorios) y cuáles las habilitan (Carteras), sin tocar código. */}
+      <fieldset className="border border-cream-card rounded-card p-4 space-y-3">
+        <legend className="text-xs tracking-wider text-muted px-2">
+          REGLAS DE VENTA
+        </legend>
+
+        <Checkbox
+          checked={form.requiresCompanion}
+          onChange={v => setForm(f => ({ ...f, requiresCompanion: v }))}
+          label="No se vende sola"
+          hint="El pedido tiene que incluir además un producto de alguna categoría marcada como acompañante. Es el caso de Accesorios."
+        />
+
+        <Checkbox
+          checked={form.isCompanion}
+          onChange={v => setForm(f => ({ ...f, isCompanion: v }))}
+          label="Habilita a las que no se venden solas"
+          hint="Sumar un producto de esta categoría al carrito destraba la compra de los accesorios. Es el caso de las carteras."
+        />
+      </fieldset>
+
       <div className="flex items-center gap-3 pt-4">
         <button
           type="submit"
@@ -116,6 +138,28 @@ export function CategoryForm({ initial, submitLabel, onSubmit }: Props) {
         <Link to="/admin/categories" className="text-muted hover:text-ink">Cancelar</Link>
       </div>
     </form>
+  );
+}
+
+function Checkbox({ checked, onChange, label, hint }: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  label: string;
+  hint: string;
+}) {
+  return (
+    <label className="flex gap-3 items-start cursor-pointer">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={e => onChange(e.target.checked)}
+        className="mt-1 accent-brown-dark"
+      />
+      <span>
+        <span className="block text-sm text-ink">{label}</span>
+        <span className="block text-xs text-muted mt-0.5">{hint}</span>
+      </span>
+    </label>
   );
 }
 

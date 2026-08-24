@@ -12,6 +12,10 @@ export interface CartItem {
   imageUrl: string;
   priceArs: number;
   quantity: number;
+  /** No se vende solo — necesita un acompañante en el carrito (Accesorios). */
+  requiresCompanion: boolean;
+  /** Habilita a los que sí lo requieren (Carteras). */
+  isCompanion: boolean;
 }
 
 interface CartState {
@@ -22,12 +26,21 @@ interface CartState {
   clear: () => void;
   itemCount: number;   // total units across items
   subtotalArs: number;
+  /**
+   * Hay productos que no se venden solos y falta el acompañante. Mientras
+   * sea true el checkout queda bloqueado — el backend rechaza igual el POST,
+   * esto sólo evita que el cliente llene el formulario para nada.
+   */
+  companionMissing: boolean;
+  /** Nombres de los productos que están bloqueando el checkout. */
+  companionBlockedNames: string[];
 }
 
-// v2 = colors removed. Old carts (v1) on returning visitors are silently
-// dropped instead of migrated — a stale cart is low-cost, and the previous
-// shape carried a color per line we no longer track.
-const STORAGE_KEY = 'artesa.cart.v2';
+// v3 = cada línea guarda además las reglas de compra de su categoría, para
+// poder bloquear el checkout sin volver a pedir el producto. Los carritos
+// viejos (v1/v2) se descartan en silencio en vez de migrarse: sin esos flags
+// no podríamos evaluar la regla, y un carrito perdido es de bajo costo.
+const STORAGE_KEY = 'artesa.cart.v3';
 
 const CartContext = createContext<CartState | null>(null);
 
@@ -41,6 +54,8 @@ function loadInitial(): CartItem[] {
     // Basic shape check — drop anything that looks wrong instead of throwing.
     return parsed.filter((it): it is CartItem =>
       it && typeof it.productId === 'number' && typeof it.quantity === 'number'
+        && typeof it.requiresCompanion === 'boolean'
+        && typeof it.isCompanion === 'boolean'
     );
   } catch {
     return [];
@@ -74,6 +89,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
           imageUrl: input.imageUrl,
           priceArs: input.priceArs,
           quantity: 1,
+          requiresCompanion: input.requiresCompanion,
+          isCompanion: input.isCompanion,
         },
       ];
     });
@@ -102,7 +119,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const derived = useMemo(() => {
     const itemCount = items.reduce((n, it) => n + it.quantity, 0);
     const subtotalArs = items.reduce((s, it) => s + it.quantity * it.priceArs, 0);
-    return { itemCount, subtotalArs };
+
+    // Una sola cartera habilita todos los accesorios del pedido — la regla
+    // es "al menos un acompañante", no uno a uno.
+    const blocked = items.filter(it => it.requiresCompanion);
+    const hasCompanion = items.some(it => it.isCompanion);
+    return {
+      itemCount,
+      subtotalArs,
+      companionMissing: blocked.length > 0 && !hasCompanion,
+      companionBlockedNames: blocked.map(it => it.name),
+    };
   }, [items]);
 
   return (

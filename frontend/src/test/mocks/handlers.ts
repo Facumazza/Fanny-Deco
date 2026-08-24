@@ -3,13 +3,20 @@ import type { Category, Page, ProductSummary, Review } from '../../types/api';
 
 export const mockCategories: Category[] = [
   { id: 1, slug: 'carteras-cuero', name: 'Carteras de Cuero',
-    subtitle: 'Full-grain curtido al vegetal', imageUrl: 'https://x/1.jpg' },
+    subtitle: 'Full-grain curtido al vegetal', imageUrl: 'https://x/1.jpg',
+    requiresCompanion: false, isCompanion: true },
   { id: 2, slug: 'carteras-otros', name: 'Carteras Otros Materiales',
-    subtitle: 'Lona, raffia y tejidos naturales', imageUrl: 'https://x/2.jpg' },
+    subtitle: 'Lona, raffia y tejidos naturales', imageUrl: 'https://x/2.jpg',
+    requiresCompanion: false, isCompanion: true },
   { id: 3, slug: 'ceramica-deco', name: 'Cerámica Deco',
-    subtitle: 'Jarrones', imageUrl: 'https://x/3.jpg' },
+    subtitle: 'Jarrones', imageUrl: 'https://x/3.jpg',
+    requiresCompanion: false, isCompanion: false },
   { id: 4, slug: 'ceramica-casa', name: 'Cerámica Casa',
-    subtitle: 'Tazas', imageUrl: 'https://x/4.jpg' },
+    subtitle: 'Tazas', imageUrl: 'https://x/4.jpg',
+    requiresCompanion: false, isCompanion: false },
+  { id: 5, slug: 'accesorios', name: 'Accesorios',
+    subtitle: 'Se venden junto a una cartera', imageUrl: 'https://x/5.jpg',
+    requiresCompanion: true, isCompanion: false },
 ];
 
 export const mockProduct: ProductSummary = {
@@ -17,11 +24,21 @@ export const mockProduct: ProductSummary = {
   priceArs: 342000, imageUrl: 'https://x/p.jpg',
   ratingAvg: 5.0, ratingCount: 128,
   categorySlug: 'carteras-cuero',
+  requiresCompanion: false, isCompanion: true,
+};
+
+/** Accesorio: no se puede comprar solo. */
+export const mockAccessory: ProductSummary = {
+  id: 11, slug: 'llavero-cuero', name: 'Llavero de Cuero',
+  priceArs: 25000, imageUrl: 'https://x/a.jpg',
+  ratingAvg: 5.0, ratingCount: 4,
+  categorySlug: 'accesorios',
+  requiresCompanion: true, isCompanion: false,
 };
 
 export const mockProductsPage: Page<ProductSummary> = {
   content: [mockProduct],
-  page: 0, size: 12, totalElements: 1, totalPages: 1,
+  page: 0, size: 16, totalElements: 1, totalPages: 1,
 };
 
 export const mockReviews: Review[] = [

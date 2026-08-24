@@ -1,4 +1,18 @@
-export interface Category {
+/**
+ * Reglas de compra de una categoría.
+ *
+ * `requiresCompanion` = sus productos no se venden solos (Accesorios).
+ * `isCompanion`       = sus productos habilitan a los anteriores (Carteras).
+ *
+ * El bloqueo real lo hace el backend al crear la orden; acá las usamos para
+ * avisar antes de que el cliente cargue todos los datos del checkout.
+ */
+export interface CompanionRules {
+  requiresCompanion: boolean;
+  isCompanion: boolean;
+}
+
+export interface Category extends CompanionRules {
   id: number;
   slug: string;
   name: string;
@@ -6,7 +20,7 @@ export interface Category {
   imageUrl: string;
 }
 
-export interface ProductSummary {
+export interface ProductSummary extends CompanionRules {
   id: number;
   slug: string;
   name: string;
@@ -84,7 +98,7 @@ export interface ProductUpsertRequest {
   additionalImages: string[];
 }
 
-export interface AdminCategory {
+export interface AdminCategory extends CompanionRules {
   id: number;
   slug: string;
   name: string;
@@ -94,7 +108,7 @@ export interface AdminCategory {
   productCount: number;
 }
 
-export interface CategoryUpsertRequest {
+export interface CategoryUpsertRequest extends CompanionRules {
   name: string;
   slug: string;
   subtitle: string | null;

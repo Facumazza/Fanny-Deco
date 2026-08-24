@@ -47,9 +47,23 @@ class AdminCategoryControllerIT {
     void listReturnsSeededCategoriesWithProductCounts() throws Exception {
         mvc.perform(get("/api/admin/categories"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()").value(4))
+            // 4 del seed original + Accesorios, que agrega V13.
+            .andExpect(jsonPath("$.length()").value(5))
             .andExpect(jsonPath("$[0].slug").value("carteras-cuero"))
-            .andExpect(jsonPath("$[0].productCount").value(2));
+            .andExpect(jsonPath("$[0].productCount").value(2))
+            .andExpect(jsonPath("$[0].isCompanion").value(true))
+            .andExpect(jsonPath("$[0].requiresCompanion").value(false));
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void listExposesCompanionRulesOfAccesorios() throws Exception {
+        mvc.perform(get("/api/admin/categories"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[?(@.slug == 'accesorios')].requiresCompanion")
+                .value(org.hamcrest.Matchers.contains(true)))
+            .andExpect(jsonPath("$[?(@.slug == 'accesorios')].isCompanion")
+                .value(org.hamcrest.Matchers.contains(false)));
     }
 
     @Test
@@ -66,20 +80,44 @@ class AdminCategoryControllerIT {
     @Test
     @WithMockUser(roles = "ADMIN")
     void createCategory_happyPath() throws Exception {
+        // Ojo: "accesorios" ya existe desde V13, así que este test usa otro slug.
         String body = """
             {
-              "name": "Accesorios",
-              "slug": "accesorios",
-              "subtitle": "Cinturones y billeteras",
+              "name": "Bijouterie",
+              "slug": "bijouterie",
+              "subtitle": "Aros y collares",
               "imageUrl": "https://example.com/img.jpg",
-              "displayOrder": 5
+              "displayOrder": 6,
+              "requiresCompanion": true,
+              "isCompanion": false
             }""";
         mvc.perform(post("/api/admin/categories")
                 .contentType(MediaType.APPLICATION_JSON).content(body))
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.id").isNumber())
-            .andExpect(jsonPath("$.slug").value("accesorios"))
+            .andExpect(jsonPath("$.slug").value("bijouterie"))
+            .andExpect(jsonPath("$.requiresCompanion").value(true))
+            .andExpect(jsonPath("$.isCompanion").value(false))
             .andExpect(jsonPath("$.productCount").value(0));
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void createCategory_defaultsCompanionRulesToFalseWhenOmitted() throws Exception {
+        // Los flags son opcionales en el JSON: si no vienen, la categoría se
+        // vende normalmente y no habilita a nadie.
+        String body = """
+            {
+              "name": "Sin reglas",
+              "slug": "sin-reglas",
+              "imageUrl": "https://example.com/img.jpg",
+              "displayOrder": 7
+            }""";
+        mvc.perform(post("/api/admin/categories")
+                .contentType(MediaType.APPLICATION_JSON).content(body))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.requiresCompanion").value(false))
+            .andExpect(jsonPath("$.isCompanion").value(false));
     }
 
     @Test
@@ -107,13 +145,18 @@ class AdminCategoryControllerIT {
               "slug": "carteras-cuero",
               "subtitle": "Nuevo subtítulo",
               "imageUrl": "https://example.com/new.jpg",
-              "displayOrder": 1
+              "displayOrder": 1,
+              "requiresCompanion": false,
+              "isCompanion": true
             }""";
         mvc.perform(put("/api/admin/categories/1")
                 .contentType(MediaType.APPLICATION_JSON).content(body))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.name").value("Carteras de Cuero — Renovado"))
-            .andExpect(jsonPath("$.subtitle").value("Nuevo subtítulo"));
+            .andExpect(jsonPath("$.subtitle").value("Nuevo subtítulo"))
+            // El form del admin siempre manda los flags: acá se verifica que
+            // el PUT los conserva en vez de apagarlos.
+            .andExpect(jsonPath("$.isCompanion").value(true));
     }
 
     @Test

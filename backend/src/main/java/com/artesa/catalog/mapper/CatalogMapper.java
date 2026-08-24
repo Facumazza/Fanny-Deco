@@ -13,7 +13,8 @@ public class CatalogMapper {
 
     public CategoryDto toDto(Category c) {
         return new CategoryDto(c.getId(), c.getSlug(), c.getName(),
-                               c.getSubtitle(), c.getImageUrl());
+                               c.getSubtitle(), c.getImageUrl(),
+                               c.requiresCompanion(), c.isCompanion());
     }
 
     public ProductSummaryDto toSummary(Product p) {
@@ -21,6 +22,7 @@ public class CatalogMapper {
             p.getId(), p.getSlug(), p.getName(), p.getPriceArs(), p.getImageUrl(),
             p.getBadge(), p.getRatingAvg(), p.getRatingCount(),
             p.getCategory().getSlug(),
+            p.getCategory().requiresCompanion(), p.getCategory().isCompanion(),
             p.getColors().stream().map(ProductColor::getHex).toList()
         );
     }
@@ -30,6 +32,7 @@ public class CatalogMapper {
             p.getId(), p.getSlug(), p.getName(), p.getPriceArs(), p.getImageUrl(),
             p.getBadge(), p.getRatingAvg(), p.getRatingCount(),
             p.getCategory().getSlug(), p.getCategory().getName(),
+            p.getCategory().requiresCompanion(), p.getCategory().isCompanion(),
             p.getDescription(),
             p.getColors().stream().map(ProductColor::getHex).toList(),
             // Defensive copy: additionalImages is a Hibernate-managed list; we

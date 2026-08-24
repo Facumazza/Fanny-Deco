@@ -4,6 +4,7 @@ import com.artesa.catalog.admin.CategoryInUseException;
 import com.artesa.catalog.admin.CategoryNotFoundException;
 import com.artesa.catalog.admin.SlugAlreadyExistsException;
 import com.artesa.catalog.service.ProductNotFoundException;
+import com.artesa.orders.CompanionRequiredException;
 import com.artesa.orders.OrderNotFoundException;
 import com.artesa.reviews.ReviewNotFoundException;
 import com.artesa.uploads.UploadException;
@@ -67,6 +68,22 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT)
             .body(ApiError.of("SLUG_ALREADY_EXISTS",
                 "Ya existe un producto con el slug '" + e.getSlug() + "'"));
+    }
+
+    // El carrito tiene accesorios sueltos. 422 y no 400: el JSON es válido,
+    // lo que no se cumple es la regla de negocio. El mensaje se muestra tal
+    // cual en el checkout, así que se arma con los nombres reales de las
+    // categorías involucradas.
+    @ExceptionHandler(CompanionRequiredException.class)
+    public ResponseEntity<ApiError> companionRequired(CompanionRequiredException e) {
+        String blocked = String.join(", ", e.getBlockedCategories());
+        String companions = e.getCompanionCategories().isEmpty()
+            ? "una cartera"
+            : "un producto de " + String.join(" o ", e.getCompanionCategories());
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+            .body(ApiError.of("COMPANION_REQUIRED",
+                "Los productos de " + blocked + " no se venden solos: "
+                + "sumá al pedido " + companions + "."));
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)

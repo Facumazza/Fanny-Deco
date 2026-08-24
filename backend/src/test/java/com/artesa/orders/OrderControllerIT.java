@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -34,6 +35,7 @@ class OrderControllerIT {
     }
 
     @Autowired MockMvc mvc;
+    @Autowired JdbcTemplate jdbc;
 
     @Test
     void createOrder_happyPath_computesSubtotalFromDbPrices() throws Exception {
@@ -152,5 +154,71 @@ class OrderControllerIT {
         mvc.perform(get("/api/orders/ARTESA-XXXXXX"))
             .andExpect(status().isNotFound())
             .andExpect(jsonPath("$.code").value("ORDER_NOT_FOUND"));
+    }
+
+    // ---- Regla de acompañante: los accesorios no se venden solos ----
+
+    /**
+     * Crea un producto en Accesorios (categoría sembrada por V13 con
+     * requires_companion = true) y devuelve su id. La clase es @Transactional
+     * así que el insert se revierte al terminar el test.
+     */
+    private long insertAccessory() {
+        return jdbc.queryForObject("""
+            INSERT INTO products (slug, name, description, price_ars, image_url,
+                                  rating_avg, rating_count, category_id)
+            VALUES ('llavero-test', 'Llavero de prueba', NULL, 25000.00,
+                    'https://x/llavero.jpg', 5.0, 0,
+                    (SELECT id FROM categories WHERE slug = 'accesorios'))
+            RETURNING id
+            """, Long.class);
+    }
+
+    @Test
+    void createOrder_rejectsAccessoryWithoutBag() throws Exception {
+        long accessoryId = insertAccessory();
+        String body = """
+            {
+              "customerEmail": "x@example.com",
+              "customerName": "Nombre",
+              "shippingAddress": "Calle 1",
+              "city": "Ciudad",
+              "country": "Argentina",
+              "items": [ { "productId": %d, "quantity": 1 } ]
+            }""".formatted(accessoryId);
+
+        mvc.perform(post("/api/orders")
+                .contentType(MediaType.APPLICATION_JSON).content(body))
+            .andExpect(status().isUnprocessableEntity())
+            .andExpect(jsonPath("$.code").value("COMPANION_REQUIRED"))
+            // El mensaje se muestra tal cual en el checkout: nombra la categoría
+            // bloqueada y las que la habilitan.
+            .andExpect(jsonPath("$.message").value(
+                org.hamcrest.Matchers.containsString("Accesorios")))
+            .andExpect(jsonPath("$.message").value(
+                org.hamcrest.Matchers.containsString("Carteras de Cuero")));
+    }
+
+    @Test
+    void createOrder_acceptsAccessoryAlongsideBag() throws Exception {
+        long accessoryId = insertAccessory();
+        // productId 1 = bolso-tote-milano, categoría carteras-cuero (is_companion).
+        String body = """
+            {
+              "customerEmail": "x@example.com",
+              "customerName": "Nombre",
+              "shippingAddress": "Calle 1",
+              "city": "Ciudad",
+              "country": "Argentina",
+              "items": [
+                { "productId": 1, "quantity": 1 },
+                { "productId": %d, "quantity": 1 }
+              ]
+            }""".formatted(accessoryId);
+
+        mvc.perform(post("/api/orders")
+                .contentType(MediaType.APPLICATION_JSON).content(body))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.items.length()").value(2));
     }
 }

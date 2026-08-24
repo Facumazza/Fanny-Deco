@@ -25,6 +25,18 @@ public class Category {
     @Column(name = "display_order", nullable = false)
     private int displayOrder;
 
+    /**
+     * Los productos de esta categoría no se pueden comprar solos: el pedido
+     * tiene que incluir al menos un producto de alguna categoría marcada como
+     * acompañante. Es el caso de Accesorios.
+     */
+    @Column(name = "requires_companion", nullable = false)
+    private boolean requiresCompanion;
+
+    /** Esta categoría habilita la compra de las que requieren acompañante. */
+    @Column(name = "is_companion", nullable = false)
+    private boolean companion;
+
     public Category() {}
 
     public Long getId() { return id; }
@@ -33,4 +45,6 @@ public class Category {
     public String getSubtitle() { return subtitle; }
     public String getImageUrl() { return imageUrl; }
     public int getDisplayOrder() { return displayOrder; }
+    public boolean requiresCompanion() { return requiresCompanion; }
+    public boolean isCompanion() { return companion; }
 }

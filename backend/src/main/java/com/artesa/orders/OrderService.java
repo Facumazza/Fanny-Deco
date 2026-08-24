@@ -1,6 +1,8 @@
 package com.artesa.orders;
 
+import com.artesa.catalog.domain.Category;
 import com.artesa.catalog.domain.Product;
+import com.artesa.catalog.repository.CategoryRepository;
 import com.artesa.catalog.repository.ProductRepository;
 import com.artesa.catalog.service.ProductNotFoundException;
 import com.artesa.emails.OrderMailer;
@@ -13,6 +15,7 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -34,13 +37,16 @@ public class OrderService {
 
     private final OrderRepository orderRepo;
     private final ProductRepository productRepo;
+    private final CategoryRepository categoryRepo;
     private final OrderMailer mailer;
 
     public OrderService(OrderRepository orderRepo,
                         ProductRepository productRepo,
+                        CategoryRepository categoryRepo,
                         OrderMailer mailer) {
         this.orderRepo = orderRepo;
         this.productRepo = productRepo;
+        this.categoryRepo = categoryRepo;
         this.mailer = mailer;
     }
 
@@ -65,6 +71,8 @@ public class OrderService {
                 throw new ProductNotFoundException("id=" + ri.productId());
             }
         }
+
+        requireCompanions(productsById.values());
 
         Order order = new Order();
         setField(order, "reference", generateUniqueReference());
@@ -104,6 +112,31 @@ public class OrderService {
         Order saved = orderRepo.save(order);
         mailer.onOrderCreated(saved);
         return saved;
+    }
+
+    /**
+     * Regla de acompañante: si el pedido tiene productos de una categoría
+     * marcada {@code requires_companion} (Accesorios), tiene que incluir
+     * además al menos un producto de una categoría {@code is_companion}
+     * (las carteras). Una sola cartera habilita todos los accesorios del
+     * pedido — no es uno a uno.
+     */
+    private void requireCompanions(Collection<Product> ordered) {
+        List<String> blocked = ordered.stream()
+            .map(Product::getCategory)
+            .filter(Category::requiresCompanion)
+            .map(Category::getName)
+            .distinct()
+            .toList();
+        if (blocked.isEmpty()) return;
+
+        boolean hasCompanion = ordered.stream()
+            .anyMatch(p -> p.getCategory().isCompanion());
+        if (hasCompanion) return;
+
+        List<String> companions = categoryRepo.findByCompanionTrueOrderByDisplayOrderAsc()
+            .stream().map(Category::getName).toList();
+        throw new CompanionRequiredException(blocked, companions);
     }
 
     private String generateUniqueReference() {

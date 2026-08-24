@@ -102,6 +102,17 @@ export default function CategoriesListPage() {
                   <td className="px-4 py-3">
                     <div className="text-ink font-medium">{c.name}</div>
                     <div className="text-xs text-muted">{c.slug}</div>
+                    {/* Reglas de venta, para verlas de un vistazo sin entrar a editar. */}
+                    {c.requiresCompanion && (
+                      <span className="inline-block mt-1 bg-terracotta/10 text-terracotta px-2 py-0.5 rounded-sm text-[11px]">
+                        No se vende sola
+                      </span>
+                    )}
+                    {c.isCompanion && (
+                      <span className="inline-block mt-1 bg-cream-card text-muted px-2 py-0.5 rounded-sm text-[11px]">
+                        Habilita accesorios
+                      </span>
+                    )}
                   </td>
                   <td className="px-4 py-3 text-muted">{c.subtitle ?? '—'}</td>
                   <td className="px-4 py-3 text-center text-ink">{c.displayOrder}</td>

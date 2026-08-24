@@ -21,5 +21,19 @@ public record CategoryUpsertRequest(
 
     @NotNull
     @Min(0)
-    Integer displayOrder
-) {}
+    Integer displayOrder,
+
+    // Reglas de compra. Ambos son opcionales en el JSON: si vienen null los
+    // tratamos como false, así los clientes viejos del admin siguen andando.
+    Boolean requiresCompanion,
+
+    Boolean isCompanion
+) {
+    public boolean requiresCompanionOrFalse() {
+        return Boolean.TRUE.equals(requiresCompanion);
+    }
+
+    public boolean isCompanionOrFalse() {
+        return Boolean.TRUE.equals(isCompanion);
+    }
+}

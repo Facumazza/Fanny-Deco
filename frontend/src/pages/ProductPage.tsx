@@ -13,7 +13,7 @@ type Status = 'loading' | 'ok' | 'not-found' | 'error';
 
 export default function ProductPage() {
   const { slug = '' } = useParams<{ slug: string }>();
-  const { items, addItem } = useCart();
+  const { items, addItem, companionMissing } = useCart();
   const [status, setStatus] = useState<Status>('loading');
   const [product, setProduct] = useState<ProductDetail | null>(null);
   const [activeImage, setActiveImage] = useState<string | null>(null);
@@ -31,6 +31,8 @@ export default function ProductPage() {
       name: product.name,
       imageUrl: product.imageUrl,
       priceArs: product.priceArs,
+      requiresCompanion: product.requiresCompanion,
+      isCompanion: product.isCompanion,
     });
     setAddedFeedback(true);
     setTimeout(() => setAddedFeedback(false), 2500);
@@ -155,6 +157,14 @@ export default function ProductPage() {
                   Pieza única, hecha a mano. Stock: 1.
                 </p>
 
+                {/* Los accesorios se venden acompañados. Lo decimos acá para
+                    que no sea una sorpresa recién en el carrito. */}
+                {product.requiresCompanion && (
+                  <p className="text-sm text-terracotta border-l-2 border-terracotta/40 pl-3 mb-4">
+                    Este producto se vende únicamente junto a una cartera.
+                  </p>
+                )}
+
                 <div className="mt-auto">
                   {alreadyInCart ? (
                     <Link
@@ -179,7 +189,11 @@ export default function ProductPage() {
                     role="status"
                     className="mt-4 bg-cream-card text-ink px-4 py-3 rounded-card text-sm flex items-center justify-between"
                   >
-                    <span>Agregado al carrito.</span>
+                    <span>
+                      {companionMissing
+                        ? 'Agregado. Falta una cartera para poder comprarlo.'
+                        : 'Agregado al carrito.'}
+                    </span>
                     <Link to="/carrito" className="text-terracotta hover:underline">
                       Ver carrito →
                     </Link>

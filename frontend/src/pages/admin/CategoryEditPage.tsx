@@ -41,6 +41,8 @@ export default function CategoryEditPage() {
     subtitle: category.subtitle,
     imageUrl: category.imageUrl,
     displayOrder: category.displayOrder,
+    requiresCompanion: category.requiresCompanion,
+    isCompanion: category.isCompanion,
   };
 
   return (

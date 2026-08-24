@@ -15,6 +15,8 @@ public record ProductDetailDto(
     int ratingCount,
     String categorySlug,
     String categoryName,
+    boolean requiresCompanion,
+    boolean isCompanion,
     String description,
     List<String> colors,
     List<String> additionalImages

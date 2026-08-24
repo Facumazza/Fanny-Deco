@@ -3,6 +3,7 @@ import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { Header } from '../components/layout/Header';
 import { Footer } from '../components/layout/Footer';
 import { useCart } from '../hooks/useCart';
+import { CompanionWarning } from '../components/catalog/CompanionWarning';
 import { createOrder } from '../api/orders';
 import { ApiRequestError } from '../types/api';
 
@@ -49,7 +50,10 @@ const INITIAL: FormState = {
 };
 
 export default function CheckoutPage() {
-  const { items, subtotalArs, itemCount, clear } = useCart();
+  const {
+    items, subtotalArs, itemCount, clear,
+    companionMissing, companionBlockedNames,
+  } = useCart();
   const navigate = useNavigate();
 
   const [form, setForm] = useState<FormState>(INITIAL);
@@ -67,6 +71,10 @@ export default function CheckoutPage() {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    // El botón está deshabilitado, pero un Enter dentro de un input puede
+    // disparar el submit igual. El backend rebota con COMPANION_REQUIRED,
+    // así que esto es sólo para no hacer el viaje.
+    if (companionMissing) return;
     setError(null);
     setSubmitting(true);
     try {
@@ -117,6 +125,8 @@ export default function CheckoutPage() {
                 {error}
               </div>
             )}
+
+            {companionMissing && <CompanionWarning names={companionBlockedNames} />}
 
             <section className="bg-white p-6 rounded-card">
               <h2 className="font-display text-2xl text-ink mb-4">Datos de contacto</h2>
@@ -251,11 +261,16 @@ export default function CheckoutPage() {
             </div>
             <button
               type="submit"
-              disabled={submitting}
-              className="w-full bg-brown-dark hover:bg-brown text-white py-4 text-sm tracking-wider font-semibold transition-colors disabled:opacity-60"
+              disabled={submitting || companionMissing}
+              className="w-full bg-brown-dark hover:bg-brown text-white py-4 text-sm tracking-wider font-semibold transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {submitting ? 'CREANDO ORDEN…' : 'CONTINUAR CON TRANSFERENCIA →'}
             </button>
+            {companionMissing && (
+              <p className="text-xs text-terracotta mt-2 text-center">
+                Sumá una cartera al carrito para continuar.
+              </p>
+            )}
           </aside>
         </form>
       </main>

@@ -15,6 +15,8 @@ public class AdminCategoryMapper {
             c.getSubtitle(),
             c.getImageUrl(),
             c.getDisplayOrder(),
+            c.requiresCompanion(),
+            c.isCompanion(),
             productCount
         );
     }

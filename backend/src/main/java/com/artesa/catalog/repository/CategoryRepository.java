@@ -9,4 +9,7 @@ import java.util.Optional;
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     Optional<Category> findBySlug(String slug);
     List<Category> findAllByOrderByDisplayOrderAscNameAsc();
+
+    /** Categorías que habilitan la compra de las que requieren acompañante. */
+    List<Category> findByCompanionTrueOrderByDisplayOrderAsc();
 }

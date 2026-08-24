@@ -7,5 +7,7 @@ public record AdminCategoryDto(
     String subtitle,
     String imageUrl,
     int displayOrder,
+    boolean requiresCompanion,
+    boolean isCompanion,
     long productCount
 ) {}

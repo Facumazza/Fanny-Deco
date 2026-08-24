@@ -75,6 +75,8 @@ public class AdminCategoryService {
         setField(c, "subtitle", req.subtitle());
         setField(c, "imageUrl", req.imageUrl());
         setField(c, "displayOrder", req.displayOrder());
+        setField(c, "requiresCompanion", req.requiresCompanionOrFalse());
+        setField(c, "companion", req.isCompanionOrFalse());
     }
 
     private static void setField(Object target, String fieldName, Object value) {
