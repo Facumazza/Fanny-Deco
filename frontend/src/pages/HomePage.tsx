@@ -38,7 +38,7 @@ export default function HomePage() {
     setProductsLoading(true);
     try {
       const prods = await getProducts({
-        size: 12,
+        size: 16,
         category: category ?? undefined,
         q: q ?? undefined,
       });
@@ -57,7 +57,7 @@ export default function HomePage() {
       const [cats, prods] = await Promise.all([
         getCategories(),
         getProducts({
-          size: 12,
+          size: 16,
           category: activeTab ?? undefined,
           q: searchQuery ?? undefined,
         }),
