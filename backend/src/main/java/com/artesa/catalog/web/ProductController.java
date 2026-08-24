@@ -31,7 +31,7 @@ public class ProductController {
         @RequestParam(required = false) ProductBadge badge,
         @RequestParam(required = false) String q,
         @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "12") int size,
+        @RequestParam(defaultValue = "16") int size,
         @RequestParam(defaultValue = "created_at,desc") String sort
     ) {
         int clampedSize = Math.max(1, Math.min(MAX_PAGE_SIZE, size));
