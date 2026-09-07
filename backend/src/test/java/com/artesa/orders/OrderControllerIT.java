@@ -159,17 +159,27 @@ class OrderControllerIT {
     // ---- Regla de acompañante: los accesorios no se venden solos ----
 
     /**
-     * Crea un producto en Accesorios (categoría sembrada por V13 con
-     * requires_companion = true) y devuelve su id. La clase es @Transactional
-     * así que el insert se revierte al terminar el test.
+     * Crea una categoría que no se vende sola y un producto adentro, y
+     * devuelve el id del producto.
+     *
+     * El test arma su propia categoría en vez de apoyarse en una sembrada por
+     * las migraciones: los datos reales divergieron del seed hace rato (V14),
+     * así que atarse a un slug concreto es exactamente lo que ya falló una vez.
+     * La clase es @Transactional, así que todo esto se revierte al terminar.
      */
     private long insertAccessory() {
+        jdbc.update("""
+            INSERT INTO categories (slug, name, subtitle, image_url, display_order,
+                                    requires_companion, is_companion)
+            VALUES ('complementos-test', 'Complementos de prueba', NULL,
+                    'https://x/cat.jpg', 90, true, false)
+            """);
         return jdbc.queryForObject("""
             INSERT INTO products (slug, name, description, price_ars, image_url,
                                   rating_avg, rating_count, category_id)
             VALUES ('llavero-test', 'Llavero de prueba', NULL, 25000.00,
                     'https://x/llavero.jpg', 5.0, 0,
-                    (SELECT id FROM categories WHERE slug = 'accesorios'))
+                    (SELECT id FROM categories WHERE slug = 'complementos-test'))
             RETURNING id
             """, Long.class);
     }
@@ -191,12 +201,10 @@ class OrderControllerIT {
                 .contentType(MediaType.APPLICATION_JSON).content(body))
             .andExpect(status().isUnprocessableEntity())
             .andExpect(jsonPath("$.code").value("COMPANION_REQUIRED"))
-            // El mensaje se muestra tal cual en el checkout: nombra la categoría
-            // bloqueada y las que la habilitan.
+            // El mensaje se muestra tal cual en el checkout: nombra la
+            // categoría bloqueada.
             .andExpect(jsonPath("$.message").value(
-                org.hamcrest.Matchers.containsString("Accesorios")))
-            .andExpect(jsonPath("$.message").value(
-                org.hamcrest.Matchers.containsString("Carteras de Cuero")));
+                org.hamcrest.Matchers.containsString("Complementos de prueba")));
     }
 
     @Test

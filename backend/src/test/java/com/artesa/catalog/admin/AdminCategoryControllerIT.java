@@ -47,23 +47,11 @@ class AdminCategoryControllerIT {
     void listReturnsSeededCategoriesWithProductCounts() throws Exception {
         mvc.perform(get("/api/admin/categories"))
             .andExpect(status().isOk())
-            // 4 del seed original + Accesorios, que agrega V13.
-            .andExpect(jsonPath("$.length()").value(5))
+            .andExpect(jsonPath("$.length()").value(4))
             .andExpect(jsonPath("$[0].slug").value("carteras-cuero"))
             .andExpect(jsonPath("$[0].productCount").value(2))
             .andExpect(jsonPath("$[0].isCompanion").value(true))
             .andExpect(jsonPath("$[0].requiresCompanion").value(false));
-    }
-
-    @Test
-    @WithMockUser(roles = "ADMIN")
-    void listExposesCompanionRulesOfAccesorios() throws Exception {
-        mvc.perform(get("/api/admin/categories"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$[?(@.slug == 'accesorios')].requiresCompanion")
-                .value(org.hamcrest.Matchers.contains(true)))
-            .andExpect(jsonPath("$[?(@.slug == 'accesorios')].isCompanion")
-                .value(org.hamcrest.Matchers.contains(false)));
     }
 
     @Test
@@ -80,7 +68,6 @@ class AdminCategoryControllerIT {
     @Test
     @WithMockUser(roles = "ADMIN")
     void createCategory_happyPath() throws Exception {
-        // Ojo: "accesorios" ya existe desde V13, así que este test usa otro slug.
         String body = """
             {
               "name": "Bijouterie",

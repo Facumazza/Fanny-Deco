@@ -268,7 +268,7 @@ export default function CheckoutPage() {
             </button>
             {companionMissing && (
               <p className="text-xs text-terracotta mt-2 text-center">
-                Sumá una cartera al carrito para continuar.
+                Sumá una cartera u otra pieza al carrito para continuar.
               </p>
             )}
           </aside>

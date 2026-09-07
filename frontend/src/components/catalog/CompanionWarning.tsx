@@ -17,14 +17,17 @@ export function CompanionWarning({ names }: { names: string[] }) {
         {plural ? 'Estos productos no se venden solos' : 'Este producto no se vende solo'}
       </p>
       <p>
-        {names.join(', ')} {plural ? 'se venden' : 'se vende'} únicamente junto a una
-        cartera. Agregá una al carrito para poder finalizar la compra.
+        {names.join(', ')} {plural ? 'se venden' : 'se vende'} junto a una cartera
+        u otra pieza de la tienda. Agregá una al carrito para poder finalizar
+        la compra.
       </p>
+      {/* A la colección entera, sin slug de categoría: los slugs los edita
+          Laura desde el admin y un link fijo se desincroniza solo. */}
       <Link
-        to="/?categoria=carteras-cuero#coleccion"
+        to="/#coleccion"
         className="inline-block mt-2 text-terracotta font-semibold hover:underline"
       >
-        Ver carteras →
+        Ver la colección →
       </Link>
     </div>
   );

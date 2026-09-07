@@ -35,27 +35,26 @@ class CategoryControllerIT {
     @Autowired MockMvc mvc;
 
     @Test
-    void listsCategoriesInDisplayOrder() throws Exception {
+    void listsFourCategoriesInDisplayOrder() throws Exception {
         mvc.perform(get("/api/categories"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()").value(5))
+            .andExpect(jsonPath("$.length()").value(4))
             .andExpect(jsonPath("$[0].slug").value("carteras-cuero"))
             .andExpect(jsonPath("$[1].slug").value("carteras-otros"))
             .andExpect(jsonPath("$[2].slug").value("ceramica-deco"))
             .andExpect(jsonPath("$[3].slug").value("ceramica-casa"))
-            .andExpect(jsonPath("$[4].slug").value("accesorios"))
             .andExpect(jsonPath("$[0].name").value("Carteras de Cuero"))
             .andExpect(jsonPath("$[0].imageUrl").isNotEmpty());
     }
 
     @Test
     void exposesCompanionRulesSoTheStoreCanBlockTheCheckout() throws Exception {
+        // Sobre el seed, V14 deja a todas habilitando y a ninguna requiriendo
+        // acompañante (la categoría de complementos sólo existe en la base
+        // real). Lo que importa acá es que los flags viajen en el JSON.
         mvc.perform(get("/api/categories"))
             .andExpect(status().isOk())
-            // Carteras de Cuero habilita; Accesorios no se vende solo.
             .andExpect(jsonPath("$[0].isCompanion").value(true))
-            .andExpect(jsonPath("$[0].requiresCompanion").value(false))
-            .andExpect(jsonPath("$[4].isCompanion").value(false))
-            .andExpect(jsonPath("$[4].requiresCompanion").value(true));
+            .andExpect(jsonPath("$[0].requiresCompanion").value(false));
     }
 }

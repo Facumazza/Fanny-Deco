@@ -77,13 +77,22 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CompanionRequiredException.class)
     public ResponseEntity<ApiError> companionRequired(CompanionRequiredException e) {
         String blocked = String.join(", ", e.getBlockedCategories());
-        String companions = e.getCompanionCategories().isEmpty()
-            ? "una cartera"
-            : "un producto de " + String.join(" o ", e.getCompanionCategories());
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
             .body(ApiError.of("COMPANION_REQUIRED",
                 "Los productos de " + blocked + " no se venden solos: "
-                + "sumá al pedido " + companions + "."));
+                + "sumá al pedido " + companionHint(e.getCompanionCategories()) + "."));
+    }
+
+    /**
+     * Casi todas las categorías habilitan, así que enumerarlas daría un
+     * mensaje de varios renglones. Se listan sólo si son pocas; si no, se
+     * dice lo mismo en corto.
+     */
+    private static String companionHint(java.util.List<String> companions) {
+        if (companions.isEmpty() || companions.size() > 3) {
+            return "una cartera u otra pieza de la tienda";
+        }
+        return "un producto de " + String.join(" o ", companions);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)

@@ -79,7 +79,7 @@ export default function CartPage() {
                     CONTINUAR AL CHECKOUT →
                   </span>
                   <p className="text-xs text-terracotta mt-2 text-center">
-                    Falta una cartera en el carrito.
+                    Falta sumar una cartera u otra pieza al carrito.
                   </p>
                 </>
               ) : (

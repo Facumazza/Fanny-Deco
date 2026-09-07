@@ -58,7 +58,10 @@ export function Header() {
           </Link>
           <nav className="hidden md:flex items-center gap-8 text-sm text-ink">
             <Link to="/#coleccion" className="hover:text-terracotta">Colecciones</Link>
-            <Link to="/?categoria=carteras-cuero" className="hover:text-terracotta">Cuero</Link>
+            {/* Dos atajos curados, con los slugs tal como están en la base de
+                producción. Si Laura renombra estas categorías hay que tocarlos
+                acá — el resto de la navegación sale de la API. */}
+            <Link to="/?categoria=cartera-cuero" className="hover:text-terracotta">Cuero</Link>
             <Link to="/?categoria=ceramica-deco" className="hover:text-terracotta">Cerámica</Link>
             <Link to="/nosotros" className="hover:text-terracotta">Nosotros</Link>
           </nav>

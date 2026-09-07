@@ -161,7 +161,7 @@ export default function ProductPage() {
                     que no sea una sorpresa recién en el carrito. */}
                 {product.requiresCompanion && (
                   <p className="text-sm text-terracotta border-l-2 border-terracotta/40 pl-3 mb-4">
-                    Este producto se vende únicamente junto a una cartera.
+                    Este producto no se vende solo: se lleva junto a una cartera u otra pieza de la tienda.
                   </p>
                 )}
 
@@ -191,7 +191,7 @@ export default function ProductPage() {
                   >
                     <span>
                       {companionMissing
-                        ? 'Agregado. Falta una cartera para poder comprarlo.'
+                        ? 'Agregado. Falta sumar otra pieza para poder comprarlo.'
                         : 'Agregado al carrito.'}
                     </span>
                     <Link to="/carrito" className="text-terracotta hover:underline">

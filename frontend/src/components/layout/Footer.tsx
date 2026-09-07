@@ -1,5 +1,8 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { InstagramIcon, INSTAGRAM_URL } from '../icons/InstagramIcon';
+import { getCategories } from '../../api/catalog';
+import type { Category } from '../../types/api';
 
 interface FooterLink {
   label: string;
@@ -8,6 +11,19 @@ interface FooterLink {
 
 export function Footer() {
   const year = new Date().getFullYear();
+
+  // La columna TIENDA sale de la API, no de una lista a mano. Estuvo
+  // hardcodeada y se desincronizó: apuntaba a slugs que Laura ya había
+  // renombrado desde el admin, así que esos links mostraban la grilla
+  // vacía y nadie se enteraba.
+  const [categories, setCategories] = useState<Category[]>([]);
+  useEffect(() => {
+    getCategories()
+      .then(setCategories)
+      // El footer no es crítico: si falla, la columna queda vacía y el
+      // resto del sitio sigue andando.
+      .catch(err => console.error('footer categories', err));
+  }, []);
 
   return (
     <footer className="bg-[#1F1613] text-white/80">
@@ -36,12 +52,10 @@ export function Footer() {
 
         <FooterColumn
           title="TIENDA"
-          links={[
-            { label: 'Carteras de Cuero',      to: '/?categoria=carteras-cuero' },
-            { label: 'Carteras Otros Mat.',    to: '/?categoria=carteras-otros' },
-            { label: 'Cerámica Deco',          to: '/?categoria=ceramica-deco' },
-            { label: 'Cerámica Casa',          to: '/?categoria=ceramica-casa' },
-          ]}
+          links={categories.map(c => ({
+            label: c.name,
+            to: `/?categoria=${c.slug}#coleccion`,
+          }))}
         />
         <FooterColumn
           title="INFORMACIÓN"
