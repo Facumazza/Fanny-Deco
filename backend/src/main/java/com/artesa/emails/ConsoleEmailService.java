@@ -2,16 +2,16 @@ package com.artesa.emails;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Component;
 
 /**
- * Dev fallback. Instead of contacting a real mail provider, prints the email
- * payload to the log — useful before Resend credentials are set up. Never fails.
+ * Implementación por defecto: en vez de hablar con un proveedor real, escribe
+ * el mail en el log. Es la única que existe hoy — las notificaciones al
+ * cliente salen por el handoff de WhatsApp del panel de admin. Nunca falla.
+ *
+ * La instancia la crea {@link EmailConfig}, no el component scan: quién se
+ * usa depende de `artesa.emails.provider` y esa decisión vive en un solo
+ * lugar.
  */
-@Component
-@ConditionalOnProperty(name = "artesa.emails.provider",
-                       havingValue = "console", matchIfMissing = true)
 public class ConsoleEmailService implements EmailService {
 
     private static final Logger log = LoggerFactory.getLogger("EMAIL");
