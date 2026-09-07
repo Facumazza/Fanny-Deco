@@ -80,15 +80,20 @@ describe('useCart — regla de acompañante', () => {
     expect(result.current.companionBlockedNames).toEqual([]);
   });
 
-  it('descarta carritos guardados sin las reglas de compra', () => {
-    // Forma vieja (v2): sin requiresCompanion/isCompanion. Si la aceptáramos,
-    // un accesorio guardado antes del cambio pasaría el checkout sin cartera.
+  it('conserva las líneas guardadas sin las reglas de compra', () => {
+    // Pasa cuando la línea se guardó contra una API que todavía no devolvía
+    // los flags. Antes se descartaban y al cliente se le vaciaba el carrito
+    // en cada recarga; ahora se asumen en false y el backend igual rechaza
+    // la orden si corresponde.
     window.localStorage.setItem('artesa.cart.v3', JSON.stringify([
       { productId: 9, slug: 's', name: 'Viejo', imageUrl: 'x', priceArs: 1, quantity: 1 },
     ]));
 
     const { result } = setup();
 
-    expect(result.current.items).toEqual([]);
+    expect(result.current.items).toHaveLength(1);
+    expect(result.current.items[0].requiresCompanion).toBe(false);
+    expect(result.current.items[0].isCompanion).toBe(false);
+    expect(result.current.companionMissing).toBe(false);
   });
 });

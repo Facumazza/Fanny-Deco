@@ -52,11 +52,20 @@ function loadInitial(): CartItem[] {
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
     // Basic shape check — drop anything that looks wrong instead of throwing.
-    return parsed.filter((it): it is CartItem =>
-      it && typeof it.productId === 'number' && typeof it.quantity === 'number'
-        && typeof it.requiresCompanion === 'boolean'
-        && typeof it.isCompanion === 'boolean'
-    );
+    return parsed
+      .filter((it: CartItem) =>
+        it && typeof it.productId === 'number' && typeof it.quantity === 'number'
+      )
+      // Las reglas de compra pueden faltar si la línea se guardó contra una
+      // API que todavía no las devolvía. Se asumen en false en vez de tirar
+      // la línea: quien manda es el backend, que rechaza la orden igual, y
+      // descartarlas silenciosamente le vaciaría el carrito al cliente en
+      // cada recarga.
+      .map((it: CartItem) => ({
+        ...it,
+        requiresCompanion: it.requiresCompanion === true,
+        isCompanion: it.isCompanion === true,
+      }));
   } catch {
     return [];
   }
@@ -89,8 +98,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
           imageUrl: input.imageUrl,
           priceArs: input.priceArs,
           quantity: 1,
-          requiresCompanion: input.requiresCompanion,
-          isCompanion: input.isCompanion,
+          // === true y no un cast: si la API es vieja y no manda los flags,
+          // llegan undefined y la línea tiene que quedar igual con booleanos.
+          requiresCompanion: input.requiresCompanion === true,
+          isCompanion: input.isCompanion === true,
         },
       ];
     });
