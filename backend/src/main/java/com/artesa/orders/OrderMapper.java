@@ -30,9 +30,13 @@ public class OrderMapper {
     }
 
     private OrderDto.Item toItem(OrderItem i) {
+        // product puede ser null cuando el admin borro el producto despues
+        // de la venta (V13 convirtio el FK a ON DELETE SET NULL). El resto
+        // del item se arma con los campos snapshot de order_items.
+        Long productId = i.getProduct() != null ? i.getProduct().getId() : null;
         return new OrderDto.Item(
             i.getId(),
-            i.getProduct().getId(),
+            productId,
             i.getProductSlug(),
             i.getProductName(),
             i.getProductImageUrl(),

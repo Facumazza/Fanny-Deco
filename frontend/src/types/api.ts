@@ -122,7 +122,9 @@ export type OrderStatus = 'PENDING' | 'PAID' | 'SHIPPED' | 'DELIVERED' | 'CANCEL
 
 export interface OrderItem {
   id: number;
-  productId: number;
+  // null si el producto fue borrado del catalogo despues de esta venta;
+  // los demas campos (slug/name/imageUrl) siguen viniendo del snapshot.
+  productId: number | null;
   productSlug: string;
   productName: string;
   productImageUrl: string;

@@ -17,8 +17,12 @@ public class OrderItem {
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "product_id", nullable = false)
+    // Nullable: cuando el admin borra un producto que ya se habia vendido,
+    // el FK pasa a NULL (ON DELETE SET NULL en V13) y la orden se sigue
+    // mostrando con los campos snapshot (slug/name/image/precio) que
+    // order_items guardo al momento de la compra.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
     private Product product;
 
     @Column(name = "product_slug", nullable = false, length = 120)
